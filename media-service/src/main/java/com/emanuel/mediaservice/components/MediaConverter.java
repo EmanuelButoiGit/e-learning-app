@@ -2,9 +2,11 @@ package com.emanuel.mediaservice.components;
 
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.MediaEntity;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class MediaConverter {
     public MediaDto toDto(MediaEntity mediaEntity){
         MediaDto dto = new MediaDto();

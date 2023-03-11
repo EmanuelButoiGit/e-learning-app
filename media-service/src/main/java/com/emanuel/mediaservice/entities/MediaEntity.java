@@ -16,6 +16,7 @@ public class MediaEntity {
     private Long id;
     private String title;
     private String description;
+    private String fileName;
     private Date uploadDate;
     private String mimeType;
     @Lob

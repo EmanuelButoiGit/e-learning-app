@@ -21,13 +21,13 @@ public class UploadService {
     MediaConverter mediaConverter;
 
     @SneakyThrows
-    public MediaDto saveFile(MultipartFile file, String description) {
+    public MediaDto saveFile(MultipartFile file, String title, String description) {
         String fileName = file.getOriginalFilename();
-        byte[] data = file.getBytes();
+        byte[] content = file.getBytes();
         String contentType = file.getContentType();
         LocalDateTime localDateTime = LocalDateTime.now();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        MediaEntity mediaEntity = new MediaEntity(null, fileName, description, date, contentType, data);
+        MediaEntity mediaEntity = new MediaEntity(null, title, description, fileName, date, contentType, content);
         MediaEntity savedEntity = mediaRepository.save(mediaEntity);
         return mediaConverter.toDto(savedEntity);
     }
