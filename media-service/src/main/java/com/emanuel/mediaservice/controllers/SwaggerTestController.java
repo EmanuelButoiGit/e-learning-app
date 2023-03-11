@@ -18,7 +18,7 @@ public class SwaggerTestController {
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Test Swagger V3 with a simple 'Hello World'")
-    @ApiResponse(responseCode = "200", description = "Get greetings")
+    @ApiResponse(responseCode = "200", description = "Message sent")
     public String getHello(
             @Parameter(
                     description = "name",
