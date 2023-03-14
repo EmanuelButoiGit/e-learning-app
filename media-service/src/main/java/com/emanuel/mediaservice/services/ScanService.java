@@ -50,6 +50,7 @@ public class ScanService {
             logger.info("Failed to get API response: {}", e.getMessage());
             return true;
         }
+        logger.info("Virus Total, API response: {}", response);
         return response.contains("\"response_code\": 1");
     }
 }

@@ -13,9 +13,22 @@ public class MediaConverter {
         dto.setId(mediaEntity.getId());
         dto.setTitle(mediaEntity.getTitle());
         dto.setDescription(mediaEntity.getDescription());
+        dto.setFileName(mediaEntity.getFileName());
         dto.setUploadDate(mediaEntity.getUploadDate());
         dto.setMimeType(mediaEntity.getMimeType());
         dto.setContent(mediaEntity.getContent());
         return dto;
+    }
+
+    public MediaEntity toEntity(MediaDto mediaDto){
+        MediaEntity entity = new MediaEntity();
+        entity.setId(mediaDto.getId());
+        entity.setTitle(mediaDto.getTitle());
+        entity.setDescription(mediaDto.getDescription());
+        entity.setFileName(mediaDto.getFileName());
+        entity.setUploadDate(mediaDto.getUploadDate());
+        entity.setMimeType(mediaDto.getMimeType());
+        entity.setContent(mediaDto.getContent());
+        return entity;
     }
 }
