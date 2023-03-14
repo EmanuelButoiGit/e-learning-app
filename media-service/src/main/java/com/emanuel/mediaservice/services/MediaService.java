@@ -36,9 +36,10 @@ public class MediaService {
         String fileName = file.getOriginalFilename();
         byte[] content = file.getBytes();
         String contentType = file.getContentType();
+        Long size = file.getSize();
         LocalDateTime localDateTime = LocalDateTime.now();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        MediaEntity mediaEntity = new MediaEntity(null, title, description, fileName, date, contentType, content);
+        MediaEntity mediaEntity = new MediaEntity(null, title, description, fileName, date, contentType, content, size);
         MediaEntity savedEntity = mediaRepository.save(mediaEntity);
         return mediaConverter.toDto(savedEntity);
     }
