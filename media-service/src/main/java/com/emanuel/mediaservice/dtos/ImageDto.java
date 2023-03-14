@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class MediaDto {
+public class ImageDto {
     private Long id;
     private String title;
     private String description;
@@ -14,4 +14,8 @@ public class MediaDto {
     private String mimeType;
     private byte[] content;
     private Long size;
+    // additional fields:
+    private Integer width;
+    private Integer height;
+    private String quality;
 }

@@ -17,6 +17,7 @@ public class MediaConverter {
         dto.setUploadDate(mediaEntity.getUploadDate());
         dto.setMimeType(mediaEntity.getMimeType());
         dto.setContent(mediaEntity.getContent());
+        dto.setSize(mediaEntity.getSize());
         return dto;
     }
 
@@ -29,6 +30,7 @@ public class MediaConverter {
         entity.setUploadDate(mediaDto.getUploadDate());
         entity.setMimeType(mediaDto.getMimeType());
         entity.setContent(mediaDto.getContent());
+        entity.setSize(mediaDto.getSize());
         return entity;
     }
 }

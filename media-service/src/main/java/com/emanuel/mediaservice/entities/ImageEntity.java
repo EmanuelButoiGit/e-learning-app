@@ -9,10 +9,10 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "media")
+@Table(name = "image")
 @NoArgsConstructor
 @AllArgsConstructor
-public class MediaEntity {
+public class ImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,4 +24,8 @@ public class MediaEntity {
     @Lob
     private byte[] content;
     private Long size;
+    // additional fields:
+    private Integer width;
+    private Integer height;
+    private String quality;
 }

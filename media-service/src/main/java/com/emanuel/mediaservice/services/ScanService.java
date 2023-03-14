@@ -47,7 +47,7 @@ public class ScanService {
         try (Scanner scanner = new Scanner(connection.getInputStream())) {
             response = scanner.useDelimiter("\\A").next();
         } catch (IOException e) {
-            logger.info("Failed to get API response: {}", e.getMessage());
+            logger.error("Failed to get API response: {}", e.getMessage());
             return true;
         }
         logger.info("Virus Total, API response: {}", response);
