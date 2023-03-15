@@ -1,15 +1,11 @@
 package com.emanuel.mediaservice.services;
 
 import com.emanuel.mediaservice.components.ImageConverter;
-import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.ImageDto;
-import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.ImageEntity;
-import com.emanuel.mediaservice.entities.MediaEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.InfectedFileException;
 import com.emanuel.mediaservice.repositories.ImageRepository;
-import com.emanuel.mediaservice.repositories.MediaRepository;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -49,10 +45,10 @@ public class ImageService {
         BufferedImage image = null;
         try {
             image = ImageIO.read(file.getInputStream());
-        } catch (IOException e){
+        } catch (IOException e) {
             logger.error("Error reading image file: {}, {}", fileName, e.getMessage());
         }
-        if (image == null){
+        if (image == null) {
             throw new NullPointerException("Error image file " + fileName + " is null: ");
         }
 
@@ -69,7 +65,7 @@ public class ImageService {
         return imageConverter.toDto(savedEntity);
     }
 
-    private String calculateQuality(Integer width, Integer height){
+    private String calculateQuality(Integer width, Integer height) {
         if (width <= 320 && height <= 240) {
             return "LOW";
         } else if (width <= 640 && height <= 480) {
@@ -77,5 +73,48 @@ public class ImageService {
         } else {
             return "HIGH";
         }
+    }
+
+    @SneakyThrows
+    public List<ImageDto> getAllImages() {
+        try {
+            List<ImageEntity> allMedias = imageRepository.findAll();
+            return allMedias.stream()
+                    .map(mediaEntity -> imageConverter.toDto(mediaEntity))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
+        }
+    }
+
+    public ImageDto getImageById(Long id) {
+        ImageEntity image = imageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ImageEntity not found with id " + id));
+        return imageConverter.toDto(image);
+    }
+
+    public ImageDto deleteImage(Long id) {
+        ImageDto image = getImageById(id);
+        imageRepository.delete(imageConverter.toEntity(image));
+        return image;
+    }
+
+    public ImageDto updateImage(Long id, ImageDto dto) {
+        ImageDto image = getImageById(id);
+        dto.setId(image.getId());
+        dto.setTitle(image.getTitle());
+        dto.setDescription(image.getDescription());
+        dto.setUploadDate(image.getUploadDate());
+        dto.setMimeType(image.getMimeType());
+        dto.setContent(image.getContent());
+        dto.setSize(image.getSize());
+        dto.setWidth(image.getWidth());
+        dto.setHeight(image.getHeight());
+        dto.setQuality(image.getQuality());
+        ImageEntity imageEntity = imageRepository.save(imageConverter.toEntity(dto));
+        return imageConverter.toDto(imageEntity);
+    }
+
+    public void deleteAllImages(){
+        imageRepository.deleteAll();
     }
 }

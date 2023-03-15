@@ -4,7 +4,6 @@ import com.emanuel.mediaservice.constants.SwaggerConstants;
 import com.emanuel.mediaservice.dtos.ImageDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.services.ImageService;
-import com.emanuel.mediaservice.services.MediaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,5 +45,59 @@ public class ImageController {
     )
     {
         return imageService.uploadImage(file, title, description);
+    }
+
+    @SneakyThrows
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get all image files")
+    @ApiResponse(responseCode = "200", description = "All image files retrieved")
+    public List<ImageDto> getAllImages()
+    {
+        return imageService.getAllImages();
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a specific image file based on a giving image id")
+    @ApiResponse(responseCode = "200", description = "Specific image file retrieved based on a giving image id")
+    public ImageDto getImageById(@PathVariable Long id)
+    {
+        return imageService.getImageById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Delete a specific image file based on a giving image id")
+    @ApiResponse(responseCode = "200", description = "Specific image file was deleted based on a giving image id")
+    public ImageDto deleteImage(@PathVariable Long id)
+    {
+        return imageService.deleteImage(id);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiResponse(responseCode = "200", description = "Specific image file was updated based on a giving image id")
+    @Operation(
+            summary = "Update a specific image file based on a giving image id",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = MediaDto.class, example = SwaggerConstants.IMAGE_DEFAULT_VALUES)
+                    )
+            ))
+    public ImageDto updateToDo(
+            @PathVariable("id") Long id,
+            @RequestBody() ImageDto image) {
+
+        return imageService.updateImage(id, image);
+    }
+
+    @DeleteMapping()
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete all image files")
+    @ApiResponse(responseCode = "204", description = "All image files were deleted")
+    public void deleteAllImages(){
+        imageService.deleteAllImages();
     }
 }
