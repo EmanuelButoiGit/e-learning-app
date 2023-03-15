@@ -51,8 +51,8 @@ public class MediaService {
             return allMedias.stream()
                     .map(mediaEntity -> mediaConverter.toDto(mediaEntity))
                     .collect(Collectors.toList());
-        } catch (Exception ex) {
-            throw new DataBaseException("Couldn't fetch data from database: " + ex.getMessage());
+        } catch (Exception e) {
+            throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
         }
     }
 
@@ -75,6 +75,7 @@ public class MediaService {
         dto.setUploadDate(media.getUploadDate());
         dto.setMimeType(media.getMimeType());
         dto.setContent(media.getContent());
+        dto.setSize(media.getSize());
         MediaEntity mediaEntity = mediaRepository.save(mediaConverter.toEntity(dto));
         return mediaConverter.toDto(mediaEntity);
     }
