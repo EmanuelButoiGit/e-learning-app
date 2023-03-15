@@ -28,11 +28,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ImageService {
 
-    ScanService scanService;
-    ImageRepository imageRepository;
-    ImageConverter imageConverter;
-
-    private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
+    private final ScanService scanService;
+    private final ImageRepository imageRepository;
+    private final ImageConverter imageConverter;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageService.class);
 
     @SneakyThrows
     public ImageDto uploadImage(MultipartFile file, String title, String description) {
@@ -40,18 +39,16 @@ public class ImageService {
         if (isInfected) {
             throw new InfectedFileException("The uploaded file is infected with viruses.");
         }
-
-        String fileName = file.getOriginalFilename();
         BufferedImage image = null;
         try {
             image = ImageIO.read(file.getInputStream());
-        } catch (IOException e) {
-            logger.error("Error reading image file: {}, {}", fileName, e.getMessage());
+        } catch (IOException e){
+            LOGGER.error("Error reading image file: {}", e.getMessage());
         }
-        if (image == null) {
-            throw new NullPointerException("Error image file " + fileName + " is null: ");
+        if (image == null){
+            throw new NullPointerException("Error image file is null");
         }
-
+        String fileName = file.getOriginalFilename();
         byte[] content = file.getBytes();
         Long size = file.getSize();
         String contentType = file.getContentType();
@@ -80,7 +77,7 @@ public class ImageService {
         try {
             List<ImageEntity> allMedias = imageRepository.findAll();
             return allMedias.stream()
-                    .map(mediaEntity -> imageConverter.toDto(mediaEntity))
+                    .map(imageConverter::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());

@@ -20,7 +20,7 @@ import java.util.Scanner;
 public class ScanService {
 
     private static final String VIRUS_TOTAL_API_KEY = "bed0e74e6e29e063b54e04cca27a28dd7e0499f3fcdb4fd5e8f942a34d83e637";
-    private static final Logger logger = LoggerFactory.getLogger(ScanService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScanService.class);
 
     @SneakyThrows
     public boolean scanFileForViruses(MultipartFile file) {
@@ -47,10 +47,10 @@ public class ScanService {
         try (Scanner scanner = new Scanner(connection.getInputStream())) {
             response = scanner.useDelimiter("\\A").next();
         } catch (IOException e) {
-            logger.error("Failed to get API response: {}", e.getMessage());
+            LOGGER.error("Failed to get API response: {}", e.getMessage());
             return true;
         }
-        logger.info("Virus Total, API response: {}", response);
+        LOGGER.info("Virus Total, API response: {}", response);
         return response.contains("\"response_code\": 1");
     }
 }

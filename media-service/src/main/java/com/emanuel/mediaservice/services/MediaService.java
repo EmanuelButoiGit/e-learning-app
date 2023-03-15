@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class MediaService {
 
-    ScanService scanService;
-    MediaRepository mediaRepository;
-    MediaConverter mediaConverter;
+    private final ScanService scanService;
+    private final MediaRepository mediaRepository;
+    private final MediaConverter mediaConverter;
 
     @SneakyThrows
     public MediaDto uploadMedia(MultipartFile file, String title, String description) {
@@ -49,7 +49,7 @@ public class MediaService {
         try {
             List<MediaEntity> allMedias = mediaRepository.findAll();
             return allMedias.stream()
-                    .map(mediaEntity -> mediaConverter.toDto(mediaEntity))
+                    .map(mediaConverter::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
