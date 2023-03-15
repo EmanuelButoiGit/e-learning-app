@@ -48,6 +48,7 @@ public class VideoService {
     }
 
     private Long getVideoDuration(MultipartFile file) {
+        // TO DO: https://www.vdocipher.com/blog/video-resolution/
         try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(file.getInputStream())) {
             grabber.start();
             int width = grabber.getImageWidth();
