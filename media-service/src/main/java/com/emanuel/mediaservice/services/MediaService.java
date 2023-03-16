@@ -69,14 +69,14 @@ public class MediaService {
 
     public MediaDto updateMedia(Long id, MediaDto dto) {
         MediaDto media = getMediaById(id);
-        dto.setId(media.getId());
-        dto.setTitle(media.getTitle());
-        dto.setDescription(media.getDescription());
-        dto.setUploadDate(media.getUploadDate());
-        dto.setMimeType(media.getMimeType());
-        dto.setContent(media.getContent());
-        dto.setSize(media.getSize());
-        MediaEntity mediaEntity = mediaRepository.save(mediaConverter.toEntity(dto));
+        media.setId(dto.getId());
+        media.setTitle(dto.getTitle());
+        media.setDescription(dto.getDescription());
+        media.setUploadDate(dto.getUploadDate());
+        media.setMimeType(dto.getMimeType());
+        media.setContent(dto.getContent());
+        media.setSize(dto.getSize());
+        MediaEntity mediaEntity = mediaRepository.save(mediaConverter.toEntity(media));
         return mediaConverter.toDto(mediaEntity);
     }
 

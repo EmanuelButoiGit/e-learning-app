@@ -3,6 +3,7 @@ package com.emanuel.mediaservice.services;
 import com.emanuel.mediaservice.components.VideoConverter;
 import com.emanuel.mediaservice.dtos.VideoDto;
 import com.emanuel.mediaservice.entities.VideoEntity;
+import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.InfectedFileException;
 import com.emanuel.mediaservice.repositories.VideoRepository;
 import lombok.AllArgsConstructor;
@@ -11,9 +12,12 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -59,4 +63,49 @@ public class VideoService {
         return videoConverter.toDto(savedEntity);
     }
 
+    @SneakyThrows
+    public List<VideoDto> getAllVideos() {
+        try {
+            List<VideoEntity> allVideos = videoRepository.findAll();
+            return allVideos.stream()
+                    .map(videoConverter::toDto)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
+        }
+    }
+
+    public VideoDto getVideoById(Long id) {
+        VideoEntity video = videoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("VideoEntity not found with id " + id));
+        return videoConverter.toDto(video);
+    }
+
+    public VideoDto deleteVideo(Long id) {
+        VideoDto video = getVideoById(id);
+        videoRepository.delete(videoConverter.toEntity(video));
+        return video;
+    }
+
+    public VideoDto updateVideo(Long id, VideoDto dto) {
+        VideoDto video = getVideoById(id);
+        video.setId(dto.getId());
+        video.setTitle(dto.getTitle());
+        video.setDescription(dto.getDescription());
+        video.setUploadDate(dto.getUploadDate());
+        video.setMimeType(dto.getMimeType());
+        video.setContent(dto.getContent());
+        video.setSize(dto.getSize());
+        video.setWidth(dto.getWidth());
+        video.setHeight(dto.getHeight());
+        video.setResolutionQuality(dto.getResolutionQuality());
+        video.setDuration(dto.getDuration());
+        video.setAspectRatio(dto.getAspectRatio());
+        video.setFps(dto.getFps());
+        VideoEntity videoEntity = videoRepository.save(videoConverter.toEntity(video));
+        return videoConverter.toDto(videoEntity);
+    }
+
+    public void deleteAllVideos(){
+        videoRepository.deleteAll();
+    }
 }

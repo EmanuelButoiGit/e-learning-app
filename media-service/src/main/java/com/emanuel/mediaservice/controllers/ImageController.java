@@ -2,7 +2,6 @@ package com.emanuel.mediaservice.controllers;
 
 import com.emanuel.mediaservice.constants.SwaggerConstants;
 import com.emanuel.mediaservice.dtos.ImageDto;
-import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.services.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -83,10 +82,10 @@ public class ImageController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = MediaDto.class, example = SwaggerConstants.IMAGE_DEFAULT_VALUES)
+                            schema = @Schema(implementation = ImageDto.class, example = SwaggerConstants.IMAGE_DEFAULT_VALUES)
                     )
             ))
-    public ImageDto updateToDo(
+    public ImageDto updateImage(
             @PathVariable("id") Long id,
             @RequestBody() ImageDto image) {
 
