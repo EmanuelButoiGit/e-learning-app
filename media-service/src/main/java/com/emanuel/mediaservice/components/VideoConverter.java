@@ -18,8 +18,11 @@ public class VideoConverter {
         dto.setMimeType(videoEntity.getMimeType());
         dto.setContent(videoEntity.getContent());
         dto.setSize(videoEntity.getSize());
+        dto.setWidth(videoEntity.getWidth());
+        dto.setHeight(videoEntity.getHeight());
+        dto.setResolutionQuality(videoEntity.getResolutionQuality());
         dto.setDuration(videoEntity.getDuration());
-        dto.setResolution(videoEntity.getResolution());
+        dto.setAspectRatio(videoEntity.getAspectRatio());
         dto.setFps(videoEntity.getFps());
         return dto;
     }
@@ -34,8 +37,11 @@ public class VideoConverter {
         entity.setMimeType(videoDto.getMimeType());
         entity.setContent(videoDto.getContent());
         entity.setSize(videoDto.getSize());
+        entity.setWidth(videoDto.getWidth());
+        entity.setHeight(videoDto.getHeight());
+        entity.setResolutionQuality(videoDto.getResolutionQuality());
         entity.setDuration(videoDto.getDuration());
-        entity.setResolution(videoDto.getResolution());
+        entity.setAspectRatio(videoDto.getAspectRatio());
         entity.setFps(videoDto.getFps());
         return entity;
     }
