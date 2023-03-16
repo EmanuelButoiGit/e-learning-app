@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class ImageService {
 
     private final ScanService scanService;
+    private final QualityService qualityService;
     private final ImageRepository imageRepository;
     private final ImageConverter imageConverter;
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageService.class);
@@ -56,21 +57,13 @@ public class ImageService {
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Integer width = image.getWidth();
         Integer height = image.getHeight();
-        String quality = calculateQuality(width, height);
-        ImageEntity imageEntity = new ImageEntity(null, title, description, fileName, date, contentType, content, size, width, height, quality);
+        Integer resolutionQuality = qualityService.calculateResolutionQuality(width, height);
+        ImageEntity imageEntity = new ImageEntity(null, title, description, fileName, date, contentType, content, size, width, height, resolutionQuality);
         ImageEntity savedEntity = imageRepository.save(imageEntity);
         return imageConverter.toDto(savedEntity);
     }
 
-    private String calculateQuality(Integer width, Integer height) {
-        if (width <= 320 && height <= 240) {
-            return "LOW";
-        } else if (width <= 640 && height <= 480) {
-            return "MEDIUM";
-        } else {
-            return "HIGH";
-        }
-    }
+
 
     @SneakyThrows
     public List<ImageDto> getAllImages() {
@@ -106,7 +99,7 @@ public class ImageService {
         dto.setSize(image.getSize());
         dto.setWidth(image.getWidth());
         dto.setHeight(image.getHeight());
-        dto.setQuality(image.getQuality());
+        dto.setResolutionQuality(image.getResolutionQuality());
         ImageEntity imageEntity = imageRepository.save(imageConverter.toEntity(dto));
         return imageConverter.toDto(imageEntity);
     }

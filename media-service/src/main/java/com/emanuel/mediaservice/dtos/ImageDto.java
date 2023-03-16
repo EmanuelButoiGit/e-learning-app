@@ -17,5 +17,5 @@ public class ImageDto {
     // additional fields:
     private Integer width;
     private Integer height;
-    private String quality;
+    private Integer resolutionQuality;
 }

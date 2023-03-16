@@ -1,9 +1,7 @@
 package com.emanuel.mediaservice.components;
 
 import com.emanuel.mediaservice.dtos.ImageDto;
-import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.ImageEntity;
-import com.emanuel.mediaservice.entities.MediaEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +20,7 @@ public class ImageConverter {
         dto.setSize(imageEntity.getSize());
         dto.setWidth(imageEntity.getWidth());
         dto.setHeight(imageEntity.getHeight());
-        dto.setQuality(imageEntity.getQuality());
+        dto.setResolutionQuality(imageEntity.getResolutionQuality());
         return dto;
     }
 
@@ -38,7 +36,7 @@ public class ImageConverter {
         entity.setSize(imageDto.getSize());
         entity.setWidth(imageDto.getWidth());
         entity.setHeight(imageDto.getHeight());
-        entity.setQuality(imageDto.getQuality());
+        entity.setResolutionQuality(imageDto.getResolutionQuality());
         return entity;
     }
 }
