@@ -85,7 +85,7 @@ public class MediaController {
                     schema = @Schema(implementation = MediaDto.class, example = SwaggerConstants.MEDIA_DEFAULT_VALUES)
             )
     ))
-    public MediaDto updateToDo(
+    public MediaDto updateMedia(
             @PathVariable("id") Long id,
             @RequestBody() MediaDto media) {
 

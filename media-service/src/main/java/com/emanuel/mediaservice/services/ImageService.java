@@ -68,8 +68,8 @@ public class ImageService {
     @SneakyThrows
     public List<ImageDto> getAllImages() {
         try {
-            List<ImageEntity> allMedias = imageRepository.findAll();
-            return allMedias.stream()
+            List<ImageEntity> allImages = imageRepository.findAll();
+            return allImages.stream()
                     .map(imageConverter::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
@@ -90,17 +90,17 @@ public class ImageService {
 
     public ImageDto updateImage(Long id, ImageDto dto) {
         ImageDto image = getImageById(id);
-        dto.setId(image.getId());
-        dto.setTitle(image.getTitle());
-        dto.setDescription(image.getDescription());
-        dto.setUploadDate(image.getUploadDate());
-        dto.setMimeType(image.getMimeType());
-        dto.setContent(image.getContent());
-        dto.setSize(image.getSize());
-        dto.setWidth(image.getWidth());
-        dto.setHeight(image.getHeight());
-        dto.setResolutionQuality(image.getResolutionQuality());
-        ImageEntity imageEntity = imageRepository.save(imageConverter.toEntity(dto));
+        image.setId(dto.getId());
+        image.setTitle(dto.getTitle());
+        image.setDescription(dto.getDescription());
+        image.setUploadDate(dto.getUploadDate());
+        image.setMimeType(dto.getMimeType());
+        image.setContent(dto.getContent());
+        image.setSize(dto.getSize());
+        image.setWidth(dto.getWidth());
+        image.setHeight(dto.getHeight());
+        image.setResolutionQuality(dto.getResolutionQuality());
+        ImageEntity imageEntity = imageRepository.save(imageConverter.toEntity(image));
         return imageConverter.toDto(imageEntity);
     }
 
