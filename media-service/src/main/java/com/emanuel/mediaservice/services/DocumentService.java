@@ -3,6 +3,7 @@ package com.emanuel.mediaservice.services;
 import com.emanuel.mediaservice.components.DocumentConverter;
 import com.emanuel.mediaservice.dtos.DocumentDto;
 import com.emanuel.mediaservice.entities.DocumentEntity;
+import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.DocumentException;
 import com.emanuel.mediaservice.exceptions.InfectedFileException;
 import com.emanuel.mediaservice.repositories.DocumentRepository;
@@ -14,12 +15,15 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -68,5 +72,46 @@ public class DocumentService {
         DocumentEntity documentEntity = new DocumentEntity(null, title, description, fileName, date, contentType, content, size, numberOfPages);
         DocumentEntity savedEntity = documentRepository.save(documentEntity);
         return documentConverter.toDto(savedEntity);
+    }
+
+    @SneakyThrows
+    public List<DocumentDto> getAllDocuments() {
+        try {
+            List<DocumentEntity> allDocuments = documentRepository.findAll();
+            return allDocuments.stream()
+                    .map(documentConverter::toDto)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
+        }
+    }
+
+    public DocumentDto getDocumentById(Long id) {
+        DocumentEntity document = documentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("DocumentEntity not found with id " + id));
+        return documentConverter.toDto(document);
+    }
+
+    public DocumentDto deleteDocument(Long id) {
+        DocumentDto document = getDocumentById(id);
+        documentRepository.delete(documentConverter.toEntity(document));
+        return document;
+    }
+
+    public DocumentDto updateDocument(Long id, DocumentDto dto) {
+        DocumentDto document = getDocumentById(id);
+        document.setId(dto.getId());
+        document.setTitle(dto.getTitle());
+        document.setDescription(dto.getDescription());
+        document.setUploadDate(dto.getUploadDate());
+        document.setMimeType(dto.getMimeType());
+        document.setContent(dto.getContent());
+        document.setSize(dto.getSize());
+        document.setNumberOfPages(dto.getNumberOfPages());
+        DocumentEntity documentEntity = documentRepository.save(documentConverter.toEntity(document));
+        return documentConverter.toDto(documentEntity);
+    }
+
+    public void deleteAllDocuments() {
+        documentRepository.deleteAll();
     }
 }
