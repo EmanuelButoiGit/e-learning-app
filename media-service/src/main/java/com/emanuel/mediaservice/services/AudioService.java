@@ -3,6 +3,7 @@ package com.emanuel.mediaservice.services;
 import com.emanuel.mediaservice.components.AudioConverter;
 import com.emanuel.mediaservice.dtos.AudioDto;
 import com.emanuel.mediaservice.entities.AudioEntity;
+import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.InfectedFileException;
 import com.emanuel.mediaservice.exceptions.Mp3Exception;
 import com.emanuel.mediaservice.repositories.AudioRepository;
@@ -12,6 +13,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -20,6 +22,8 @@ import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -70,5 +74,47 @@ public class AudioService {
         AudioEntity audioEntity = new AudioEntity(null, title, description, fileName, date, contentType, content, size, duration, sampleRate);
         AudioEntity savedEntity = audioRepository.save(audioEntity);
         return audioConverter.toDto(savedEntity);
+    }
+
+    @SneakyThrows
+    public List<AudioDto> getAllAudios() {
+        try {
+            List<AudioEntity> allAudios = audioRepository.findAll();
+            return allAudios.stream()
+                    .map(audioConverter::toDto)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
+        }
+    }
+
+    public AudioDto getAudioById(Long id) {
+        AudioEntity media = audioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("AudioEntity not found with id " + id));
+        return audioConverter.toDto(media);
+    }
+
+    public AudioDto deleteAudio(Long id) {
+        AudioDto audio = getAudioById(id);
+        audioRepository.delete(audioConverter.toEntity(audio));
+        return audio;
+    }
+
+    public AudioDto updateAudio(Long id, AudioDto dto) {
+        AudioDto audio = getAudioById(id);
+        audio.setId(dto.getId());
+        audio.setTitle(dto.getTitle());
+        audio.setDescription(dto.getDescription());
+        audio.setUploadDate(dto.getUploadDate());
+        audio.setMimeType(dto.getMimeType());
+        audio.setContent(dto.getContent());
+        audio.setSize(dto.getSize());
+        audio.setDuration(dto.getDuration());
+        audio.setSampleRate(dto.getSampleRate());
+        AudioEntity audioEntity = audioRepository.save(audioConverter.toEntity(audio));
+        return audioConverter.toDto(audioEntity);
+    }
+
+    public void deleteAllAudios() {
+        audioRepository.deleteAll();
     }
 }
