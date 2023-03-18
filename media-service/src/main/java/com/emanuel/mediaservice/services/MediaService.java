@@ -28,11 +28,11 @@ public class MediaService {
     private final MediaConverter mediaConverter;
 
     public MediaDto uploadMedia(MultipartFile file, String title, String description) {
-        MediaDto mediaFields = getMediaFields(file);
+        MediaDto mediaFields = getMediaFields(file, title, description);
         MediaEntity mediaEntity =
                 new MediaEntity(null,
-                                description,
-                                title,
+                                mediaFields.getTitle(),
+                                mediaFields.getDescription(),
                                 mediaFields.getFileName(),
                                 mediaFields.getUploadDate(),
                                 mediaFields.getMimeType(),
@@ -44,7 +44,7 @@ public class MediaService {
     }
 
     @SneakyThrows
-    public MediaDto getMediaFields(MultipartFile file){
+    public MediaDto getMediaFields(MultipartFile file, String title, String description){
         boolean isInfected = scanService.scanFileForViruses(file);
         if (isInfected) {
             throw new InfectedFileException("The uploaded file is infected with viruses.");
@@ -55,7 +55,7 @@ public class MediaService {
         Long size = file.getSize();
         LocalDateTime localDateTime = LocalDateTime.now();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        return new MediaDto(null, null, null, fileName, date, contentType, content, size);
+        return new MediaDto(null, title, description, fileName, date, contentType, content, size);
     }
 
     @SneakyThrows

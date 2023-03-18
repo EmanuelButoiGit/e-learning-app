@@ -1,6 +1,7 @@
 package com.emanuel.mediaservice.services;
 
 import com.emanuel.mediaservice.components.AudioConverter;
+import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.AudioDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.AudioEntity;
@@ -28,12 +29,13 @@ import java.util.stream.Collectors;
 public class AudioService {
 
     private final MediaService mediaService;
+    private final MediaConverter mediaConverter;
     private final AudioRepository audioRepository;
     private final AudioConverter audioConverter;
 
     @SneakyThrows
     public AudioDto uploadAudio(MultipartFile file, String title, String description) {
-        MediaDto mediaFields = mediaService.getMediaFields(file);
+        MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
         String[] parts = mediaFields.getFileName().split("\\.");
         String extension = parts[parts.length - 1];
         float sampleRate = 0;
@@ -58,14 +60,7 @@ public class AudioService {
         }
 
         AudioEntity audioEntity = AudioEntity.builder()
-                .id(null)
-                .title(title)
-                .description(description)
-                .fileName(mediaFields.getFileName())
-                .uploadDate(mediaFields.getUploadDate())
-                .mimeType(mediaFields.getMimeType())
-                .content(mediaFields.getContent())
-                .size(mediaFields.getSize())
+                .mediaEntity(mediaConverter.toEntity(mediaFields))
                 .duration(duration)
                 .sampleRate(sampleRate)
                 .build();
@@ -103,14 +98,7 @@ public class AudioService {
     public AudioDto updateAudio(Long id, AudioDto dto) {
         MediaDto media = mediaService.updateMediaFields(id, dto);
         AudioDto updatedAudio = AudioDto.builder()
-                .id(media.getId())
-                .title(media.getTitle())
-                .description(media.getDescription())
-                .fileName(media.getFileName())
-                .uploadDate(media.getUploadDate())
-                .mimeType(media.getMimeType())
-                .content(media.getContent())
-                .size(media.getSize())
+                .mediaDto(media)
                 .duration(dto.getDuration())
                 .sampleRate(dto.getSampleRate())
                 .build();

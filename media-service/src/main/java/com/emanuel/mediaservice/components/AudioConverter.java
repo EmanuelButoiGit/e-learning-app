@@ -13,14 +13,7 @@ public class AudioConverter extends MediaConverter{
     public AudioDto toDto(AudioEntity audioEntity){
         MediaDto media = super.toDto(audioEntity);
         return AudioDto.builder()
-                .id(media.getId())
-                .title(media.getTitle())
-                .description(media.getDescription())
-                .fileName(media.getFileName())
-                .uploadDate(media.getUploadDate())
-                .mimeType(media.getMimeType())
-                .content(media.getContent())
-                .size(media.getSize())
+                .mediaDto(media)
                 .duration(audioEntity.getDuration())
                 .sampleRate(audioEntity.getSampleRate())
                 .build();
@@ -29,14 +22,7 @@ public class AudioConverter extends MediaConverter{
     public AudioEntity toEntity(AudioDto audioDto){
         MediaEntity media = super.toEntity(audioDto);
         return AudioEntity.builder()
-                .id(media.getId())
-                .title(media.getTitle())
-                .description(media.getDescription())
-                .fileName(media.getFileName())
-                .uploadDate(media.getUploadDate())
-                .mimeType(media.getMimeType())
-                .content(media.getContent())
-                .size(media.getSize())
+                .mediaEntity(media)
                 .duration(audioDto.getDuration())
                 .sampleRate(audioDto.getSampleRate())
                 .build();
