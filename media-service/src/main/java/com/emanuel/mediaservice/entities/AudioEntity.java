@@ -1,8 +1,6 @@
 package com.emanuel.mediaservice.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,19 +10,16 @@ import java.util.Date;
 @Table(name = "audio")
 @NoArgsConstructor
 @AllArgsConstructor
-public class AudioEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;
-    private String description;
-    private String fileName;
-    private Date uploadDate;
-    private String mimeType;
-    @Lob
-    private byte[] content;
-    private Long size;
-    // additional fields:
+@EqualsAndHashCode(callSuper = true)
+public class AudioEntity extends MediaEntity{
     private Long duration;
     private Float sampleRate;
+    @Builder
+    public AudioEntity(Long id, String title, String description, String fileName,
+                       Date uploadDate, String mimeType, byte[] content, Long size,
+                       Long duration, Float sampleRate) {
+        super(id, title, description, fileName, uploadDate, mimeType, content, size);
+        this.duration = duration;
+        this.sampleRate = sampleRate;
+    }
 }

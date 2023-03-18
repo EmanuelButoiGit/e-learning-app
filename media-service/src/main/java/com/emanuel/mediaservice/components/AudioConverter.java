@@ -1,40 +1,44 @@
 package com.emanuel.mediaservice.components;
 
 import com.emanuel.mediaservice.dtos.AudioDto;
+import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.AudioEntity;
+import com.emanuel.mediaservice.entities.MediaEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class AudioConverter {
+public class AudioConverter extends MediaConverter{
     public AudioDto toDto(AudioEntity audioEntity){
-        AudioDto dto = new AudioDto();
-        dto.setId(audioEntity.getId());
-        dto.setTitle(audioEntity.getTitle());
-        dto.setDescription(audioEntity.getDescription());
-        dto.setFileName(audioEntity.getFileName());
-        dto.setUploadDate(audioEntity.getUploadDate());
-        dto.setMimeType(audioEntity.getMimeType());
-        dto.setContent(audioEntity.getContent());
-        dto.setSize(audioEntity.getSize());
-        dto.setDuration(audioEntity.getDuration());
-        dto.setSampleRate(audioEntity.getSampleRate());
-        return dto;
+        MediaDto media = super.toDto(audioEntity);
+        return AudioDto.builder()
+                .id(media.getId())
+                .title(media.getTitle())
+                .description(media.getDescription())
+                .fileName(media.getFileName())
+                .uploadDate(media.getUploadDate())
+                .mimeType(media.getMimeType())
+                .content(media.getContent())
+                .size(media.getSize())
+                .duration(audioEntity.getDuration())
+                .sampleRate(audioEntity.getSampleRate())
+                .build();
     }
 
     public AudioEntity toEntity(AudioDto audioDto){
-        AudioEntity entity = new AudioEntity();
-        entity.setId(audioDto.getId());
-        entity.setTitle(audioDto.getTitle());
-        entity.setDescription(audioDto.getDescription());
-        entity.setFileName(audioDto.getFileName());
-        entity.setUploadDate(audioDto.getUploadDate());
-        entity.setMimeType(audioDto.getMimeType());
-        entity.setContent(audioDto.getContent());
-        entity.setSize(audioDto.getSize());
-        entity.setDuration(audioDto.getDuration());
-        entity.setSampleRate(audioDto.getSampleRate());
-        return entity;
+        MediaEntity media = super.toEntity(audioDto);
+        return AudioEntity.builder()
+                .id(media.getId())
+                .title(media.getTitle())
+                .description(media.getDescription())
+                .fileName(media.getFileName())
+                .uploadDate(media.getUploadDate())
+                .mimeType(media.getMimeType())
+                .content(media.getContent())
+                .size(media.getSize())
+                .duration(audioDto.getDuration())
+                .sampleRate(audioDto.getSampleRate())
+                .build();
     }
 }

@@ -2,9 +2,10 @@ package com.emanuel.mediaservice.services;
 
 import com.emanuel.mediaservice.components.AudioConverter;
 import com.emanuel.mediaservice.dtos.AudioDto;
+import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.AudioEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
-import com.emanuel.mediaservice.exceptions.InfectedFileException;
+import com.emanuel.mediaservice.exceptions.EntityNotFoundException;
 import com.emanuel.mediaservice.exceptions.Mp3Exception;
 import com.emanuel.mediaservice.repositories.AudioRepository;
 import com.mpatric.mp3agic.Mp3File;
@@ -13,15 +14,11 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,40 +27,29 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AudioService {
 
-    private final ScanService scanService;
+    private final MediaService mediaService;
     private final AudioRepository audioRepository;
     private final AudioConverter audioConverter;
 
     @SneakyThrows
     public AudioDto uploadAudio(MultipartFile file, String title, String description) {
-        boolean isInfected = scanService.scanFileForViruses(file);
-        if (isInfected) {
-            throw new InfectedFileException("The uploaded file is infected with viruses.");
-        }
-        String fileName = file.getOriginalFilename();
-        byte[] content = file.getBytes();
-        String contentType = file.getContentType();
-        long size = file.getSize();
-        LocalDateTime localDateTime = LocalDateTime.now();
-        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-
-        assert fileName != null;
-        String[] parts = fileName.split("\\.");
+        MediaDto mediaFields = mediaService.getMediaFields(file);
+        String[] parts = mediaFields.getFileName().split("\\.");
         String extension = parts[parts.length - 1];
         float sampleRate = 0;
         long duration = 0;
 
         if("wav".equals(extension) || "ogg".equals(extension)) {
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(content);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(mediaFields.getContent());
             BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
             AudioFormat audioFormat = audioInputStream.getFormat();
             sampleRate = audioFormat.getSampleRate();
             float frameRate = audioFormat.getFrameRate();
-            duration = (long) (size / (frameRate * audioFormat.getFrameSize()));
+            duration = (long) (mediaFields.getSize() / (frameRate * audioFormat.getFrameSize()));
         } else if ("mp3".equals(extension)) {
             try {
-                Mp3File mp3file = new Mp3File(fileName);
+                Mp3File mp3file = new Mp3File(mediaFields.getFileName());
                 sampleRate = mp3file.getSampleRate();
                 duration = mp3file.getLengthInSeconds();
             } catch (Exception e) {
@@ -71,7 +57,18 @@ public class AudioService {
             }
         }
 
-        AudioEntity audioEntity = new AudioEntity(null, title, description, fileName, date, contentType, content, size, duration, sampleRate);
+        AudioEntity audioEntity = AudioEntity.builder()
+                .id(null)
+                .title(title)
+                .description(description)
+                .fileName(mediaFields.getFileName())
+                .uploadDate(mediaFields.getUploadDate())
+                .mimeType(mediaFields.getMimeType())
+                .content(mediaFields.getContent())
+                .size(mediaFields.getSize())
+                .duration(duration)
+                .sampleRate(sampleRate)
+                .build();
         AudioEntity savedEntity = audioRepository.save(audioEntity);
         return audioConverter.toDto(savedEntity);
     }
@@ -88,9 +85,12 @@ public class AudioService {
         }
     }
 
+    @SneakyThrows
     public AudioDto getAudioById(Long id) {
-        AudioEntity media = audioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("AudioEntity not found with id " + id));
-        return audioConverter.toDto(media);
+        AudioEntity audio = new AudioEntity();
+        final AudioEntity entity = audio;
+        audio = audioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with %s ", entity.getClass(), id));
+        return audioConverter.toDto(audio);
     }
 
     public AudioDto deleteAudio(Long id) {
@@ -101,21 +101,20 @@ public class AudioService {
 
     @SneakyThrows
     public AudioDto updateAudio(Long id, AudioDto dto) {
-        boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
-        if (isInfected) {
-            throw new InfectedFileException("The updated content is infected with viruses.");
-        }
-        AudioDto audio = getAudioById(id);
-        audio.setId(dto.getId());
-        audio.setTitle(dto.getTitle());
-        audio.setDescription(dto.getDescription());
-        audio.setUploadDate(dto.getUploadDate());
-        audio.setMimeType(dto.getMimeType());
-        audio.setContent(dto.getContent());
-        audio.setSize(dto.getSize());
-        audio.setDuration(dto.getDuration());
-        audio.setSampleRate(dto.getSampleRate());
-        AudioEntity audioEntity = audioRepository.save(audioConverter.toEntity(audio));
+        MediaDto media = mediaService.updateMediaFields(id, dto);
+        AudioDto updatedAudio = AudioDto.builder()
+                .id(media.getId())
+                .title(media.getTitle())
+                .description(media.getDescription())
+                .fileName(media.getFileName())
+                .uploadDate(media.getUploadDate())
+                .mimeType(media.getMimeType())
+                .content(media.getContent())
+                .size(media.getSize())
+                .duration(dto.getDuration())
+                .sampleRate(dto.getSampleRate())
+                .build();
+        AudioEntity audioEntity = audioRepository.save(audioConverter.toEntity(updatedAudio));
         return audioConverter.toDto(audioEntity);
     }
 
