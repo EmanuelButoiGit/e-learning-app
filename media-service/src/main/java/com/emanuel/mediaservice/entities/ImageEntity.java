@@ -1,31 +1,26 @@
 package com.emanuel.mediaservice.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "image")
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImageEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;
-    private String description;
-    private String fileName;
-    private Date uploadDate;
-    private String mimeType;
-    @Lob
-    private byte[] content;
-    private Long size;
-    // additional fields:
+@EqualsAndHashCode(callSuper = true)
+public class ImageEntity extends MediaEntity {
     private Integer width;
     private Integer height;
     private Integer resolutionQuality;
+    @Builder
+    public ImageEntity(MediaEntity mediaEntity, Integer width, Integer height, Integer resolutionQuality) {
+        super(mediaEntity.getId(), mediaEntity.getTitle(), mediaEntity.getDescription(),
+                mediaEntity.getFileName(), mediaEntity.getUploadDate(), mediaEntity.getMimeType(),
+                mediaEntity.getContent(), mediaEntity.getSize());
+        this.width = width;
+        this.height = height;
+        this.resolutionQuality = resolutionQuality;
+    }
 }

@@ -84,7 +84,7 @@ public class AudioService {
     public AudioDto getAudioById(Long id) {
         AudioEntity audio = new AudioEntity();
         final AudioEntity entity = audio;
-        audio = audioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with %s ", entity.getClass(), id));
+        audio = audioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return audioConverter.toDto(audio);
     }
 

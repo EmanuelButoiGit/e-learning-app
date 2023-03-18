@@ -82,7 +82,7 @@ public class DocumentService {
     public DocumentDto getDocumentById(Long id) {
         DocumentEntity document = new DocumentEntity();
         final DocumentEntity entity = document;
-        document = documentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with %s ", entity.getClass(), id));
+        document = documentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return documentConverter.toDto(document);
     }
 
