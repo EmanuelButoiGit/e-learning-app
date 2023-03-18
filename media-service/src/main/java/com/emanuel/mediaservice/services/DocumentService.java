@@ -97,7 +97,12 @@ public class DocumentService {
         return document;
     }
 
+    @SneakyThrows
     public DocumentDto updateDocument(Long id, DocumentDto dto) {
+        boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
+        if (isInfected) {
+            throw new InfectedFileException("The updated content is infected with viruses.");
+        }
         DocumentDto document = getDocumentById(id);
         document.setId(dto.getId());
         document.setTitle(dto.getTitle());

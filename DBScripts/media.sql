@@ -6,5 +6,9 @@ CREATE TABLE media (
     upload_date TIMESTAMP,
     mime_type VARCHAR(100),
     content BIGINT,
-    size BIGINT
+    size BIGINT,
+    dtype VARCHAR(255) 
+    /* default column by Hibernate to 
+    store the type of the entity in the 
+    database table */
 );

@@ -1,8 +1,6 @@
 package com.emanuel.mediaservice.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,6 +10,7 @@ import java.util.Date;
 @Table(name = "media")
 @NoArgsConstructor
 @AllArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
 public class MediaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

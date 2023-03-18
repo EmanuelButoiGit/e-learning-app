@@ -1,20 +1,20 @@
 package com.emanuel.mediaservice.dtos;
 
-import lombok.Data;
-
-import java.util.Date;
+import lombok.*;
 
 @Data
-public class AudioDto {
-    private Long id;
-    private String title;
-    private String description;
-    private String fileName;
-    private Date uploadDate;
-    private String mimeType;
-    private byte[] content;
-    private Long size;
-    // additional fields:
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class AudioDto extends MediaDto{
     private Long duration;
     private Float sampleRate;
+    @Builder
+    public AudioDto(MediaDto mediaDto, Long duration, Float sampleRate) {
+        super(mediaDto.getId(), mediaDto.getTitle(), mediaDto.getDescription(),
+                mediaDto.getFileName(), mediaDto.getUploadDate(), mediaDto.getMimeType(),
+                mediaDto.getContent(), mediaDto.getSize());
+        this.duration = duration;
+        this.sampleRate = sampleRate;
+    }
 }
