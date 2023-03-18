@@ -33,6 +33,27 @@ public class ScanService {
         String urlParameters = "apikey=" + VIRUS_TOTAL_API_KEY + "&file=" + URLEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()), "UTF-8");
         URL url = new URL(apiUrl + "?" + urlParameters);
 
+        return sendRequest(url, encodedFileContent);
+    }
+
+    @SneakyThrows
+    public boolean scanContentForViruses(byte[] content, String fileName) {
+        // Encode the file as base64
+        String fileContent = new String(content, StandardCharsets.ISO_8859_1);
+        String encodedFileContent = Base64.getEncoder().encodeToString(fileContent.getBytes(StandardCharsets.UTF_8));
+
+        // Build the API request URL
+        String apiUrl = "https://www.virustotal.com/vtapi/v2/file/scan";
+        String urlParameters = "apikey=" + VIRUS_TOTAL_API_KEY + "&file=" + URLEncoder.encode(Objects.requireNonNull(fileName), "UTF-8");
+        URL url = new URL(apiUrl + "?" + urlParameters);
+
+        return sendRequest(url, encodedFileContent);
+    }
+
+    private boolean sendRequest(URL url, String encodedFileContent) throws IOException {
+        if (encodedFileContent.isEmpty()){
+            LOGGER.warn("The file content is empty");
+        }
         // Send the API request and capture the response
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");

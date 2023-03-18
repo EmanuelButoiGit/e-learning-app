@@ -86,7 +86,12 @@ public class VideoService {
         return video;
     }
 
+    @SneakyThrows
     public VideoDto updateVideo(Long id, VideoDto dto) {
+        boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
+        if (isInfected) {
+            throw new InfectedFileException("The updated content is infected with viruses.");
+        }
         VideoDto video = getVideoById(id);
         video.setId(dto.getId());
         video.setTitle(dto.getTitle());

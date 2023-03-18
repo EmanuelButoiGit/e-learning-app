@@ -67,7 +67,12 @@ public class MediaService {
         return media;
     }
 
+    @SneakyThrows
     public MediaDto updateMedia(Long id, MediaDto dto) {
+        boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
+        if (isInfected) {
+            throw new InfectedFileException("The updated content is infected with viruses.");
+        }
         MediaDto media = getMediaById(id);
         media.setId(dto.getId());
         media.setTitle(dto.getTitle());

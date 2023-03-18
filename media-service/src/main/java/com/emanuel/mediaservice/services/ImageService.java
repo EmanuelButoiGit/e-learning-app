@@ -88,7 +88,12 @@ public class ImageService {
         return image;
     }
 
+    @SneakyThrows
     public ImageDto updateImage(Long id, ImageDto dto) {
+        boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
+        if (isInfected) {
+            throw new InfectedFileException("The updated content is infected with viruses.");
+        }
         ImageDto image = getImageById(id);
         image.setId(dto.getId());
         image.setTitle(dto.getTitle());

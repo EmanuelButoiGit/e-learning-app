@@ -53,7 +53,7 @@ public class AudioService {
         float sampleRate = 0;
         long duration = 0;
 
-        if("wav".equals(extension)) {
+        if("wav".equals(extension) || "ogg".equals(extension)) {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(content);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
@@ -99,7 +99,12 @@ public class AudioService {
         return audio;
     }
 
+    @SneakyThrows
     public AudioDto updateAudio(Long id, AudioDto dto) {
+        boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
+        if (isInfected) {
+            throw new InfectedFileException("The updated content is infected with viruses.");
+        }
         AudioDto audio = getAudioById(id);
         audio.setId(dto.getId());
         audio.setTitle(dto.getTitle());
