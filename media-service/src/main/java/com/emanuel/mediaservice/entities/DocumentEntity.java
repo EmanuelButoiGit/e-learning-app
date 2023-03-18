@@ -1,29 +1,22 @@
 package com.emanuel.mediaservice.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "document")
 @NoArgsConstructor
 @AllArgsConstructor
-public class DocumentEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;
-    private String description;
-    private String fileName;
-    private Date uploadDate;
-    private String mimeType;
-    @Lob
-    private byte[] content;
-    private Long size;
-    // additional fields:
+@EqualsAndHashCode(callSuper = true)
+public class DocumentEntity extends MediaEntity {
     private Integer numberOfPages;
+    @Builder
+    public DocumentEntity(MediaEntity mediaEntity, Integer numberOfPages) {
+        super(mediaEntity.getId(), mediaEntity.getTitle(), mediaEntity.getDescription(),
+                mediaEntity.getFileName(), mediaEntity.getUploadDate(), mediaEntity.getMimeType(),
+                mediaEntity.getContent(), mediaEntity.getSize());
+        this.numberOfPages = numberOfPages;
+    }
 }

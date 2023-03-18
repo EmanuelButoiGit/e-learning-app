@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AudioEntity extends MediaEntity{
+public class AudioEntity extends MediaEntity {
     private Long duration;
     private Float sampleRate;
     @Builder
