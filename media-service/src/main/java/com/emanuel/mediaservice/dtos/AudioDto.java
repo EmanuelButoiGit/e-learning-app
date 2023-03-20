@@ -9,7 +9,7 @@ import lombok.*;
 public class AudioDto extends MediaDto {
     private Long duration;
     private Float sampleRate;
-    @Builder
+
     public AudioDto(MediaDto mediaDto, Long duration, Float sampleRate) {
         super(mediaDto.getId(), mediaDto.getTitle(), mediaDto.getDescription(),
                 mediaDto.getFileName(), mediaDto.getUploadDate(), mediaDto.getMimeType(),

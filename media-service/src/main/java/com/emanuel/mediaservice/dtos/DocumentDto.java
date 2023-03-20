@@ -8,7 +8,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 public class DocumentDto extends MediaDto {
     private Integer numberOfPages;
-    @Builder
+
     public DocumentDto(MediaDto mediaDto, Integer numberOfPages) {
         super(mediaDto.getId(), mediaDto.getTitle(), mediaDto.getDescription(),
                 mediaDto.getFileName(), mediaDto.getUploadDate(), mediaDto.getMimeType(),

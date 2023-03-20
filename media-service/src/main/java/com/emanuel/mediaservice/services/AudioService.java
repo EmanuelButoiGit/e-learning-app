@@ -5,6 +5,7 @@ import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.AudioDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.AudioEntity;
+import com.emanuel.mediaservice.entities.MediaEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.EntityNotFoundException;
 import com.emanuel.mediaservice.exceptions.Mp3Exception;
@@ -59,11 +60,8 @@ public class AudioService {
             }
         }
 
-        AudioEntity audioEntity = AudioEntity.builder()
-                .mediaEntity(mediaConverter.toEntity(mediaFields))
-                .duration(duration)
-                .sampleRate(sampleRate)
-                .build();
+        MediaEntity entity = mediaConverter.toEntity(mediaFields);
+        AudioEntity audioEntity = new AudioEntity(entity, duration, sampleRate);
         AudioEntity savedEntity = audioRepository.save(audioEntity);
         return audioConverter.toDto(savedEntity);
     }
@@ -97,11 +95,7 @@ public class AudioService {
     @SneakyThrows
     public AudioDto updateAudio(Long id, AudioDto dto) {
         MediaDto media = mediaService.updateMediaFields(id, dto);
-        AudioDto updatedAudio = AudioDto.builder()
-                .mediaDto(media)
-                .duration(dto.getDuration())
-                .sampleRate(dto.getSampleRate())
-                .build();
+        AudioDto updatedAudio = new AudioDto(media, dto.getDuration(), dto.getSampleRate());
         AudioEntity audioEntity = audioRepository.save(audioConverter.toEntity(updatedAudio));
         return audioConverter.toDto(audioEntity);
     }
