@@ -1,11 +1,9 @@
 package com.emanuel.mediaservice.controllers;
 
-import com.emanuel.mediaservice.constants.SwaggerConstants;
 import com.emanuel.mediaservice.dtos.DocumentDto;
 import com.emanuel.mediaservice.services.DocumentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -76,19 +74,9 @@ public class DocumentController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update a specific document file based on a giving document id")
     @ApiResponse(responseCode = "200", description = "Specific document file was updated based on a giving document id")
-    @Operation(
-            summary = "Update a specific document file based on a giving document id",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = DocumentDto.class, example = SwaggerConstants.DOCUMENT_DEFAULT_VALUES)
-                    )
-            ))
-    public DocumentDto updateDocument(
-            @PathVariable("id") Long id,
-            @RequestBody() DocumentDto document) {
-
+    public DocumentDto updateDocument(@PathVariable("id") Long id, @RequestBody() DocumentDto document) {
         return documentService.updateDocument(id, document);
     }
 
