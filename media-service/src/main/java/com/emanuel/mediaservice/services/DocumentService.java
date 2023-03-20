@@ -41,13 +41,13 @@ public class DocumentService {
         String extension = parts[parts.length - 1];
         int numberOfPages = 0;
 
-        if("doc".equals(extension) || "docx".equals(extension)) {
+        if("docx".equals(extension)) {
             try (InputStream inputStream = file.getInputStream()) {
                 XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(IOUtils.toByteArray(inputStream)));
                 numberOfPages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
                 document.close();
             } catch (IOException e) {
-                throw new DocumentException("Can't close the document: " + e.getMessage());
+                throw new DocumentException("Can't process the document: " + e.getMessage());
             }
         } else if ("pdf".equals(extension)){
             try (InputStream inputStream = file.getInputStream()) {
