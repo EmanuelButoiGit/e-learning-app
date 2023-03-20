@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AudioDto extends MediaDto{
+public class AudioDto extends MediaDto {
     private Long duration;
     private Float sampleRate;
     @Builder

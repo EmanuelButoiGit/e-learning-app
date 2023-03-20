@@ -74,7 +74,7 @@ public class MediaService {
     public MediaDto getMediaById(Long id) {
         MediaEntity media = new MediaEntity();
         final MediaEntity entity = media;
-        media = mediaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with %s ", entity.getClass(), id));
+        media = mediaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return mediaConverter.toDto(media);
     }
 

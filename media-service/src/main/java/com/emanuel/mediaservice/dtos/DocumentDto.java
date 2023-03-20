@@ -1,19 +1,18 @@
 package com.emanuel.mediaservice.dtos;
 
-import lombok.Data;
-
-import java.util.Date;
+import lombok.*;
 
 @Data
-public class DocumentDto {
-    private Long id;
-    private String title;
-    private String description;
-    private String fileName;
-    private Date uploadDate;
-    private String mimeType;
-    private byte[] content;
-    private Long size;
-    // additional fields:
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class DocumentDto extends MediaDto {
     private Integer numberOfPages;
+    @Builder
+    public DocumentDto(MediaDto mediaDto, Integer numberOfPages) {
+        super(mediaDto.getId(), mediaDto.getTitle(), mediaDto.getDescription(),
+                mediaDto.getFileName(), mediaDto.getUploadDate(), mediaDto.getMimeType(),
+                mediaDto.getContent(), mediaDto.getSize());
+        this.numberOfPages = numberOfPages;
+    }
 }

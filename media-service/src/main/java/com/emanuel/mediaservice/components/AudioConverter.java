@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class AudioConverter extends MediaConverter{
+public class AudioConverter extends MediaConverter {
     public AudioDto toDto(AudioEntity audioEntity){
         MediaDto media = super.toDto(audioEntity);
         return AudioDto.builder()

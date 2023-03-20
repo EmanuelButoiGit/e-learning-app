@@ -1,11 +1,13 @@
 package com.emanuel.mediaservice.services;
 
 import com.emanuel.mediaservice.components.DocumentConverter;
+import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.DocumentDto;
+import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.DocumentEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.DocumentException;
-import com.emanuel.mediaservice.exceptions.InfectedFileException;
+import com.emanuel.mediaservice.exceptions.EntityNotFoundException;
 import com.emanuel.mediaservice.repositories.DocumentRepository;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -15,13 +17,9 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,27 +28,18 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DocumentService {
 
-    private final ScanService scanService;
+    private final MediaService mediaService;
+    private final MediaConverter mediaConverter;
     private final DocumentRepository documentRepository;
     private final DocumentConverter documentConverter;
 
     @SneakyThrows
     public DocumentDto uploadDocument(MultipartFile file, String title, String description) {
-        boolean isInfected = scanService.scanFileForViruses(file);
-        if (isInfected) {
-            throw new InfectedFileException("The uploaded file is infected with viruses.");
-        }
-        String fileName = file.getOriginalFilename();
-        byte[] content = file.getBytes();
-        String contentType = file.getContentType();
-        Long size = file.getSize();
-        LocalDateTime localDateTime = LocalDateTime.now();
-        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-
-        assert fileName != null;
-        String[] parts = fileName.split("\\.");
+        MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
+        String[] parts = mediaFields.getFileName().split("\\.");
         String extension = parts[parts.length - 1];
         int numberOfPages = 0;
+
         if("doc".equals(extension) || "docx".equals(extension)) {
             try (InputStream inputStream = file.getInputStream()) {
                 XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(IOUtils.toByteArray(inputStream)));
@@ -69,7 +58,10 @@ public class DocumentService {
             }
         }
 
-        DocumentEntity documentEntity = new DocumentEntity(null, title, description, fileName, date, contentType, content, size, numberOfPages);
+        DocumentEntity documentEntity = DocumentEntity.builder()
+                .mediaEntity(mediaConverter.toEntity(mediaFields))
+                .numberOfPages(numberOfPages)
+                .build();
         DocumentEntity savedEntity = documentRepository.save(documentEntity);
         return documentConverter.toDto(savedEntity);
     }
@@ -86,8 +78,11 @@ public class DocumentService {
         }
     }
 
+    @SneakyThrows
     public DocumentDto getDocumentById(Long id) {
-        DocumentEntity document = documentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("DocumentEntity not found with id " + id));
+        DocumentEntity document = new DocumentEntity();
+        final DocumentEntity entity = document;
+        document = documentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return documentConverter.toDto(document);
     }
 
@@ -99,20 +94,12 @@ public class DocumentService {
 
     @SneakyThrows
     public DocumentDto updateDocument(Long id, DocumentDto dto) {
-        boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
-        if (isInfected) {
-            throw new InfectedFileException("The updated content is infected with viruses.");
-        }
-        DocumentDto document = getDocumentById(id);
-        document.setId(dto.getId());
-        document.setTitle(dto.getTitle());
-        document.setDescription(dto.getDescription());
-        document.setUploadDate(dto.getUploadDate());
-        document.setMimeType(dto.getMimeType());
-        document.setContent(dto.getContent());
-        document.setSize(dto.getSize());
-        document.setNumberOfPages(dto.getNumberOfPages());
-        DocumentEntity documentEntity = documentRepository.save(documentConverter.toEntity(document));
+        MediaDto media = mediaService.updateMediaFields(id, dto);
+        DocumentDto updatedDocument = DocumentDto.builder()
+                .mediaDto(media)
+                .numberOfPages(dto.getNumberOfPages())
+                .build();
+        DocumentEntity documentEntity = documentRepository.save(documentConverter.toEntity(updatedDocument));
         return documentConverter.toDto(documentEntity);
     }
 
