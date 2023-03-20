@@ -12,19 +12,11 @@ import org.springframework.stereotype.Component;
 public class AudioConverter extends MediaConverter {
     public AudioDto toDto(AudioEntity audioEntity){
         MediaDto media = super.toDto(audioEntity);
-        return AudioDto.builder()
-                .mediaDto(media)
-                .duration(audioEntity.getDuration())
-                .sampleRate(audioEntity.getSampleRate())
-                .build();
+        return new AudioDto(media, audioEntity.getDuration(), audioEntity.getSampleRate());
     }
 
     public AudioEntity toEntity(AudioDto audioDto){
         MediaEntity media = super.toEntity(audioDto);
-        return AudioEntity.builder()
-                .mediaEntity(media)
-                .duration(audioDto.getDuration())
-                .sampleRate(audioDto.getSampleRate())
-                .build();
+        return new AudioEntity(media, audioDto.getDuration(), audioDto.getSampleRate());
     }
 }

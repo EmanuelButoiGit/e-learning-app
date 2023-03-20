@@ -5,6 +5,7 @@ import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.DocumentDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.DocumentEntity;
+import com.emanuel.mediaservice.entities.MediaEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.DocumentException;
 import com.emanuel.mediaservice.exceptions.EntityNotFoundException;
@@ -40,13 +41,13 @@ public class DocumentService {
         String extension = parts[parts.length - 1];
         int numberOfPages = 0;
 
-        if("doc".equals(extension) || "docx".equals(extension)) {
+        if("docx".equals(extension)) {
             try (InputStream inputStream = file.getInputStream()) {
                 XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(IOUtils.toByteArray(inputStream)));
                 numberOfPages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
                 document.close();
             } catch (IOException e) {
-                throw new DocumentException("Can't close the document: " + e.getMessage());
+                throw new DocumentException("Can't process the document: " + e.getMessage());
             }
         } else if ("pdf".equals(extension)){
             try (InputStream inputStream = file.getInputStream()) {
@@ -58,10 +59,8 @@ public class DocumentService {
             }
         }
 
-        DocumentEntity documentEntity = DocumentEntity.builder()
-                .mediaEntity(mediaConverter.toEntity(mediaFields))
-                .numberOfPages(numberOfPages)
-                .build();
+        MediaEntity entity = mediaConverter.toEntity(mediaFields);
+        DocumentEntity documentEntity = new DocumentEntity(entity, numberOfPages);
         DocumentEntity savedEntity = documentRepository.save(documentEntity);
         return documentConverter.toDto(savedEntity);
     }
@@ -95,10 +94,7 @@ public class DocumentService {
     @SneakyThrows
     public DocumentDto updateDocument(Long id, DocumentDto dto) {
         MediaDto media = mediaService.updateMediaFields(id, dto);
-        DocumentDto updatedDocument = DocumentDto.builder()
-                .mediaDto(media)
-                .numberOfPages(dto.getNumberOfPages())
-                .build();
+        DocumentDto updatedDocument = new DocumentDto(media, dto.getNumberOfPages());
         DocumentEntity documentEntity = documentRepository.save(documentConverter.toEntity(updatedDocument));
         return documentConverter.toDto(documentEntity);
     }

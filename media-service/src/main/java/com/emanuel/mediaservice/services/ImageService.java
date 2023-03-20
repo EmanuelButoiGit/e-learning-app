@@ -5,6 +5,7 @@ import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.ImageDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.ImageEntity;
+import com.emanuel.mediaservice.entities.MediaEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.EntityNotFoundException;
 import com.emanuel.mediaservice.repositories.ImageRepository;
@@ -48,12 +49,9 @@ public class ImageService {
         Integer width = image.getWidth();
         Integer height = image.getHeight();
         Integer resolutionQuality = qualityService.calculateResolutionQuality(width, height);
-        ImageEntity imageEntity = ImageEntity.builder()
-                .mediaEntity(mediaConverter.toEntity(mediaFields))
-                .width(width)
-                .height(height)
-                .resolutionQuality(resolutionQuality)
-                .build();
+
+        MediaEntity entity = mediaConverter.toEntity(mediaFields);
+        ImageEntity imageEntity = new ImageEntity(entity, width, height, resolutionQuality);
         ImageEntity savedEntity = imageRepository.save(imageEntity);
         return imageConverter.toDto(savedEntity);
     }
@@ -87,12 +85,7 @@ public class ImageService {
     @SneakyThrows
     public ImageDto updateImage(Long id, ImageDto dto) {
         MediaDto media = mediaService.updateMediaFields(id, dto);
-        ImageDto updatedImage = ImageDto.builder()
-                .mediaDto(media)
-                .width(dto.getWidth())
-                .height(dto.getHeight())
-                .resolutionQuality(dto.getResolutionQuality())
-                .build();
+        ImageDto updatedImage = new ImageDto(media, dto.getWidth(), dto.getHeight(), dto.getResolutionQuality());
         ImageEntity imageEntity = imageRepository.save(imageConverter.toEntity(updatedImage));
         return imageConverter.toDto(imageEntity);
     }

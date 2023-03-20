@@ -1,11 +1,9 @@
 package com.emanuel.mediaservice.controllers;
 
-import com.emanuel.mediaservice.constants.SwaggerConstants;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.services.MediaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -76,19 +74,9 @@ public class MediaController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update a specific media file based on a giving media id")
     @ApiResponse(responseCode = "200", description = "Specific media file was updated based on a giving media id")
-    @Operation(
-            summary = "Update a specific media file based on a giving media id",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = MediaDto.class, example = SwaggerConstants.MEDIA_DEFAULT_VALUES)
-            )
-    ))
-    public MediaDto updateMedia(
-            @PathVariable("id") Long id,
-            @RequestBody() MediaDto media) {
-
+    public MediaDto updateMedia(@PathVariable("id") Long id, @RequestBody() MediaDto media) {
         return mediaService.updateMedia(id, media);
     }
 

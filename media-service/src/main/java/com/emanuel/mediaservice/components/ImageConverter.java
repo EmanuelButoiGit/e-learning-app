@@ -12,21 +12,11 @@ import org.springframework.stereotype.Component;
 public class ImageConverter extends MediaConverter {
     public ImageDto toDto(ImageEntity imageEntity){
         MediaDto media = super.toDto(imageEntity);
-        return ImageDto.builder()
-                .mediaDto(media)
-                .width(imageEntity.getWidth())
-                .height(imageEntity.getHeight())
-                .resolutionQuality(imageEntity.getResolutionQuality())
-                .build();
+        return new ImageDto(media, imageEntity.getWidth(), imageEntity.getHeight(), imageEntity.getResolutionQuality());
     }
 
     public ImageEntity toEntity(ImageDto imageDto){
         MediaEntity media = super.toEntity(imageDto);
-        return ImageEntity.builder()
-                .mediaEntity(media)
-                .width(imageDto.getWidth())
-                .height(imageDto.getHeight())
-                .resolutionQuality(imageDto.getResolutionQuality())
-                .build();
+        return new ImageEntity(media, imageDto.getWidth(), imageDto.getHeight(), imageDto.getResolutionQuality());
     }
 }

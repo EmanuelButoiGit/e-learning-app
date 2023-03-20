@@ -1,11 +1,9 @@
 package com.emanuel.mediaservice.controllers;
 
-import com.emanuel.mediaservice.constants.SwaggerConstants;
 import com.emanuel.mediaservice.dtos.VideoDto;
 import com.emanuel.mediaservice.services.VideoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -76,19 +74,9 @@ public class VideoController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update a specific video file based on a giving video id")
     @ApiResponse(responseCode = "200", description = "Specific video file was updated based on a giving video id")
-    @Operation(
-            summary = "Update a specific video file based on a giving video id",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = VideoDto.class, example = SwaggerConstants.VIDEO_DEFAULT_VALUES)
-                    )
-            ))
-    public VideoDto updateVideo(
-            @PathVariable("id") Long id,
-            @RequestBody() VideoDto video) {
-
+    public VideoDto updateVideo(@PathVariable("id") Long id, @RequestBody() VideoDto video) {
         return videoService.updateVideo(id, video);
     }
 

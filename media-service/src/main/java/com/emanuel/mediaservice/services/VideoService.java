@@ -1,10 +1,13 @@
 package com.emanuel.mediaservice.services;
 
+import com.emanuel.mediaservice.components.ImageConverter;
 import com.emanuel.mediaservice.components.VideoConverter;
+import com.emanuel.mediaservice.dtos.ImageDto;
+import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.dtos.VideoDto;
+import com.emanuel.mediaservice.entities.ImageEntity;
 import com.emanuel.mediaservice.entities.VideoEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
-import com.emanuel.mediaservice.exceptions.InfectedFileException;
 import com.emanuel.mediaservice.repositories.VideoRepository;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -13,9 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,24 +24,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class VideoService {
 
-    private final ScanService scanService;
+    private final MediaService mediaService;
+    private final ImageConverter imageConverter;
     private final QualityService qualityService;
     private final VideoRepository videoRepository;
     private final VideoConverter videoConverter;
 
     @SneakyThrows
     public VideoDto uploadVideo(MultipartFile file, String title, String description) {
-        boolean isInfected = scanService.scanFileForViruses(file);
-        if (isInfected) {
-            throw new InfectedFileException("The uploaded file is infected with viruses.");
-        }
-        String fileName = file.getOriginalFilename();
-        byte[] content = file.getBytes();
-        String contentType = file.getContentType();
-        Long size = file.getSize();
-        LocalDateTime localDateTime = LocalDateTime.now();
-        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-
+        MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
         long duration;
         int width;
         int height;
@@ -58,7 +49,9 @@ public class VideoService {
             fps = grabber.getVideoFrameRate();
         }
 
-        VideoEntity videoEntity = new VideoEntity(null, title, description, fileName, date, contentType, content, size, width, height, qualityResolution, duration, aspectRatio, fps);
+        ImageDto imageDto = new ImageDto(mediaFields, width, height, qualityResolution);
+        ImageEntity entity = imageConverter.toEntity(imageDto);
+        VideoEntity videoEntity = new VideoEntity(entity, duration, aspectRatio, fps);
         VideoEntity savedEntity = videoRepository.save(videoEntity);
         return videoConverter.toDto(savedEntity);
     }
@@ -88,25 +81,10 @@ public class VideoService {
 
     @SneakyThrows
     public VideoDto updateVideo(Long id, VideoDto dto) {
-        boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
-        if (isInfected) {
-            throw new InfectedFileException("The updated content is infected with viruses.");
-        }
-        VideoDto video = getVideoById(id);
-        video.setId(dto.getId());
-        video.setTitle(dto.getTitle());
-        video.setDescription(dto.getDescription());
-        video.setUploadDate(dto.getUploadDate());
-        video.setMimeType(dto.getMimeType());
-        video.setContent(dto.getContent());
-        video.setSize(dto.getSize());
-        video.setWidth(dto.getWidth());
-        video.setHeight(dto.getHeight());
-        video.setResolutionQuality(dto.getResolutionQuality());
-        video.setDuration(dto.getDuration());
-        video.setAspectRatio(dto.getAspectRatio());
-        video.setFps(dto.getFps());
-        VideoEntity videoEntity = videoRepository.save(videoConverter.toEntity(video));
+        MediaDto media = mediaService.updateMediaFields(id, dto);
+        ImageDto image = new ImageDto(media, dto.getWidth(), dto.getHeight(), dto.getResolutionQuality());
+        VideoDto updatedVideo = new VideoDto(image, dto.getDuration(), dto.getAspectRatio(), dto.getFps());
+        VideoEntity videoEntity = videoRepository.save(videoConverter.toEntity(updatedVideo));
         return videoConverter.toDto(videoEntity);
     }
 

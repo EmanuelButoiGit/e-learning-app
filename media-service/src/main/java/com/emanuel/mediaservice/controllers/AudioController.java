@@ -1,11 +1,9 @@
 package com.emanuel.mediaservice.controllers;
 
-import com.emanuel.mediaservice.constants.SwaggerConstants;
 import com.emanuel.mediaservice.dtos.AudioDto;
 import com.emanuel.mediaservice.services.AudioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -76,19 +74,9 @@ public class AudioController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update a specific audio file based on a giving audio id")
     @ApiResponse(responseCode = "200", description = "Specific audio file was updated based on a giving audio id")
-    @Operation(
-            summary = "Update a specific audio file based on a giving audio id",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = AudioDto.class, example = SwaggerConstants.AUDIO_DEFAULT_VALUES)
-                    )
-            ))
-    public AudioDto updateAudio(
-            @PathVariable("id") Long id,
-            @RequestBody() AudioDto audio) {
-
+    public AudioDto updateAudio(@PathVariable("id") Long id, @RequestBody() AudioDto audio) {
         return audioService.updateAudio(id, audio);
     }
 

@@ -12,7 +12,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true)
 public class DocumentEntity extends MediaEntity {
     private Integer numberOfPages;
-    @Builder
+
     public DocumentEntity(MediaEntity mediaEntity, Integer numberOfPages) {
         super(mediaEntity.getId(), mediaEntity.getTitle(), mediaEntity.getDescription(),
                 mediaEntity.getFileName(), mediaEntity.getUploadDate(), mediaEntity.getMimeType(),
