@@ -1,5 +1,6 @@
 package com.emanuel.mediaservice.services;
 
+import com.emanuel.mediaservice.classes.FileFormat;
 import com.emanuel.mediaservice.components.DocumentConverter;
 import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.DocumentDto;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DocumentService {
 
+    private final RestrictionService restrictionService;
     private final MediaService mediaService;
     private final MediaConverter mediaConverter;
     private final DocumentRepository documentRepository;
@@ -36,11 +38,9 @@ public class DocumentService {
 
     @SneakyThrows
     public DocumentDto uploadDocument(MultipartFile file, String title, String description) {
+        String extension = restrictionService.validateExtensionAndMimeType(FileFormat.getDOCUMENT_EXTENSIONS(), file);
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
-        String[] parts = mediaFields.getFileName().split("\\.");
-        String extension = parts[parts.length - 1];
         int numberOfPages = 0;
-
         if("docx".equals(extension)) {
             try (InputStream inputStream = file.getInputStream()) {
                 XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(IOUtils.toByteArray(inputStream)));
