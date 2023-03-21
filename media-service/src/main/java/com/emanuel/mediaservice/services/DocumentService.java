@@ -1,5 +1,6 @@
 package com.emanuel.mediaservice.services;
 
+import com.emanuel.mediaservice.classes.FileFormats;
 import com.emanuel.mediaservice.components.DocumentConverter;
 import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.DocumentDto;
@@ -22,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DocumentService {
 
+    private final RestrictionService restrictionService;
     private final MediaService mediaService;
     private final MediaConverter mediaConverter;
     private final DocumentRepository documentRepository;
@@ -36,9 +39,9 @@ public class DocumentService {
 
     @SneakyThrows
     public DocumentDto uploadDocument(MultipartFile file, String title, String description) {
+        String fileName = Objects.requireNonNull(file.getOriginalFilename());
+        String extension = restrictionService.validateExtensionAndMimeType(FileFormats.getDOCUMENT_FORMATS(), fileName, file.getContentType());
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
-        String[] parts = mediaFields.getFileName().split("\\.");
-        String extension = parts[parts.length - 1];
         int numberOfPages = 0;
 
         if("docx".equals(extension)) {

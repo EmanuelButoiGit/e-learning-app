@@ -1,5 +1,6 @@
 package com.emanuel.mediaservice.services;
 
+import com.emanuel.mediaservice.classes.FileFormats;
 import com.emanuel.mediaservice.components.ImageConverter;
 import com.emanuel.mediaservice.components.VideoConverter;
 import com.emanuel.mediaservice.dtos.ImageDto;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class VideoService {
 
+    private final RestrictionService restrictionService;
     private final MediaService mediaService;
     private final ImageConverter imageConverter;
     private final QualityService qualityService;
@@ -32,6 +35,8 @@ public class VideoService {
 
     @SneakyThrows
     public VideoDto uploadVideo(MultipartFile file, String title, String description) {
+        String fileName = Objects.requireNonNull(file.getOriginalFilename());
+        restrictionService.validateExtensionAndMimeType(FileFormats.getVIDEO_FORMATS(), fileName, file.getContentType());
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
         long duration;
         int width;
