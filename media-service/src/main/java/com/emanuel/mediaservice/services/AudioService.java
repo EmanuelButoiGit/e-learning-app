@@ -1,6 +1,6 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.classes.FileFormats;
+import com.emanuel.mediaservice.classes.FileFormat;
 import com.emanuel.mediaservice.components.AudioConverter;
 import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.AudioDto;
@@ -23,7 +23,6 @@ import javax.sound.sampled.AudioSystem;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -39,12 +38,10 @@ public class AudioService {
 
     @SneakyThrows
     public AudioDto uploadAudio(MultipartFile file, String title, String description) {
-        String fileName = Objects.requireNonNull(file.getOriginalFilename());
-        String extension = restrictionService.validateExtensionAndMimeType(FileFormats.getAUDIO_FORMATS(), fileName, file.getContentType());
+        String extension = restrictionService.validateExtensionAndMimeType(FileFormat.getAUDIO_EXTENSIONS(), file);
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
         float sampleRate = 0;
         long duration = 0;
-
         if("wav".equals(extension) || "ogg".equals(extension)) {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(mediaFields.getContent());
             BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream);

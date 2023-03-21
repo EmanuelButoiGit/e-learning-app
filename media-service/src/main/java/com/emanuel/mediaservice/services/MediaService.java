@@ -1,6 +1,6 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.classes.FileFormats;
+import com.emanuel.mediaservice.classes.FileFormat;
 import com.emanuel.mediaservice.components.MediaConverter;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.MediaEntity;
@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -31,8 +30,7 @@ public class MediaService {
     private final MediaConverter mediaConverter;
 
     public MediaDto uploadMedia(MultipartFile file, String title, String description) {
-        String fileName = Objects.requireNonNull(file.getOriginalFilename());
-        restrictionService.validateExtensionAndMimeType(FileFormats.getMEDIA_FORMATS(), fileName, file.getContentType());
+        restrictionService.validateExtensionAndMimeType(FileFormat.getMEDIA_EXTENSIONS(), file);
         MediaDto mediaFields = getMediaFields(file, title, description);
         MediaEntity mediaEntity =
                 new MediaEntity(null,
