@@ -25,8 +25,18 @@ public class RestrictionService {
         Tika tika = new Tika();
         try (InputStream inputStream = file.getInputStream()) {
             String mimeType = tika.detect(inputStream);
-            if (!Objects.equals(mimeType, file.getContentType())){
-                throw new WrongExtensionException(fileName, file.getContentType(), extension);
+            String contentType = file.getContentType();
+            // special cases:
+            if("video/x-msvideo".equals(mimeType) && "video/avi".equals(contentType) && "avi".equals(extension)){
+                return  extension;
+            } else if ("application/x-matroska".equals(mimeType) && "video/webm".equals(contentType) && "webm".equals(extension)) {
+                return  extension;
+            } else if ("audio/vnd.wave".equals(mimeType) && "audio/wav".equals(contentType) && "wav".equals(extension)) {
+                return extension;
+            } else if ("application/x-tika-ooxml".equals(mimeType) && "application/vnd.openxmlformats-officedocument.wordprocessingml.document".equals(contentType) && "docx".equals(extension)) {
+                return extension;
+            } else if (!Objects.equals(mimeType, contentType)){
+                throw new WrongExtensionException(contentType, fileName, extension);
             }
         } catch (IOException e) {
             e.printStackTrace();

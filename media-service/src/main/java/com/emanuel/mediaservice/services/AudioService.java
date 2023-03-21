@@ -11,9 +11,10 @@ import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.exceptions.EntityNotFoundException;
 import com.emanuel.mediaservice.exceptions.Mp3Exception;
 import com.emanuel.mediaservice.repositories.AudioRepository;
-import com.mpatric.mp3agic.Mp3File;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,7 @@ public class AudioService {
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
         float sampleRate = 0;
         long duration = 0;
-        if("wav".equals(extension) || "ogg".equals(extension)) {
+        if("wav".equals(extension)) {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(mediaFields.getContent());
             BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
@@ -52,9 +54,11 @@ public class AudioService {
             duration = (long) (mediaFields.getSize() / (frameRate * audioFormat.getFrameSize()));
         } else if ("mp3".equals(extension)) {
             try {
-                Mp3File mp3file = new Mp3File(mediaFields.getFileName());
-                sampleRate = mp3file.getSampleRate();
-                duration = mp3file.getLengthInSeconds();
+                File tempFile = File.createTempFile("temp", ".mp3");
+                file.transferTo(tempFile);
+                AudioFile audioFile = AudioFileIO.read(tempFile);
+                sampleRate = audioFile.getAudioHeader().getSampleRateAsNumber();
+                duration = audioFile.getAudioHeader().getTrackLength();
             } catch (Exception e) {
                 throw new Mp3Exception("Couldn't get mp3 fields: " + e.getMessage());
             }

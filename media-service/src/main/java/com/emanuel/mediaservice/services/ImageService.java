@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,9 +42,9 @@ public class ImageService {
         restrictionService.validateExtensionAndMimeType(FileFormat.getIMAGE_EXTENSIONS(), file);
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
         BufferedImage image = null;
-        try {
-            image = ImageIO.read(file.getInputStream());
-        } catch (IOException e){
+        try (InputStream inputStream = file.getInputStream()) {
+            image = ImageIO.read(inputStream);
+        }  catch (IOException e){
             LOGGER.error("Error reading image file: {}", e.getMessage());
         }
         if (image == null){
