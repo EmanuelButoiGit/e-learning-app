@@ -70,4 +70,13 @@ public class RatingController {
     public void deleteAllRatings(){
         ratingService.deleteAllRatings();
     }
+
+    @GetMapping("media/{mediaId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a specific media rating based on a giving rated media id")
+    @ApiResponse(responseCode = "200", description = "Specific media rating retrieved based on a giving rated media id")
+    public RatingDto getMediaByRatingId(@PathVariable Long mediaId)
+    {
+        return ratingService.getMediaByRatingId(mediaId);
+    }
 }

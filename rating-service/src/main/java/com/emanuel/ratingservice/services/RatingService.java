@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.webjars.NotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -118,5 +119,16 @@ public class RatingService {
 
     public void deleteAllRatings(){
         ratingRepository.deleteAll();
+    }
+
+    @SneakyThrows
+    public RatingDto getMediaByRatingId(Long id) {
+        List<RatingDto> allRatings = getAllRatings();
+        Optional<RatingDto> rating = allRatings.stream().filter(ratingDto -> ratingDto.getMediaId().equals(id)).findFirst();
+        if(!rating.isPresent()){
+            throw new NotFoundException("Media with id " + id + " has no rating assigned");
+        } else {
+            return rating.get();
+        }
     }
 }
