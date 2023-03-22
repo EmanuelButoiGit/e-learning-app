@@ -11,6 +11,8 @@ public class RatingConverter {
         dto.setId(ratingEntity.getId());
         dto.setMediaId(ratingEntity.getMediaId());
         dto.setGeneralRating(ratingEntity.getGeneralRating());
+        dto.setTitle(ratingEntity.getTitle());
+        dto.setDescription(ratingEntity.getDescription());
         dto.setTutorRating(ratingEntity.getTutorRating());
         dto.setContentRating(ratingEntity.getContentRating());
         dto.setContentStructureRating(ratingEntity.getContentStructureRating());
@@ -25,6 +27,8 @@ public class RatingConverter {
         entity.setId(ratingDto.getId());
         entity.setMediaId(ratingDto.getMediaId());
         entity.setGeneralRating(ratingDto.getGeneralRating());
+        entity.setTitle(ratingDto.getTitle());
+        entity.setDescription(ratingDto.getDescription());
         entity.setTutorRating(ratingDto.getTutorRating());
         entity.setContentRating(ratingDto.getContentRating());
         entity.setContentStructureRating(ratingDto.getContentStructureRating());

@@ -44,6 +44,8 @@ public class RatingService {
         RatingEntity ratingEntity =
                 new RatingEntity(null,
                         rating.getMediaId(),
+                        rating.getTitle(),
+                        rating.getDescription(),
                         rating.getGeneralRating(),
                         rating.getTutorRating(),
                         rating.getContentRating(),
@@ -101,6 +103,8 @@ public class RatingService {
         RatingDto rating = getRatingById(id);
         rating.setId(updatedRating.getId());
         rating.setMediaId(updatedRating.getMediaId());
+        rating.setTitle(updatedRating.getTitle());
+        rating.setDescription(updatedRating.getDescription());
         rating.setGeneralRating(updatedRating.getGeneralRating());
         rating.setTutorRating(updatedRating.getTutorRating());
         rating.setContentRating(updatedRating.getContentRating());

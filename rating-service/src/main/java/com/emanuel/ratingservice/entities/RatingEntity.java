@@ -16,6 +16,8 @@ public class RatingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long mediaId;
+    private String title;
+    private String description;
     private Float generalRating;
     private Float tutorRating;
     private Float contentRating;
