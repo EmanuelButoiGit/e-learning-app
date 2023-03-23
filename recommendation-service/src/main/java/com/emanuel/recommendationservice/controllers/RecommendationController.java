@@ -18,12 +18,22 @@ public class RecommendationController {
     private final RecommendationService recommendationService;
 
     @SneakyThrows
-    @GetMapping()
+    @GetMapping("/audio")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all recommended audio files")
     @ApiResponse(responseCode = "200", description = "All recommended audio retrieved")
     public List<AudioDto> getRecommendedAudio(@RequestParam int numberOfAudios)
     {
         return recommendationService.getRecommendedAudio(numberOfAudios);
+    }
+
+    @SneakyThrows
+    @GetMapping("/audio/random")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get random recommended audio file")
+    @ApiResponse(responseCode = "200", description = "Random audio retrieved")
+    public AudioDto getRandomRecommendedAudio()
+    {
+        return recommendationService.getRandomRecommendedAudio();
     }
 }

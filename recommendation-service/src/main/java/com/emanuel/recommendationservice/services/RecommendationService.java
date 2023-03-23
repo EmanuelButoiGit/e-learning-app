@@ -19,19 +19,14 @@ import java.util.stream.Collectors;
 public class RecommendationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
+    private final Random random = new Random();
+
     public List<AudioDto> getRecommendedAudio(int nrOfAudios) {
-        ResponseEntity<List<AudioDto>> audioResponse = new RestTemplate()
-                .exchange("http://localhost:8080/api/media/", HttpMethod.GET, null,
-                        new ParameterizedTypeReference<List<AudioDto>>() {});
-        List<AudioDto> audios = audioResponse.getBody();
-        if (audios == null) {
-            throw new NullPointerException("The audio table is empty!");
-        }
+        List<AudioDto> audios = getAudiosFromDatabase();
         if (audios.size() < nrOfAudios){
             throw new ArithmeticException("The database has less number of audios than you are trying to retrieve");
         }
-
-        // Set weights for each criterion
+        // set weights for each criterion
         double durationWeight = 0.15;
         double ratingWeight = 0.55;
         double extensionWeight = 0.15;
@@ -56,6 +51,17 @@ public class RecommendationService {
             }
         }
         return sortedAudios;
+    }
+
+    private List<AudioDto> getAudiosFromDatabase() {
+        ResponseEntity<List<AudioDto>> audioResponse = new RestTemplate()
+                .exchange("http://localhost:8080/api/media/", HttpMethod.GET, null,
+                        new ParameterizedTypeReference<List<AudioDto>>() {});
+        List<AudioDto> audios = audioResponse.getBody();
+        if (audios == null) {
+            throw new NullPointerException("The audio table is empty!");
+        }
+        return audios;
     }
 
     private Map<Long, Double> getAudioScores(List<AudioDto> audios, double durationWeight, double ratingWeight, double extensionWeight, double sampleRateWeight) {
@@ -110,5 +116,32 @@ public class RecommendationService {
             sampleScore = 1;
         }
         return sampleScore;
+    }
+
+    public AudioDto getRandomRecommendedAudio() {
+        int minRating = 5;
+        List<AudioDto> audios = getAudiosFromDatabase();
+        Float generalRating = 0f;
+        List<AudioDto> passAudios = new ArrayList<>();
+        for (AudioDto audio:
+             audios) {
+            try {
+                ResponseEntity<RatingDto> ratingResponse = new RestTemplate().getForEntity("http://localhost:8081/api/rating/media/" + audio.getId(), RatingDto.class);
+                RatingDto rating = ratingResponse.getBody();
+                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
+                    generalRating = rating.getGeneralRating();
+                }
+            } catch (HttpClientErrorException | HttpServerErrorException ex) {
+                LOGGER.info(ex.getMessage());
+            }
+            if(generalRating >= minRating){
+                passAudios.add(audio);
+            }
+        }
+        if (passAudios.isEmpty()){
+            throw new UnsupportedOperationException("No file has a rating above " + minRating);
+        }
+        int randomNumber = random.nextInt(passAudios.size());
+        return passAudios.get(randomNumber);
     }
 }
