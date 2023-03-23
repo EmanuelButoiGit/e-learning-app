@@ -24,6 +24,12 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+	// for logging
+	implementation 'org.slf4j:slf4j-api:1.7.30'
+	implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
+	implementation 'org.slf4j:log4j-over-slf4j:1.7.30'
+	implementation 'ch.qos.logback:logback-classic:1.2.3'
+	implementation 'org.bytedeco:javacv:1.5.8'
 }
 
 tasks.named('test') {
