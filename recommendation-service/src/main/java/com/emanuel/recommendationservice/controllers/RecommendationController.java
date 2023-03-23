@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,12 +18,22 @@ public class RecommendationController {
     private final RecommendationService recommendationService;
 
     @SneakyThrows
-    @GetMapping()
+    @GetMapping("/audio")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all recommended audio files")
     @ApiResponse(responseCode = "200", description = "All recommended audio retrieved")
-    public List<AudioDto> getRecommendedAudio()
+    public List<AudioDto> getRecommendedAudio(@RequestParam int numberOfAudios)
     {
-        return recommendationService.getRecommendedAudio();
+        return recommendationService.getRecommendedAudio(numberOfAudios);
+    }
+
+    @SneakyThrows
+    @GetMapping("/audio/random")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get random recommended audio file")
+    @ApiResponse(responseCode = "200", description = "Random audio retrieved")
+    public AudioDto getRandomRecommendedAudio()
+    {
+        return recommendationService.getRandomRecommendedAudio();
     }
 }
