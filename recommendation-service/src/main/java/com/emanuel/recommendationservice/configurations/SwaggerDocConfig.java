@@ -14,7 +14,7 @@ public class SwaggerDocConfig {
         return new OpenAPI().info(
                 new Info()
                         .title("Documentation")
-                        .version("1.0")
+                        .version("1.3")
                         .description("This service is responsible with the recommendation workflow")
         );
     }
