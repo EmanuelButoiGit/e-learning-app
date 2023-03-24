@@ -103,4 +103,26 @@ public class RecommendationService {
         int randomNumber = random.nextInt(passMedias.size());
         return passMedias.get(randomNumber);
     }
+
+    public Integer calculateResolutionQuality(Integer quality) {
+        int score = 0;
+        if (quality == 144) {
+            score = 3;
+        } else if (quality == 360) {
+            score = 4;
+        } else if (quality == 480) {
+            score = 5;
+        } else if (quality == 720) {
+            score = 6;
+        } else if (quality == 1080) {
+            score = 7;
+        } else if (quality == 1440) {
+            score = 8;
+        } else if (quality == 2160) {
+            score = 9;
+        } else if (quality == 4320) {
+            score = 10;
+        }
+        return score;
+    }
 }

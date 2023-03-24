@@ -33,31 +33,9 @@ public class ImageRecommendationService {
             generalRating = recommendationService.getRating(imageDto, generalRating);
             // calculate quality score
             int resolutionQuality = Optional.ofNullable(imageDto.getResolutionQuality()).orElse(0);
-            int resolutionQualityScore = calculateResolutionQuality(resolutionQuality);
+            int resolutionQualityScore = recommendationService.calculateResolutionQuality(resolutionQuality);
             return generalRating * ratingWeight + resolutionQualityScore * qualityWeight;
         }));
-    }
-
-    public Integer calculateResolutionQuality(Integer quality) {
-        int score = 0;
-        if (quality == 144) {
-            score = 3;
-        } else if (quality == 360) {
-            score = 4;
-        } else if (quality == 480) {
-            score = 5;
-        } else if (quality == 720) {
-            score = 6;
-        } else if (quality == 1080) {
-            score = 7;
-        } else if (quality == 1440) {
-            score = 8;
-        } else if (quality == 2160) {
-            score = 9;
-        } else if (quality == 4320) {
-            score = 10;
-        }
-        return score;
     }
 
     public ImageDto getRandomRecommendedImage() {
