@@ -20,6 +20,16 @@ public class DocumentRecommendationController {
     private final DocumentRecommendationService documentRecommendationService;
 
     @SneakyThrows
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get all recommended document files")
+    @ApiResponse(responseCode = "200", description = "All recommended document retrieved")
+    public List<DocumentDto> getRecommendedDocument(@RequestParam int numberOfDocuments)
+    {
+        return documentRecommendationService.getRecommendedDocument(numberOfDocuments);
+    }
+
+    @SneakyThrows
     @GetMapping("/random")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get random recommended document file")

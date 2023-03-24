@@ -1,5 +1,6 @@
 package com.emanuel.recommendationservice.services;
 
+import com.emanuel.recommendationservice.dtos.DocumentDto;
 import com.emanuel.recommendationservice.dtos.MediaDto;
 import com.emanuel.recommendationservice.dtos.RatingDto;
 import com.emanuel.recommendationservice.exceptions.DeserializationException;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RecommendationService {
@@ -40,6 +42,40 @@ public class RecommendationService {
         } catch (IOException e) {
             throw new DeserializationException("Failed to deserialize response: " + e.getMessage());
         }
+    }
+
+    public  <T extends MediaDto> Float getRating(T media, Float generalRating) {
+        try {
+            ResponseEntity<RatingDto> ratingResponse = new RestTemplate().getForEntity("http://localhost:8081/api/rating/media/" + media.getId(), RatingDto.class);
+            RatingDto rating = ratingResponse.getBody();
+            if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
+                generalRating = rating.getGeneralRating();
+            }
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            LOGGER.info(ex.getMessage());
+        }
+        return generalRating;
+    }
+
+    public <T extends MediaDto> List<T> getSortedMedia(int numberOfMedias, List<T> medias, Map<Long, Double> scores) {
+        List<Map.Entry<Long, Double>> sortedScores = new ArrayList<>(scores.entrySet());
+        sortedScores.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+
+        List<Long> mediaIds = sortedScores.stream()
+                .limit(numberOfMedias)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        List<T> sortedMedia = new ArrayList<>();
+        for (Long id : mediaIds) {
+            for (T media : medias) {
+                if (media.getId().equals(id)) {
+                    sortedMedia.add(media);
+                    break;
+                }
+            }
+        }
+        return sortedMedia;
     }
 
     public <T extends MediaDto> T getRandomRecommendedMedia(Class<T> mediaType) {

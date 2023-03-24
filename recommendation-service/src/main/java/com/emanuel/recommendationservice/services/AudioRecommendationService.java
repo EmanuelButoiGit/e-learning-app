@@ -32,25 +32,7 @@ public class AudioRecommendationService {
         double extensionWeight = 0.15;
         double sampleRateWeight = 0.15;
         Map<Long, Double> scores = getAudioScores(audios, durationWeight, ratingWeight, extensionWeight, sampleRateWeight);
-
-        List<Map.Entry<Long, Double>> sortedScores = new ArrayList<>(scores.entrySet());
-        sortedScores.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
-
-        List<Long> audioIds = sortedScores.stream()
-                .limit(nrOfAudios)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-
-        List<AudioDto> sortedAudios = new ArrayList<>();
-        for (Long id : audioIds) {
-            for (AudioDto audio : audios) {
-                if (audio.getId().equals(id)) {
-                    sortedAudios.add(audio);
-                    break;
-                }
-            }
-        }
-        return sortedAudios;
+        return recommendationService.getSortedMedia(nrOfAudios, audios, scores);
     }
 
     private Map<Long, Double> getAudioScores(List<AudioDto> audios, double durationWeight, double ratingWeight, double extensionWeight, double sampleRateWeight) {
@@ -60,15 +42,7 @@ public class AudioRecommendationService {
             double extensionScore = 0;
             double sampleScore = 0;
             // get rating score
-            try {
-                ResponseEntity<RatingDto> ratingResponse = new RestTemplate().getForEntity("http://localhost:8081/api/rating/media/" + audioDto.getId(), RatingDto.class);
-                RatingDto rating = ratingResponse.getBody();
-                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
-                    generalRating = rating.getGeneralRating();
-                }
-            } catch (HttpClientErrorException | HttpServerErrorException ex) {
-                LOGGER.info(ex.getMessage());
-            }
+            generalRating = recommendationService.getRating(audioDto, generalRating);
             // calculate duration score
             long duration = Optional.ofNullable(audioDto.getDuration()).orElse(0L);
             if (duration > 600 && duration < 1200){
