@@ -1,7 +1,7 @@
 package com.emanuel.recommendationservice.controllers;
 
 import com.emanuel.recommendationservice.dtos.AudioDto;
-import com.emanuel.recommendationservice.services.RecommendationService;
+import com.emanuel.recommendationservice.services.AudioRecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("api/recommendation/audio")
 public class AudioRecommendationController {
-    private final RecommendationService recommendationService;
+    private final AudioRecommendationService audioRecommendationService;
 
     @SneakyThrows
     @GetMapping
@@ -24,7 +24,7 @@ public class AudioRecommendationController {
     @ApiResponse(responseCode = "200", description = "All recommended audio retrieved")
     public List<AudioDto> getRecommendedAudio(@RequestParam int numberOfAudios)
     {
-        return recommendationService.getRecommendedAudio(numberOfAudios);
+        return audioRecommendationService.getRecommendedAudio(numberOfAudios);
     }
 
     @SneakyThrows
@@ -34,6 +34,6 @@ public class AudioRecommendationController {
     @ApiResponse(responseCode = "200", description = "Random audio retrieved")
     public AudioDto getRandomRecommendedAudio()
     {
-        return recommendationService.getRandomRecommendedAudio();
+        return audioRecommendationService.getRandomRecommendedAudio();
     }
 }
