@@ -40,9 +40,7 @@ public class AudioRecommendationService {
                 durationScore = 10;
             }
             // calculate extension score
-            String fileName = Optional.ofNullable(audioDto.getFileName()).orElse("");
-            String[] parts = fileName.split("\\.");
-            String extension = parts[parts.length - 1];
+            String extension = Optional.ofNullable(audioDto.getExtension()).orElse("");
             if (extension.equalsIgnoreCase("wav")) {
                 extensionScore = 10;
             }
