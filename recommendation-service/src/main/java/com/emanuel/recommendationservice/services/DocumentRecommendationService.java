@@ -1,19 +1,12 @@
 package com.emanuel.recommendationservice.services;
 
-import com.emanuel.recommendationservice.dtos.AudioDto;
 import com.emanuel.recommendationservice.dtos.DocumentDto;
-import com.emanuel.recommendationservice.dtos.MediaDto;
-import com.emanuel.recommendationservice.dtos.RatingDto;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,7 +15,7 @@ public class DocumentRecommendationService {
     private final RecommendationService recommendationService;
 
     public List<DocumentDto> getRecommendedDocument(int numberOfDocuments) {
-        List<DocumentDto> documents = recommendationService.getDtoListFromDatabase(DocumentDto.class);
+        List<DocumentDto> documents = recommendationService.getDtoListFromDatabase(DocumentDto.class, "document");
         if (documents.size() < numberOfDocuments){
             throw new ArithmeticException("The database has less number of documents than you are trying to retrieve");
         }
@@ -52,7 +45,7 @@ public class DocumentRecommendationService {
             }
             // calculate number of pages score
             int numberOfPages = Optional.ofNullable(documentDto.getNumberOfPages()).orElse(0);
-            if (numberOfPages >= 5 && numberOfPages <= 20){
+            if (numberOfPages >= 1 && numberOfPages <= 20){
                 numberOfPagesScore = 10;
             } else if (numberOfPages > 20 && numberOfPages <= 200) {
                 numberOfPagesScore = 8;
@@ -64,6 +57,6 @@ public class DocumentRecommendationService {
     }
 
     public DocumentDto getRandomRecommendedDocument() {
-        return recommendationService.getRandomRecommendedMedia(DocumentDto.class);
+        return recommendationService.getRandomRecommendedMedia(DocumentDto.class, "document");
     }
 }

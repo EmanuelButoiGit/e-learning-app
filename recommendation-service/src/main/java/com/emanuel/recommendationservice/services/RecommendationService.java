@@ -1,6 +1,5 @@
 package com.emanuel.recommendationservice.services;
 
-import com.emanuel.recommendationservice.dtos.DocumentDto;
 import com.emanuel.recommendationservice.dtos.MediaDto;
 import com.emanuel.recommendationservice.dtos.RatingDto;
 import com.emanuel.recommendationservice.exceptions.DeserializationException;
@@ -27,14 +26,14 @@ public class RecommendationService {
     private final Random random = new Random();
 
     @SneakyThrows
-    public <T> List<T> getDtoListFromDatabase(Class<T> mediaType) throws RuntimeException {
+    public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
         ResponseEntity<List<T>> response = new RestTemplate()
-                .exchange("http://localhost:8080/api/media/", HttpMethod.GET, null,
+                .exchange("http://localhost:8080/api/" + mediaType + "/", HttpMethod.GET, null,
                         new ParameterizedTypeReference<List<T>>() {});
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<T> medias =mapper.readValue(mapper.writeValueAsString(response.getBody()),
-                    mapper.getTypeFactory().constructCollectionType(List.class, mediaType));
+                    mapper.getTypeFactory().constructCollectionType(List.class, mediaClassType));
             if (medias == null) {
                 throw new NullPointerException("The table is empty!");
             }
@@ -78,9 +77,9 @@ public class RecommendationService {
         return sortedMedia;
     }
 
-    public <T extends MediaDto> T getRandomRecommendedMedia(Class<T> mediaType) {
+    public <T extends MediaDto> T getRandomRecommendedMedia(Class<T> mediaClassType, String mediaType) {
         int minRating = 5;
-        List<T> medias = getDtoListFromDatabase(mediaType);
+        List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         Float generalRating = 0f;
         List<T> passMedias = new ArrayList<>();
         for (T media : medias) {
@@ -103,5 +102,27 @@ public class RecommendationService {
         }
         int randomNumber = random.nextInt(passMedias.size());
         return passMedias.get(randomNumber);
+    }
+
+    public Integer calculateResolutionQuality(Integer quality) {
+        int score = 0;
+        if (quality == 144) {
+            score = 3;
+        } else if (quality == 360) {
+            score = 4;
+        } else if (quality == 480) {
+            score = 5;
+        } else if (quality == 720) {
+            score = 6;
+        } else if (quality == 1080) {
+            score = 7;
+        } else if (quality == 1440) {
+            score = 8;
+        } else if (quality == 2160) {
+            score = 9;
+        } else if (quality == 4320) {
+            score = 10;
+        }
+        return score;
     }
 }
