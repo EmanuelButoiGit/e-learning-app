@@ -14,16 +14,22 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class VideoEntity extends ImageEntity{
+public class VideoEntity extends MediaEntity {
+    private Integer width;
+    private Integer height;
+    private Integer resolutionQuality;
     private Long duration;
     private Double aspectRatio;
     private Double fps;
 
-    public VideoEntity(ImageEntity imageEntity, Long duration, Double aspectRatio, Double fps) {
-        super(imageEntity.getId(), imageEntity.getTitle(), imageEntity.getDescription(),
-                imageEntity.getFileName(), imageEntity.getUploadDate(), imageEntity.getMimeType(),
-                imageEntity.getContent(), imageEntity.getSize(), imageEntity.getWidth(),
-                imageEntity.getHeight(), imageEntity.getResolutionQuality());
+    public VideoEntity(MediaEntity mediaEntity, Integer width, Integer height, Integer resolutionQuality,
+                       Long duration, Double aspectRatio, Double fps) {
+        super(mediaEntity.getId(), mediaEntity.getTitle(), mediaEntity.getDescription(),
+                mediaEntity.getFileName(), mediaEntity.getExtension(), mediaEntity.getUploadDate(),
+                mediaEntity.getMimeType(), mediaEntity.getContent(), mediaEntity.getSize());
+        this.width = width;
+        this.height = height;
+        this.resolutionQuality = resolutionQuality;
         this.duration = duration;
         this.aspectRatio = aspectRatio;
         this.fps = fps;

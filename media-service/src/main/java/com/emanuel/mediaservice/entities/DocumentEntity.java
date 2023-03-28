@@ -15,8 +15,8 @@ public class DocumentEntity extends MediaEntity {
 
     public DocumentEntity(MediaEntity mediaEntity, Integer numberOfPages) {
         super(mediaEntity.getId(), mediaEntity.getTitle(), mediaEntity.getDescription(),
-                mediaEntity.getFileName(), mediaEntity.getUploadDate(), mediaEntity.getMimeType(),
-                mediaEntity.getContent(), mediaEntity.getSize());
+                mediaEntity.getFileName(), mediaEntity.getExtension(), mediaEntity.getUploadDate(),
+                mediaEntity.getMimeType(), mediaEntity.getContent(), mediaEntity.getSize());
         this.numberOfPages = numberOfPages;
     }
 }

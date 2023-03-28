@@ -16,9 +16,9 @@ public class VideoDto extends ImageDto {
 
     public VideoDto(ImageDto imageDto, Long duration, Double aspectRatio, Double fps) {
         super(imageDto.getId(), imageDto.getTitle(), imageDto.getDescription(),
-                imageDto.getFileName(), imageDto.getUploadDate(), imageDto.getMimeType(),
-                imageDto.getContent(), imageDto.getSize(), imageDto.getWidth(),
-                imageDto.getHeight(), imageDto.getResolutionQuality());
+                imageDto.getFileName(), imageDto.getExtension(), imageDto.getUploadDate(),
+                imageDto.getMimeType(), imageDto.getContent(), imageDto.getSize(),
+                imageDto.getWidth(), imageDto.getHeight(), imageDto.getResolutionQuality());
         this.duration = duration;
         this.aspectRatio = aspectRatio;
         this.fps = fps;

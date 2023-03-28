@@ -1,12 +1,12 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.classes.FileFormat;
-import com.emanuel.mediaservice.components.ImageConverter;
-import com.emanuel.mediaservice.components.VideoConverter;
+import com.emanuel.mediaservice.options.FileOption;
+import com.emanuel.mediaservice.converters.MediaConverter;
+import com.emanuel.mediaservice.converters.VideoConverter;
 import com.emanuel.mediaservice.dtos.ImageDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.dtos.VideoDto;
-import com.emanuel.mediaservice.entities.ImageEntity;
+import com.emanuel.mediaservice.entities.MediaEntity;
 import com.emanuel.mediaservice.entities.VideoEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
 import com.emanuel.mediaservice.repositories.VideoRepository;
@@ -27,15 +27,15 @@ public class VideoService {
 
     private final RestrictionService restrictionService;
     private final MediaService mediaService;
-    private final ImageConverter imageConverter;
+    private final MediaConverter mediaConverter;
     private final QualityService qualityService;
     private final VideoRepository videoRepository;
     private final VideoConverter videoConverter;
 
     @SneakyThrows
     public VideoDto uploadVideo(MultipartFile file, String title, String description) {
-        restrictionService.validateExtensionAndMimeType(FileFormat.getVIDEO_EXTENSIONS(), file);
-        MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
+        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getVIDEO_EXTENSIONS(), file);
+        MediaDto mediaFields = mediaService.getMediaFields(file, title, description, extension);
         long duration;
         int width;
         int height;
@@ -52,9 +52,8 @@ public class VideoService {
             fps = grabber.getVideoFrameRate();
         }
 
-        ImageDto imageDto = new ImageDto(mediaFields, width, height, qualityResolution);
-        ImageEntity entity = imageConverter.toEntity(imageDto);
-        VideoEntity videoEntity = new VideoEntity(entity, duration, aspectRatio, fps);
+        MediaEntity entity = mediaConverter.toEntity(mediaFields);
+        VideoEntity videoEntity = new VideoEntity(entity, width, height, qualityResolution, duration, aspectRatio, fps);
         VideoEntity savedEntity = videoRepository.save(videoEntity);
         return videoConverter.toDto(savedEntity);
     }

@@ -1,8 +1,8 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.classes.FileFormat;
-import com.emanuel.mediaservice.components.ImageConverter;
-import com.emanuel.mediaservice.components.MediaConverter;
+import com.emanuel.mediaservice.options.FileOption;
+import com.emanuel.mediaservice.converters.ImageConverter;
+import com.emanuel.mediaservice.converters.MediaConverter;
 import com.emanuel.mediaservice.dtos.ImageDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.ImageEntity;
@@ -39,8 +39,8 @@ public class ImageService {
 
     @SneakyThrows
     public ImageDto uploadImage(MultipartFile file, String title, String description) {
-        restrictionService.validateExtensionAndMimeType(FileFormat.getIMAGE_EXTENSIONS(), file);
-        MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
+        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getIMAGE_EXTENSIONS(), file);
+        MediaDto mediaFields = mediaService.getMediaFields(file, title, description, extension);
         BufferedImage image = null;
         try (InputStream inputStream = file.getInputStream()) {
             image = ImageIO.read(inputStream);

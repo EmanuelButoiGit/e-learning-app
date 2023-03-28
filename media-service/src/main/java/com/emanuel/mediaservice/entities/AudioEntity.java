@@ -1,8 +1,12 @@
 package com.emanuel.mediaservice.entities;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Data
 @Entity
@@ -16,8 +20,8 @@ public class AudioEntity extends MediaEntity {
 
     public AudioEntity(MediaEntity mediaEntity, Long duration, Float sampleRate) {
         super(mediaEntity.getId(), mediaEntity.getTitle(), mediaEntity.getDescription(),
-                mediaEntity.getFileName(), mediaEntity.getUploadDate(), mediaEntity.getMimeType(),
-                mediaEntity.getContent(), mediaEntity.getSize());
+                mediaEntity.getFileName(), mediaEntity.getExtension(), mediaEntity.getUploadDate(),
+                mediaEntity.getMimeType(), mediaEntity.getContent(), mediaEntity.getSize());
         this.duration = duration;
         this.sampleRate = sampleRate;
     }
