@@ -35,9 +35,7 @@ public class DocumentRecommendationService {
             // get rating score
             generalRating = recommendationService.getRating(documentDto, generalRating);
             // calculate extension score
-            String fileName = Optional.ofNullable(documentDto.getFileName()).orElse("");
-            String[] parts = fileName.split("\\.");
-            String extension = parts[parts.length - 1];
+            String extension = Optional.ofNullable(documentDto.getExtension()).orElse("");
             if (extension.equalsIgnoreCase("pdf")) {
                 extensionScore = 10;
             } else if (extension.equalsIgnoreCase("docx")){
