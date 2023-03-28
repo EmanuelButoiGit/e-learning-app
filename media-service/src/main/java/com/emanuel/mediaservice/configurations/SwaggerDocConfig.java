@@ -14,7 +14,7 @@ public class SwaggerDocConfig {
         return new OpenAPI().info(
                 new Info()
                         .title("Documentation")
-                        .version("2.3")
+                        .version("2.4")
                         .description("This service is responsible with all the operations related to media")
         );
     }
