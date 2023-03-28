@@ -47,7 +47,8 @@ public class RatingService {
                         rating.getMediaId(),
                         rating.getTitle(),
                         rating.getDescription(),
-                        rating.getGeneralRating(),
+                        calculateGeneralRating(rating.getTutorRating(), rating.getContentRating(), rating.getContentStructureRating(),
+                                rating.getPresentationRating(), rating.getEngagementRating(), rating.getDifficultyRating()),
                         rating.getTutorRating(),
                         rating.getContentRating(),
                         rating.getContentStructureRating(),
@@ -57,6 +58,12 @@ public class RatingService {
                 );
         RatingEntity savedEntity = ratingRepository.save(ratingEntity);
         return ratingConverter.toDto(savedEntity);
+    }
+
+    private Float calculateGeneralRating(Float tutorRating, Float contentRating, Float contentStructureRating,
+                                         Float presentationRating, Float engagementRating, Float difficultyRating){
+        float sumOfRatings = tutorRating + contentRating + contentStructureRating + presentationRating + engagementRating + difficultyRating;
+        return sumOfRatings / 6;
     }
 
     @SneakyThrows
@@ -106,7 +113,9 @@ public class RatingService {
         rating.setMediaId(updatedRating.getMediaId());
         rating.setTitle(updatedRating.getTitle());
         rating.setDescription(updatedRating.getDescription());
-        rating.setGeneralRating(updatedRating.getGeneralRating());
+        Float generalRating = calculateGeneralRating(updatedRating.getTutorRating(), updatedRating.getContentRating(), updatedRating.getContentStructureRating(),
+                updatedRating.getPresentationRating(), updatedRating.getEngagementRating(), updatedRating.getDifficultyRating());
+        rating.setGeneralRating(generalRating);
         rating.setTutorRating(updatedRating.getTutorRating());
         rating.setContentRating(updatedRating.getContentRating());
         rating.setContentStructureRating(updatedRating.getContentStructureRating());
