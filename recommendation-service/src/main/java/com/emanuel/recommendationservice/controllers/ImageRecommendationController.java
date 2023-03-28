@@ -1,7 +1,7 @@
 package com.emanuel.recommendationservice.controllers;
 
-import com.emanuel.recommendationservice.dtos.ImageDto;
 import com.emanuel.recommendationservice.services.ImageRecommendationService;
+import com.emanuel.starterlibrary.dtos.ImageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;

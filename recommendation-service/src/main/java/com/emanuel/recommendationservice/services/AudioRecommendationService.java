@@ -1,6 +1,6 @@
 package com.emanuel.recommendationservice.services;
 
-import com.emanuel.recommendationservice.dtos.AudioDto;
+import com.emanuel.starterlibrary.dtos.AudioDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,16 +1,16 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.options.FileOption;
 import com.emanuel.mediaservice.converters.AudioConverter;
 import com.emanuel.mediaservice.converters.MediaConverter;
-import com.emanuel.mediaservice.dtos.AudioDto;
-import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.AudioEntity;
 import com.emanuel.mediaservice.entities.MediaEntity;
-import com.emanuel.mediaservice.exceptions.DataBaseException;
-import com.emanuel.mediaservice.exceptions.EntityNotFoundException;
-import com.emanuel.mediaservice.exceptions.Mp3Exception;
+import com.emanuel.mediaservice.options.FileOption;
 import com.emanuel.mediaservice.repositories.AudioRepository;
+import com.emanuel.starterlibrary.dtos.AudioDto;
+import com.emanuel.starterlibrary.dtos.MediaDto;
+import com.emanuel.starterlibrary.exceptions.DataBaseException;
+import com.emanuel.starterlibrary.exceptions.EntityNotFoundException;
+import com.emanuel.starterlibrary.exceptions.Mp3Exception;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.jaudiotagger.audio.AudioFile;

@@ -1,7 +1,7 @@
 package com.emanuel.ratingservice.controllers;
 
-import com.emanuel.ratingservice.dtos.RatingDto;
 import com.emanuel.ratingservice.services.RatingService;
+import com.emanuel.starterlibrary.dtos.RatingDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.emanuel.ratingservice.components;
 
-import com.emanuel.ratingservice.dtos.RatingDto;
 import com.emanuel.ratingservice.entities.RatingEntity;
+import com.emanuel.starterlibrary.dtos.RatingDto;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,8 +1,8 @@
 package com.emanuel.recommendationservice.services;
 
-import com.emanuel.recommendationservice.dtos.MediaDto;
-import com.emanuel.recommendationservice.dtos.RatingDto;
-import com.emanuel.recommendationservice.exceptions.DeserializationException;
+import com.emanuel.starterlibrary.dtos.MediaDto;
+import com.emanuel.starterlibrary.dtos.RatingDto;
+import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;

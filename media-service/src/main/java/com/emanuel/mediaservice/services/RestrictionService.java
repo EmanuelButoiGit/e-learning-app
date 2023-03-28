@@ -1,6 +1,6 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.exceptions.WrongExtensionException;
+import com.emanuel.starterlibrary.exceptions.WrongExtensionException;
 import lombok.SneakyThrows;
 import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
