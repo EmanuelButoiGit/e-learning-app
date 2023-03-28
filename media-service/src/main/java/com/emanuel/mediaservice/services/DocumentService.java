@@ -1,8 +1,8 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.classes.FileFormat;
-import com.emanuel.mediaservice.components.DocumentConverter;
-import com.emanuel.mediaservice.components.MediaConverter;
+import com.emanuel.mediaservice.options.FileOption;
+import com.emanuel.mediaservice.converters.DocumentConverter;
+import com.emanuel.mediaservice.converters.MediaConverter;
 import com.emanuel.mediaservice.dtos.DocumentDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.DocumentEntity;
@@ -38,10 +38,10 @@ public class DocumentService {
 
     @SneakyThrows
     public DocumentDto uploadDocument(MultipartFile file, String title, String description) {
-        String extension = restrictionService.validateExtensionAndMimeType(FileFormat.getDOCUMENT_EXTENSIONS(), file);
-        MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
+        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getDOCUMENT_EXTENSIONS(), file);
+        MediaDto mediaFields = mediaService.getMediaFields(file, title, description, extension);
         int numberOfPages = 0;
-        if("docx".equals(extension)) {
+        if("docx".equalsIgnoreCase(extension)) {
             try (InputStream inputStream = file.getInputStream()) {
                 XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(IOUtils.toByteArray(inputStream)));
                 numberOfPages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
@@ -49,7 +49,7 @@ public class DocumentService {
             } catch (IOException e) {
                 throw new DocumentException("Can't process the document: " + e.getMessage());
             }
-        } else if ("pdf".equals(extension)){
+        } else if ("pdf".equalsIgnoreCase(extension)){
             try (InputStream inputStream = file.getInputStream()) {
                 PDDocument document = PDDocument.load(inputStream);
                 numberOfPages = document.getNumberOfPages();

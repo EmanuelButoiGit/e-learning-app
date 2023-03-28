@@ -1,4 +1,4 @@
-package com.emanuel.mediaservice.components;
+package com.emanuel.mediaservice.converters;
 
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.MediaEntity;
@@ -14,6 +14,7 @@ public class MediaConverter {
         dto.setTitle(mediaEntity.getTitle());
         dto.setDescription(mediaEntity.getDescription());
         dto.setFileName(mediaEntity.getFileName());
+        dto.setExtension(mediaEntity.getExtension());
         dto.setUploadDate(mediaEntity.getUploadDate());
         dto.setMimeType(mediaEntity.getMimeType());
         dto.setContent(mediaEntity.getContent());
@@ -27,6 +28,7 @@ public class MediaConverter {
         entity.setTitle(mediaDto.getTitle());
         entity.setDescription(mediaDto.getDescription());
         entity.setFileName(mediaDto.getFileName());
+        entity.setExtension(mediaDto.getExtension());
         entity.setUploadDate(mediaDto.getUploadDate());
         entity.setMimeType(mediaDto.getMimeType());
         entity.setContent(mediaDto.getContent());

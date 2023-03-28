@@ -1,4 +1,4 @@
-package com.emanuel.mediaservice.components;
+package com.emanuel.mediaservice.converters;
 
 import com.emanuel.mediaservice.dtos.ImageDto;
 import com.emanuel.mediaservice.dtos.MediaDto;

@@ -1,7 +1,7 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.classes.FileFormat;
-import com.emanuel.mediaservice.components.MediaConverter;
+import com.emanuel.mediaservice.options.FileOption;
+import com.emanuel.mediaservice.converters.MediaConverter;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.MediaEntity;
 import com.emanuel.mediaservice.exceptions.DataBaseException;
@@ -30,13 +30,14 @@ public class MediaService {
     private final MediaConverter mediaConverter;
 
     public MediaDto uploadMedia(MultipartFile file, String title, String description) {
-        restrictionService.validateExtensionAndMimeType(FileFormat.getMEDIA_EXTENSIONS(), file);
-        MediaDto mediaFields = getMediaFields(file, title, description);
+        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getMEDIA_EXTENSIONS(), file);
+        MediaDto mediaFields = getMediaFields(file, title, description, extension);
         MediaEntity mediaEntity =
                 new MediaEntity(null,
                                 mediaFields.getTitle(),
                                 mediaFields.getDescription(),
                                 mediaFields.getFileName(),
+                                mediaFields.getExtension(),
                                 mediaFields.getUploadDate(),
                                 mediaFields.getMimeType(),
                                 mediaFields.getContent(),
@@ -47,7 +48,7 @@ public class MediaService {
     }
 
     @SneakyThrows
-    public MediaDto getMediaFields(MultipartFile file, String title, String description){
+    public MediaDto getMediaFields(MultipartFile file, String title, String description, String extension){
         boolean isInfected = scanService.scanFileForViruses(file);
         if (isInfected) {
             throw new InfectedFileException("The uploaded file is infected with viruses.");
@@ -58,7 +59,7 @@ public class MediaService {
         Long size = file.getSize();
         LocalDateTime localDateTime = LocalDateTime.now();
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        return new MediaDto(null, title, description, fileName, date, contentType, content, size);
+        return new MediaDto(null, title, description, fileName, extension, date, contentType, content, size);
     }
 
     @SneakyThrows
@@ -103,6 +104,8 @@ public class MediaService {
         media.setId(dto.getId());
         media.setTitle(dto.getTitle());
         media.setDescription(dto.getDescription());
+        media.setFileName(dto.getFileName());
+        media.setExtension(dto.getExtension());
         media.setUploadDate(dto.getUploadDate());
         media.setMimeType(dto.getMimeType());
         media.setContent(dto.getContent());

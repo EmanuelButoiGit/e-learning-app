@@ -3,6 +3,7 @@ CREATE TABLE media (
     title VARCHAR(255),
     description TEXT,
     file_name VARCHAR(255),
+    extension VARCHAR(4),
     upload_date TIMESTAMP,
     mime_type VARCHAR(100),
     content BIGINT,

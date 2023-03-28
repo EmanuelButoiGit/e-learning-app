@@ -11,8 +11,8 @@ public class DocumentDto extends MediaDto {
 
     public DocumentDto(MediaDto mediaDto, Integer numberOfPages) {
         super(mediaDto.getId(), mediaDto.getTitle(), mediaDto.getDescription(),
-                mediaDto.getFileName(), mediaDto.getUploadDate(), mediaDto.getMimeType(),
-                mediaDto.getContent(), mediaDto.getSize());
+                mediaDto.getFileName(), mediaDto.getExtension(), mediaDto.getUploadDate(),
+                mediaDto.getMimeType(), mediaDto.getContent(), mediaDto.getSize());
         this.numberOfPages = numberOfPages;
     }
 }

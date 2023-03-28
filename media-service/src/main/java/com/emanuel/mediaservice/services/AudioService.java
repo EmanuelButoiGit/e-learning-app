@@ -1,8 +1,8 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.classes.FileFormat;
-import com.emanuel.mediaservice.components.AudioConverter;
-import com.emanuel.mediaservice.components.MediaConverter;
+import com.emanuel.mediaservice.options.FileOption;
+import com.emanuel.mediaservice.converters.AudioConverter;
+import com.emanuel.mediaservice.converters.MediaConverter;
 import com.emanuel.mediaservice.dtos.AudioDto;
 import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.AudioEntity;
@@ -40,11 +40,11 @@ public class AudioService {
 
     @SneakyThrows
     public AudioDto uploadAudio(MultipartFile file, String title, String description) {
-        String extension = restrictionService.validateExtensionAndMimeType(FileFormat.getAUDIO_EXTENSIONS(), file);
-        MediaDto mediaFields = mediaService.getMediaFields(file, title, description);
+        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getAUDIO_EXTENSIONS(), file);
+        MediaDto mediaFields = mediaService.getMediaFields(file, title, description, extension);
         float sampleRate = 0;
         long duration = 0;
-        if("wav".equals(extension)) {
+        if("wav".equalsIgnoreCase(extension)) {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(mediaFields.getContent());
             BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
@@ -52,7 +52,7 @@ public class AudioService {
             sampleRate = audioFormat.getSampleRate();
             float frameRate = audioFormat.getFrameRate();
             duration = (long) (mediaFields.getSize() / (frameRate * audioFormat.getFrameSize()));
-        } else if ("mp3".equals(extension)) {
+        } else if ("mp3".equalsIgnoreCase(extension)) {
             try {
                 File tempFile = File.createTempFile("temp", ".mp3");
                 file.transferTo(tempFile);

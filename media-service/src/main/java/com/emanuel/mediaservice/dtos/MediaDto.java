@@ -14,6 +14,7 @@ public class MediaDto {
     private String title;
     private String description;
     private String fileName;
+    private String extension;
     private Date uploadDate;
     private String mimeType;
     private byte[] content;

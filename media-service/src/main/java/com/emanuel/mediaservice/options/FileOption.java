@@ -1,4 +1,4 @@
-package com.emanuel.mediaservice.classes;
+package com.emanuel.mediaservice.options;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class FileFormat {
+public class FileOption {
     @Getter
     private static final String[] VIDEO_EXTENSIONS = {"avi", "mov", "mp4", "webm", "wmv"};
     @Getter

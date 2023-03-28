@@ -19,7 +19,7 @@ public class RestrictionService {
         String fileName = Objects.requireNonNull(file.getOriginalFilename());
         String[] parts = fileName.split("\\.");
         String extension = parts[parts.length - 1];
-        if (Arrays.stream(fileFormat).noneMatch(ext -> ext.equals(extension))) {
+        if (Arrays.stream(fileFormat).noneMatch(ext -> ext.equalsIgnoreCase(extension))) {
             throw new WrongExtensionException(extension);
         }
         Tika tika = new Tika();
@@ -27,13 +27,13 @@ public class RestrictionService {
             String mimeType = tika.detect(inputStream);
             String contentType = file.getContentType();
             // special cases:
-            if("video/x-msvideo".equals(mimeType) && "video/avi".equals(contentType) && "avi".equals(extension)){
+            if("video/x-msvideo".equals(mimeType) && "video/avi".equals(contentType) && "avi".equalsIgnoreCase(extension)){
                 return  extension;
-            } else if ("application/x-matroska".equals(mimeType) && "video/webm".equals(contentType) && "webm".equals(extension)) {
+            } else if ("application/x-matroska".equals(mimeType) && "video/webm".equals(contentType) && "webm".equalsIgnoreCase(extension)) {
                 return  extension;
-            } else if ("audio/vnd.wave".equals(mimeType) && "audio/wav".equals(contentType) && "wav".equals(extension)) {
+            } else if ("audio/vnd.wave".equals(mimeType) && "audio/wav".equals(contentType) && "wav".equalsIgnoreCase(extension)) {
                 return extension;
-            } else if ("application/x-tika-ooxml".equals(mimeType) && "application/vnd.openxmlformats-officedocument.wordprocessingml.document".equals(contentType) && "docx".equals(extension)) {
+            } else if ("application/x-tika-ooxml".equals(mimeType) && "application/vnd.openxmlformats-officedocument.wordprocessingml.document".equals(contentType) && "docx".equalsIgnoreCase(extension)) {
                 return extension;
             } else if (!Objects.equals(mimeType, contentType)){
                 throw new WrongExtensionException(contentType, fileName, extension);
