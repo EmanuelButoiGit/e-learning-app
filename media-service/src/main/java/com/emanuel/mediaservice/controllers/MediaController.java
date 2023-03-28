@@ -1,7 +1,7 @@
 package com.emanuel.mediaservice.controllers;
 
-import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.services.MediaService;
+import com.emanuel.starterlibrary.dtos.MediaDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;

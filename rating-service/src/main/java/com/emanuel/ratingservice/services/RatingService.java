@@ -1,11 +1,12 @@
 package com.emanuel.ratingservice.services;
 
 import com.emanuel.ratingservice.components.RatingConverter;
-import com.emanuel.ratingservice.dtos.MediaDto;
-import com.emanuel.ratingservice.dtos.RatingDto;
 import com.emanuel.ratingservice.entities.RatingEntity;
-import com.emanuel.ratingservice.exceptions.DataBaseException;
 import com.emanuel.ratingservice.repositories.RatingRepository;
+import com.emanuel.starterlibrary.dtos.MediaDto;
+import com.emanuel.starterlibrary.dtos.RatingDto;
+import com.emanuel.starterlibrary.exceptions.DataBaseException;
+import com.emanuel.starterlibrary.exceptions.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.webjars.NotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -75,7 +75,7 @@ public class RatingService {
     public RatingDto getRatingById(Long id) {
         RatingEntity rating = new RatingEntity();
         final RatingEntity entity = rating;
-        rating = ratingRepository.findById(id).orElseThrow(() -> new com.emanuel.ratingservice.exceptions.EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
+        rating = ratingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return ratingConverter.toDto(rating);
     }
 

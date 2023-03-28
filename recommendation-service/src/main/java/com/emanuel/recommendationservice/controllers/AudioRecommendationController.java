@@ -1,7 +1,7 @@
 package com.emanuel.recommendationservice.controllers;
 
-import com.emanuel.recommendationservice.dtos.AudioDto;
 import com.emanuel.recommendationservice.services.AudioRecommendationService;
+import com.emanuel.starterlibrary.dtos.AudioDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;

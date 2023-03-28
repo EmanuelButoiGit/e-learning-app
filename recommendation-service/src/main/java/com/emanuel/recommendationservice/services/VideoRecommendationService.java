@@ -1,7 +1,7 @@
 package com.emanuel.recommendationservice.services;
 
-import com.emanuel.recommendationservice.dtos.ImageDto;
-import com.emanuel.recommendationservice.dtos.VideoDto;
+import com.emanuel.starterlibrary.dtos.ImageDto;
+import com.emanuel.starterlibrary.dtos.VideoDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

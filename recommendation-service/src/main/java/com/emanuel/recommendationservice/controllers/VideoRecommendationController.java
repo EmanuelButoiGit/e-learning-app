@@ -1,9 +1,7 @@
 package com.emanuel.recommendationservice.controllers;
 
-import com.emanuel.recommendationservice.dtos.ImageDto;
-import com.emanuel.recommendationservice.dtos.VideoDto;
-import com.emanuel.recommendationservice.services.ImageRecommendationService;
 import com.emanuel.recommendationservice.services.VideoRecommendationService;
+import com.emanuel.starterlibrary.dtos.VideoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/recommendation/image")
+@RequestMapping("api/recommendation/video")
 public class VideoRecommendationController {
     private final VideoRecommendationService videoRecommendationService;
 

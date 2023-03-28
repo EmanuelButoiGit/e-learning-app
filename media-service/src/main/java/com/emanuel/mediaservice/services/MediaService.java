@@ -2,12 +2,12 @@ package com.emanuel.mediaservice.services;
 
 import com.emanuel.mediaservice.options.FileOption;
 import com.emanuel.mediaservice.converters.MediaConverter;
-import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.MediaEntity;
-import com.emanuel.mediaservice.exceptions.DataBaseException;
-import com.emanuel.mediaservice.exceptions.EntityNotFoundException;
-import com.emanuel.mediaservice.exceptions.InfectedFileException;
 import com.emanuel.mediaservice.repositories.MediaRepository;
+import com.emanuel.starterlibrary.dtos.MediaDto;
+import com.emanuel.starterlibrary.exceptions.DataBaseException;
+import com.emanuel.starterlibrary.exceptions.EntityNotFoundException;
+import com.emanuel.starterlibrary.exceptions.InfectedFileException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;

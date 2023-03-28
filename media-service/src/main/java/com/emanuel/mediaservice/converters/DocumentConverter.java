@@ -1,9 +1,9 @@
 package com.emanuel.mediaservice.converters;
 
-import com.emanuel.mediaservice.dtos.DocumentDto;
-import com.emanuel.mediaservice.dtos.MediaDto;
 import com.emanuel.mediaservice.entities.DocumentEntity;
 import com.emanuel.mediaservice.entities.MediaEntity;
+import com.emanuel.starterlibrary.dtos.DocumentDto;
+import com.emanuel.starterlibrary.dtos.MediaDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
