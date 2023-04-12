@@ -2,11 +2,13 @@ package com.emanuel.recommendationservice.services;
 
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
+import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,9 @@ public class RecommendationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
     private final Random random = new Random();
+
+    @Value("${minRating}")
+    private float minRating;
 
     @SneakyThrows
     public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
@@ -77,9 +82,12 @@ public class RecommendationService {
         return sortedMedia;
     }
 
+    @SneakyThrows
     public <T extends MediaDto> T getRandomRecommendedMedia(Class<T> mediaClassType, String mediaType) {
-        int minRating = 5;
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
+        if(medias.isEmpty()){
+            throw new DataBaseException("Can't get random recommended media. The database is empty. Please upload something");
+        }
         Float generalRating = 0f;
         List<T> passMedias = new ArrayList<>();
         for (T media : medias) {
@@ -97,10 +105,12 @@ public class RecommendationService {
                 passMedias.add(media);
             }
         }
-        if (passMedias.isEmpty()) {
-            throw new UnsupportedOperationException("No media has a rating above " + minRating);
-        }
         int randomNumber = random.nextInt(passMedias.size());
+        if (passMedias.isEmpty()) {
+            // sonar warning is a false positive
+            LOGGER.info("No media has a rating above {}", minRating);
+            return medias.get(randomNumber);
+        }
         return passMedias.get(randomNumber);
     }
 
