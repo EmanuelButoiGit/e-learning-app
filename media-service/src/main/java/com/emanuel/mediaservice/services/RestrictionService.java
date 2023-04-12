@@ -3,6 +3,9 @@ package com.emanuel.mediaservice.services;
 import com.emanuel.starterlibrary.exceptions.WrongExtensionException;
 import lombok.SneakyThrows;
 import org.apache.tika.Tika;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +19,10 @@ public class RestrictionService {
 
     @SneakyThrows
     public String validateExtensionAndMimeType(String[] fileFormat, MultipartFile file){
+        Objects.requireNonNull(file, "File cannot be null");
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File cannot be empty");
+        }
         String fileName = Objects.requireNonNull(file.getOriginalFilename());
         String[] parts = fileName.split("\\.");
         String extension = parts[parts.length - 1];
@@ -43,4 +50,12 @@ public class RestrictionService {
         }
         return extension;
     }
+
+    public String sanitizeString(String string){
+        // Sanitize string
+        Safelist safelist = Safelist.basic();
+        Cleaner cleaner = new Cleaner(safelist);
+        return cleaner.clean(Jsoup.parse(string)).text();
+    }
+
 }

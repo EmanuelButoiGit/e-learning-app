@@ -49,6 +49,8 @@ public class MediaService {
 
     @SneakyThrows
     public MediaDto getMediaFields(MultipartFile file, String title, String description, String extension){
+        title = restrictionService.sanitizeString(title);
+        description = restrictionService.sanitizeString(description);
         boolean isInfected = scanService.scanFileForViruses(file);
         if (isInfected) {
             throw new InfectedFileException("The uploaded file is infected with viruses.");
@@ -96,6 +98,8 @@ public class MediaService {
 
     @SneakyThrows
     public MediaDto updateMediaFields(Long id, MediaDto dto) {
+        dto.setTitle(restrictionService.sanitizeString(dto.getTitle()));
+        dto.setDescription(restrictionService.sanitizeString(dto.getDescription()));
         boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
         if (isInfected) {
             throw new InfectedFileException("The updated content is infected with viruses.");
