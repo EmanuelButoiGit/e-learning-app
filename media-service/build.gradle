@@ -23,24 +23,22 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'org.postgresql:postgresql'
 	// for logging
-	implementation 'org.slf4j:slf4j-api:1.7.30'
-	implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
-	implementation 'org.slf4j:log4j-over-slf4j:1.7.30'
-	implementation 'ch.qos.logback:logback-classic:1.2.3'
+	implementation 'org.slf4j:slf4j-api:2.0.5'
+	implementation 'org.slf4j:jcl-over-slf4j:2.0.5'
+	implementation 'org.slf4j:log4j-over-slf4j:2.0.5'
+	implementation 'ch.qos.logback:logback-classic:1.4.6'
 	implementation 'org.bytedeco:javacv:1.5.8'
 	// for medias
-	implementation 'org.apache.tika:tika-core:2.6.0'
+	implementation 'org.apache.tika:tika-core:2.7.0'
 	implementation 'org.bytedeco:javacv-platform:1.5.8'
 	implementation 'org.apache.pdfbox:pdfbox:2.0.27'
 	implementation 'org.apache.poi:poi-ooxml:5.2.3'
 	implementation 'com.mpatric:mp3agic:0.9.1'
 	implementation 'org:jaudiotagger:2.0.3'
-	// for sanitizing
-	implementation 'org.jsoup:jsoup:1.14.3'
 }
 
 tasks.named('test') {
