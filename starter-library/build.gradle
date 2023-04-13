@@ -23,7 +23,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+	// for sanitizing
+	implementation 'org.jsoup:jsoup:1.15.4'
 }
 
 tasks.named('test') {
