@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -59,7 +60,7 @@ public class RatingController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a specific media rating file based on a giving media rating id")
     @ApiResponse(responseCode = "200", description = "Specific media rating file was updated based on a giving media rating id")
-    public RatingDto updateRating(@PathVariable("id") Long id, @RequestBody() RatingDto rating) {
+    public RatingDto updateRating(@PathVariable("id") Long id, @RequestBody @Valid RatingDto rating) {
         return ratingService.updateRating(id, rating);
     }
 
