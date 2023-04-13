@@ -12,16 +12,22 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Service
-public class RestrictionService {
+public class ValidationService {
 
     @SneakyThrows
-    public String validateExtensionAndMimeType(String[] fileFormat, MultipartFile file){
+    public String validateFile(String[] fileFormat, MultipartFile file){
+        // validate file and extension
+        Objects.requireNonNull(file, "File cannot be null");
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File cannot be empty");
+        }
         String fileName = Objects.requireNonNull(file.getOriginalFilename());
         String[] parts = fileName.split("\\.");
         String extension = parts[parts.length - 1];
         if (Arrays.stream(fileFormat).noneMatch(ext -> ext.equalsIgnoreCase(extension))) {
             throw new WrongExtensionException(extension);
         }
+        // validate the mime type
         Tika tika = new Tika();
         try (InputStream inputStream = file.getInputStream()) {
             String mimeType = tika.detect(inputStream);

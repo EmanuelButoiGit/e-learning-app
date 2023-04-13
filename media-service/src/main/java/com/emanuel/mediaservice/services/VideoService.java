@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class VideoService {
 
-    private final RestrictionService restrictionService;
+    private final ValidationService validationService;
     private final MediaService mediaService;
     private final MediaConverter mediaConverter;
     private final QualityService qualityService;
@@ -34,7 +34,7 @@ public class VideoService {
 
     @SneakyThrows
     public VideoDto uploadVideo(MultipartFile file, String title, String description) {
-        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getVIDEO_EXTENSIONS(), file);
+        String extension = validationService.validateFile(FileOption.getVIDEO_EXTENSIONS(), file);
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description, extension);
         long duration;
         int width;

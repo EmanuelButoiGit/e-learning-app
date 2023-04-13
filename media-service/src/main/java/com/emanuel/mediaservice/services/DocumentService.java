@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DocumentService {
 
-    private final RestrictionService restrictionService;
+    private final ValidationService validationService;
     private final MediaService mediaService;
     private final MediaConverter mediaConverter;
     private final DocumentRepository documentRepository;
@@ -38,7 +38,7 @@ public class DocumentService {
 
     @SneakyThrows
     public DocumentDto uploadDocument(MultipartFile file, String title, String description) {
-        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getDOCUMENT_EXTENSIONS(), file);
+        String extension = validationService.validateFile(FileOption.getDOCUMENT_EXTENSIONS(), file);
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description, extension);
         int numberOfPages = 0;
         if("docx".equalsIgnoreCase(extension)) {

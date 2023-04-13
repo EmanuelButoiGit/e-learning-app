@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ImageService {
 
-    private final RestrictionService restrictionService;
+    private final ValidationService validationService;
     private final MediaService mediaService;
     private final MediaConverter mediaConverter;
     private final QualityService qualityService;
@@ -39,7 +39,7 @@ public class ImageService {
 
     @SneakyThrows
     public ImageDto uploadImage(MultipartFile file, String title, String description) {
-        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getIMAGE_EXTENSIONS(), file);
+        String extension = validationService.validateFile(FileOption.getIMAGE_EXTENSIONS(), file);
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description, extension);
         BufferedImage image = null;
         try (InputStream inputStream = file.getInputStream()) {

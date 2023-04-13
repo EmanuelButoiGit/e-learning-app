@@ -6,7 +6,6 @@ plugins {
 
 group = 'com.emanuel'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
 
 configurations {
 	compileOnly {
@@ -24,9 +23,11 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'org.postgresql:postgresql'
+	// for sanitizing
+	implementation 'org.jsoup:jsoup:1.15.4'
 }
 
 tasks.named('test') {
