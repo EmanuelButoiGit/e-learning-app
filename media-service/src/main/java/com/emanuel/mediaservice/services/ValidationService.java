@@ -3,9 +3,6 @@ package com.emanuel.mediaservice.services;
 import com.emanuel.starterlibrary.exceptions.WrongExtensionException;
 import lombok.SneakyThrows;
 import org.apache.tika.Tika;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Cleaner;
-import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,10 +12,11 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Service
-public class RestrictionService {
+public class ValidationService {
 
     @SneakyThrows
-    public String validateExtensionAndMimeType(String[] fileFormat, MultipartFile file){
+    public String validateFile(String[] fileFormat, MultipartFile file){
+        // validate file and extension
         Objects.requireNonNull(file, "File cannot be null");
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File cannot be empty");
@@ -29,6 +27,7 @@ public class RestrictionService {
         if (Arrays.stream(fileFormat).noneMatch(ext -> ext.equalsIgnoreCase(extension))) {
             throw new WrongExtensionException(extension);
         }
+        // validate the mime type
         Tika tika = new Tika();
         try (InputStream inputStream = file.getInputStream()) {
             String mimeType = tika.detect(inputStream);
@@ -50,12 +49,4 @@ public class RestrictionService {
         }
         return extension;
     }
-
-    public String sanitizeString(String string){
-        // Sanitize string
-        Safelist safelist = Safelist.basic();
-        Cleaner cleaner = new Cleaner(safelist);
-        return cleaner.clean(Jsoup.parse(string)).text();
-    }
-
 }

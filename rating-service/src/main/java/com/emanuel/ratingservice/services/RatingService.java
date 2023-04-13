@@ -7,6 +7,7 @@ import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.EntityNotFoundException;
+import com.emanuel.starterlibrary.services.SanitizationService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class RatingService {
 
     private final RatingRepository ratingRepository;
+    private final SanitizationService sanitizationService;
     private final RatingConverter ratingConverter;
 
     @SneakyThrows
@@ -42,6 +44,8 @@ public class RatingService {
         if (matchingRating.isPresent()) {
             throw new DataBaseException("A rating already exists for the given media id: " + rating.getMediaId());
         }
+        rating.setTitle(sanitizationService.sanitizeString(rating.getTitle()));
+        rating.setDescription(sanitizationService.sanitizeString(rating.getDescription()));
         RatingEntity ratingEntity =
                 new RatingEntity(null,
                         rating.getMediaId(),
@@ -109,6 +113,8 @@ public class RatingService {
             throw new DataBaseException("A rating already exists for the given media id: " + updatedRating.getMediaId());
         }
         RatingDto rating = getRatingById(id);
+        updatedRating.setTitle(sanitizationService.sanitizeString(rating.getTitle()));
+        updatedRating.setDescription(sanitizationService.sanitizeString(rating.getDescription()));
         rating.setId(updatedRating.getId());
         rating.setMediaId(updatedRating.getMediaId());
         rating.setTitle(updatedRating.getTitle());

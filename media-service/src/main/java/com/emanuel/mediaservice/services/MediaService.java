@@ -1,13 +1,14 @@
 package com.emanuel.mediaservice.services;
 
-import com.emanuel.mediaservice.options.FileOption;
 import com.emanuel.mediaservice.converters.MediaConverter;
 import com.emanuel.mediaservice.entities.MediaEntity;
+import com.emanuel.mediaservice.options.FileOption;
 import com.emanuel.mediaservice.repositories.MediaRepository;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.EntityNotFoundException;
 import com.emanuel.starterlibrary.exceptions.InfectedFileException;
+import com.emanuel.starterlibrary.services.SanitizationService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -19,18 +20,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
 @AllArgsConstructor
 public class MediaService {
 
-    private final RestrictionService restrictionService;
+    private final ValidationService validationService;
+    private final SanitizationService sanitizationService;
     private final ScanService scanService;
     private final MediaRepository mediaRepository;
     private final MediaConverter mediaConverter;
 
     public MediaDto uploadMedia(MultipartFile file, String title, String description) {
-        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getMEDIA_EXTENSIONS(), file);
+        String extension = validationService.validateFile(FileOption.getMEDIA_EXTENSIONS(), file);
         MediaDto mediaFields = getMediaFields(file, title, description, extension);
         MediaEntity mediaEntity =
                 new MediaEntity(null,
@@ -49,8 +50,8 @@ public class MediaService {
 
     @SneakyThrows
     public MediaDto getMediaFields(MultipartFile file, String title, String description, String extension){
-        title = restrictionService.sanitizeString(title);
-        description = restrictionService.sanitizeString(description);
+        title = sanitizationService.sanitizeString(title);
+        description = sanitizationService.sanitizeString(description);
         boolean isInfected = scanService.scanFileForViruses(file);
         if (isInfected) {
             throw new InfectedFileException("The uploaded file is infected with viruses.");
@@ -98,8 +99,8 @@ public class MediaService {
 
     @SneakyThrows
     public MediaDto updateMediaFields(Long id, MediaDto dto) {
-        dto.setTitle(restrictionService.sanitizeString(dto.getTitle()));
-        dto.setDescription(restrictionService.sanitizeString(dto.getDescription()));
+        dto.setTitle(sanitizationService.sanitizeString(dto.getTitle()));
+        dto.setDescription(sanitizationService.sanitizeString(dto.getDescription()));
         boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());
         if (isInfected) {
             throw new InfectedFileException("The updated content is infected with viruses.");

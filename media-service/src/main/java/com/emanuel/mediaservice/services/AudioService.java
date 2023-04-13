@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AudioService {
 
-    private final RestrictionService restrictionService;
+    private final ValidationService validationService;
     private final MediaService mediaService;
     private final MediaConverter mediaConverter;
     private final AudioRepository audioRepository;
@@ -40,7 +40,7 @@ public class AudioService {
 
     @SneakyThrows
     public AudioDto uploadAudio(MultipartFile file, String title, String description) {
-        String extension = restrictionService.validateExtensionAndMimeType(FileOption.getAUDIO_EXTENSIONS(), file);
+        String extension = validationService.validateFile(FileOption.getAUDIO_EXTENSIONS(), file);
         MediaDto mediaFields = mediaService.getMediaFields(file, title, description, extension);
         float sampleRate = 0;
         long duration = 0;
