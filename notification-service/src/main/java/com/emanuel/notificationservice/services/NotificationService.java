@@ -3,6 +3,7 @@ package com.emanuel.notificationservice.services;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,9 +21,10 @@ import java.util.Optional;
 public class NotificationService {
     @Autowired
     private MetricsEndpoint metricsEndpoint;
-
     @Autowired
     private JavaMailSender javaMailSender;
+    @Value("${spring.mail.username}")
+    private String username;
 
     public void sendActuatorMetrics() {
         StringBuilder messageBodyBuilder = new StringBuilder();
@@ -62,7 +64,7 @@ public class NotificationService {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo("anotification99@gmail.com"); // replace with user's email address
+            helper.setTo(username); // replace with user's email address
             helper.setSubject("Daily Actuator Metrics 🌞");
             helper.setText(messageBody);
             javaMailSender.send(message);
