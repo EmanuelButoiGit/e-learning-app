@@ -1,0 +1,17 @@
+To not leak password I created this helper.
+Please don't forget to add this application.properties:
+# enable actuator endpoints
+management.endpoints.web.exposure.include=*
+management.endpoint.health.show-details=always
+management.endpoint.info.enabled=true
+management.endpoint.mappings.enabled=true
+management.endpoint.trace.enabled=true
+management.endpoint.metrics.enabled=true
+
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=anotification99@gmail.com
+spring.mail.password=ugkxzuouwkjwkoag
+spring.mail.protocol=smtp
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
