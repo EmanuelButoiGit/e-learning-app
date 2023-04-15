@@ -73,8 +73,8 @@ public class NotificationService {
                 "we would like to inform you of a <b>critical issue</b> that requires your attention. " +
                 "Our monitoring system has detected a potential problem with one or more components of our system.<br> " +
                 "This issue could potentially impact the availability or performance " +
-                "of our services and requires immediate attention.</h3> <br><br>");
-        messageBodyBuilder.append("<h3>").append(alertMessage).append("</h3><br><br>");
+                "of our services and <b>requires immediate attention</b>.</h3> <br>");
+        messageBodyBuilder.append("<h1>").append(alertMessage).append("</h1><br>");
         messageBodyBuilder.append(H3STYLE +
                 "We understand the importance of our systems to your operations and apologize for any inconvenience " +
                 "or disruption this may cause.<br> " +
