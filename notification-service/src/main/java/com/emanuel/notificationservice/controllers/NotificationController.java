@@ -39,6 +39,21 @@ public class NotificationController {
         notificationService.sendAlert(alert);
     }
 
+    @PostMapping("/new/media")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Send new media notification")
+    @ApiResponse(responseCode = "200", description = "New media notification sent")
+    public void sendNewMediaNotification(
+            @Parameter(
+                    description = "new media",
+                    schema = @Schema(defaultValue = "New media test")
+            )
+            @RequestParam String newMedia
+    )
+    {
+        notificationService.sendNewMediaNotification(newMedia);
+    }
+
     @PostMapping("/top/medias")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Send top medias notification")
