@@ -57,6 +57,7 @@ public class ImageService {
         MediaEntity entity = mediaConverter.toEntity(mediaFields);
         ImageEntity imageEntity = new ImageEntity(entity, width, height, resolutionQuality);
         ImageEntity savedEntity = imageRepository.save(imageEntity);
+        mediaService.sendNotification(savedEntity.getTitle());
         return imageConverter.toDto(savedEntity);
     }
 

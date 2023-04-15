@@ -12,7 +12,10 @@ import com.emanuel.starterlibrary.services.SanitizationService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -45,7 +48,20 @@ public class MediaService {
                                 mediaFields.getSize()
                 );
         MediaEntity savedEntity = mediaRepository.save(mediaEntity);
+        sendNotification(savedEntity.getTitle());
         return mediaConverter.toDto(savedEntity);
+    }
+
+    @SneakyThrows
+    public void sendNotification(String name) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8083/api/notification/new/media")
+                    .queryParam("newMedia", "{name}");
+            String url = builder.buildAndExpand(name).toUriString();
+            new RestTemplate().postForEntity(url, Void.class, Void.class);
+        } catch (RestClientException e) {
+            throw new RestClientException("Can't send notification", e);
+        }
     }
 
     @SneakyThrows
