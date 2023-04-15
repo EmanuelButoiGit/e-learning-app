@@ -38,7 +38,7 @@ public class MediaRecommendationController {
     }
 
     @SneakyThrows
-    @GetMapping
+    @GetMapping("/top")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get the top media files by name")
     @ApiResponse(responseCode = "200", description = "All media names retrieved")
