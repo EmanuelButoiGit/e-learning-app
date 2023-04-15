@@ -1,16 +1,26 @@
 package com.emanuel.notificationservice.services;
 
 import com.emanuel.notificationservice.dtos.MetricDto;
+import com.emanuel.starterlibrary.exceptions.DeserializationException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -95,7 +105,25 @@ public class NotificationService {
         sendEmail(messageBodyBuilder, "Daily Actuator Metrics");
     }
 
+    @SneakyThrows
     public void sendTopMedias() {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8082/api/recommendation/media/top")
+                .queryParam("numberOfMedias", 10);
+        ResponseEntity<List<String>> response = new RestTemplate()
+                .exchange(builder.toUriString(), HttpMethod.GET, null,
+                        new ParameterizedTypeReference<List<String>>() {});
+        List<String> medias;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            medias = mapper.readValue(mapper.writeValueAsString(response.getBody()),
+                    mapper.getTypeFactory().constructCollectionType(List.class, String.class));
+            if (medias == null) {
+                throw new NullPointerException("The list is empty!");
+            }
+        } catch (IOException e) {
+            throw new DeserializationException("Failed to deserialize response: " + e.getMessage());
+        }
+
         StringBuilder messageBodyBuilder = new StringBuilder();
         messageBodyBuilder.append("<h1>&#11088; Weekly top medias</h1> <br>");
         messageBodyBuilder.append(INTRO).append(
@@ -103,16 +131,11 @@ public class NotificationService {
                         "Over the past week, we have seen a significant increase in user engagement, " +
                         "and I am pleased to report that the following medias have been particularly successful:" +
                         "</h3> <br>");
-        messageBodyBuilder.append(
-                "<ul>" +
-                "<li>" +
-                "Order Number: 1001<br>" +
-                "Customer Name: John Doe<br>" +
-                "Order Date: 2022-04-16<br>" +
-                "Total Amount: $250.00" +
-                "</li>" +
-                "</ul>"
-        );
+
+        messageBodyBuilder.append("<ol>");
+        medias.forEach((String media) -> messageBodyBuilder.append("<b><li>").append(media).append("</li></b>"));
+        messageBodyBuilder.append("</ol>");
+
         messageBodyBuilder.append("<br>");
         messageBodyBuilder.append(OUTRO)
                 .append(ENDING);
