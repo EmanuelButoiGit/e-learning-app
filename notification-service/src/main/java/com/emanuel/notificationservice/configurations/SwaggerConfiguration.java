@@ -17,7 +17,7 @@ public class SwaggerConfiguration {
         return new OpenAPI().info(
                 new Info()
                         .title("Documentation")
-                        .version("1.3")
+                        .version("1.4")
                         .contact(new Contact()
                                 .name("Butoi Emanuel-Sebastian")
                                 .url("https://www.linkedin.com/in/emanuel-sebastian-butoi-929271213/"))
