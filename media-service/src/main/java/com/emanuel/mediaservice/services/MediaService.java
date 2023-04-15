@@ -56,8 +56,9 @@ public class MediaService {
     public void sendNotification(String name) {
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8083/api/notification/new/media")
-                    .queryParam("newMedia", name);
-            new RestTemplate().postForEntity(builder.toUriString(), Void.class, Void.class);
+                    .queryParam("newMedia", "{name}");
+            String url = builder.buildAndExpand(name).toUriString();
+            new RestTemplate().postForEntity(url, Void.class, Void.class);
         } catch (RestClientException e) {
             throw new RestClientException("Can't send notification", e);
         }
