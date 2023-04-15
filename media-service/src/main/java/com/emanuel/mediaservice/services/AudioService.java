@@ -67,6 +67,7 @@ public class AudioService {
         MediaEntity entity = mediaConverter.toEntity(mediaFields);
         AudioEntity audioEntity = new AudioEntity(entity, duration, sampleRate);
         AudioEntity savedEntity = audioRepository.save(audioEntity);
+        mediaService.sendNotification(savedEntity.getTitle());
         return audioConverter.toDto(savedEntity);
     }
 

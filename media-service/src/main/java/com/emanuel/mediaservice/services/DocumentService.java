@@ -62,6 +62,7 @@ public class DocumentService {
         MediaEntity entity = mediaConverter.toEntity(mediaFields);
         DocumentEntity documentEntity = new DocumentEntity(entity, numberOfPages);
         DocumentEntity savedEntity = documentRepository.save(documentEntity);
+        mediaService.sendNotification(savedEntity.getTitle());
         return documentConverter.toDto(savedEntity);
     }
 

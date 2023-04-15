@@ -55,6 +55,7 @@ public class VideoService {
         MediaEntity entity = mediaConverter.toEntity(mediaFields);
         VideoEntity videoEntity = new VideoEntity(entity, width, height, qualityResolution, duration, aspectRatio, fps);
         VideoEntity savedEntity = videoRepository.save(videoEntity);
+        mediaService.sendNotification(savedEntity.getTitle());
         return videoConverter.toDto(savedEntity);
     }
 
