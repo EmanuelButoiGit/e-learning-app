@@ -26,6 +26,7 @@ public class RecommendationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
     private static final String RATING_MEDIA_ENDPOINT = "http://localhost:8081/api/rating/media/";
+    private  static final String DB_MEDIA_EXCEPTION = "Can't get random recommended media. The database is empty. Please upload something";
     private final Random random = new Random();
     @Value("${minRating}")
     private float minRating;
@@ -87,7 +88,7 @@ public class RecommendationService {
     public <T extends MediaDto> T getRandomRecommendedMedia(Class<T> mediaClassType, String mediaType) {
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         if(medias.isEmpty()){
-            throw new DataBaseException("Can't get random recommended media. The database is empty. Please upload something");
+            throw new DataBaseException(DB_MEDIA_EXCEPTION);
         }
         Float generalRating = 0f;
         List<T> passMedias = new ArrayList<>();
@@ -137,10 +138,10 @@ public class RecommendationService {
     }
 
     @SneakyThrows
-    public <T extends MediaDto> List<String> getTopMedia(Class<T> mediaClassType, String mediaType) {
+    public <T extends MediaDto> List<String> getTitlesOfMediasBasedOnRating(Class<T> mediaClassType, String mediaType, int nrOfMedias) {
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         if(medias.isEmpty()){
-            throw new DataBaseException("Can't get random recommended media. The database is empty. Please upload something");
+            throw new DataBaseException(DB_MEDIA_EXCEPTION);
         }
         Float generalRating;
         HashMap<String, Float> map = new HashMap<>();
@@ -161,11 +162,42 @@ public class RecommendationService {
             LOGGER.info("No media has a rating");
         }
         List<Map.Entry<String, Float>> entries = new ArrayList<>(map.entrySet());
-        entries.sort(Map.Entry.comparingByValue());
-        // return top 10 medias
+        entries.sort(Map.Entry.<String, Float>comparingByValue().reversed());
         return entries.stream()
                 .map(Map.Entry::getKey)
-                .limit(10)
+                .limit(nrOfMedias)
+                .collect(Collectors.toList());
+    }
+
+    @SneakyThrows
+    public <T extends MediaDto> List<T> getMediasBasedOnRating(Class<T> mediaClassType, String mediaType, int nrOfMedias) {
+        List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
+        if(medias.isEmpty()){
+            throw new DataBaseException(DB_MEDIA_EXCEPTION);
+        }
+        Float generalRating;
+        HashMap<T, Float> map = new HashMap<>();
+        for (T media : medias) {
+            try {
+                ResponseEntity<RatingDto> ratingResponse = new RestTemplate()
+                        .getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
+                RatingDto rating = ratingResponse.getBody();
+                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
+                    generalRating = rating.getGeneralRating();
+                    map.put(media, generalRating);
+                }
+            } catch (HttpClientErrorException | HttpServerErrorException ex) {
+                LOGGER.info(ex.getMessage());
+            }
+        }
+        if (map.isEmpty()) {
+            LOGGER.info("No media has a rating");
+        }
+        List<Map.Entry<T, Float>> entries = new ArrayList<>(map.entrySet());
+        entries.sort(Map.Entry.<T, Float>comparingByValue().reversed());
+        return entries.stream()
+                .map(Map.Entry::getKey)
+                .limit(nrOfMedias)
                 .collect(Collectors.toList());
     }
 }
