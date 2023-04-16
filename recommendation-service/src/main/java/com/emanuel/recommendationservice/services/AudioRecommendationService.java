@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 public class AudioRecommendationService {
     private final RecommendationService recommendationService;
 
-    public List<AudioDto> getRecommendedAudio(int nrOfAudios) {
+    public List<AudioDto> getRecommendedAudio(int numberOfAudios) {
         List<AudioDto> audios = recommendationService.getDtoListFromDatabase(AudioDto.class, "audio");
-        if (audios.size() < nrOfAudios){
+        if (audios.size() < numberOfAudios){
             throw new ArithmeticException("The database has less number of audios than you are trying to retrieve");
         }
         // set weights for each criterion
@@ -23,7 +23,7 @@ public class AudioRecommendationService {
         double extensionWeight = 0.15;
         double sampleRateWeight = 0.15;
         Map<Long, Double> scores = getAudioScores(audios, durationWeight, ratingWeight, extensionWeight, sampleRateWeight);
-        return recommendationService.getSortedMedia(nrOfAudios, audios, scores);
+        return recommendationService.getSortedMedia(numberOfAudios, audios, scores);
     }
 
     private Map<Long, Double> getAudioScores(List<AudioDto> audios, double durationWeight, double ratingWeight, double extensionWeight, double sampleRateWeight) {

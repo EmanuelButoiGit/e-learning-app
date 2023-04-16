@@ -138,7 +138,7 @@ public class RecommendationService {
     }
 
     @SneakyThrows
-    public <T extends MediaDto> List<String> getTitlesOfMediasBasedOnRating(Class<T> mediaClassType, String mediaType, int nrOfMedias) {
+    public <T extends MediaDto> List<String> getTitlesOfMediasBasedOnRating(Class<T> mediaClassType, String mediaType, int numberOfMedias) {
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
@@ -165,12 +165,12 @@ public class RecommendationService {
         entries.sort(Map.Entry.<String, Float>comparingByValue().reversed());
         return entries.stream()
                 .map(Map.Entry::getKey)
-                .limit(nrOfMedias)
+                .limit(numberOfMedias)
                 .collect(Collectors.toList());
     }
 
     @SneakyThrows
-    public <T extends MediaDto> List<T> getMediasBasedOnRating(Class<T> mediaClassType, String mediaType, int nrOfMedias) {
+    public <T extends MediaDto> List<T> getMediasBasedOnRating(Class<T> mediaClassType, String mediaType, int numberOfMedias) {
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
@@ -197,7 +197,7 @@ public class RecommendationService {
         entries.sort(Map.Entry.<T, Float>comparingByValue().reversed());
         return entries.stream()
                 .map(Map.Entry::getKey)
-                .limit(nrOfMedias)
+                .limit(numberOfMedias)
                 .collect(Collectors.toList());
     }
 }
