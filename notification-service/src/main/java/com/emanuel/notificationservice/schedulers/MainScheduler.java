@@ -1,8 +1,8 @@
 package com.emanuel.notificationservice.schedulers;
 
-import com.emanuel.notificationservice.dtos.MetricDto;
 import com.emanuel.notificationservice.services.MetricService;
 import com.emanuel.notificationservice.services.NotificationService;
+import com.emanuel.starterlibrary.dtos.MetricDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
@@ -22,17 +22,17 @@ public class MainScheduler {
     private Double jvmMemoryMax;
     private Double jvmMemoryUsed;
 
-    @Scheduled(cron = "0 0 7 * * ?")
+    @Scheduled(cron = "0 0 12 * * ?") // every day at noon
     public void sendActuatorMetrics() {
         notificationService.sendActuatorMetrics();
     }
 
-    @Scheduled(cron = "0 0 12 * * ?") // every day at noon
+    @Scheduled(cron = "0 0 9 ? * MON") // every monday at 9 AM
     public void sendTopMedias() {
         notificationService.sendTopMedias();
     }
 
-    @Scheduled(fixedRate = 60000 * 60) // run every 1 minute (60) // TO DO: put back to 1 minute and add initial delay of 1 hour
+    @Scheduled(initialDelay = 3600000, fixedRate = 60000) // run every 1 minute with an initial delay of 1 hour
     public void checkMetrics() {
         List<MetricDto> metrics = metricService.getMetrics();
         metrics.forEach(metric -> {

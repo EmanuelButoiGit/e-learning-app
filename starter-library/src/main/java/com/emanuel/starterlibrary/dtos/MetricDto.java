@@ -1,4 +1,4 @@
-package com.emanuel.notificationservice.dtos;
+package com.emanuel.starterlibrary.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

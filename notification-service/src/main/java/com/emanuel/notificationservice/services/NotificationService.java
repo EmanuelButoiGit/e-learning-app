@@ -1,6 +1,6 @@
 package com.emanuel.notificationservice.services;
 
-import com.emanuel.notificationservice.dtos.MetricDto;
+import com.emanuel.starterlibrary.dtos.MetricDto;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -110,8 +108,7 @@ public class NotificationService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8082/api/recommendation/media/top")
                 .queryParam("numberOfMedias", 10);
         ResponseEntity<List<String>> response = new RestTemplate()
-                .exchange(builder.toUriString(), HttpMethod.GET, null,
-                        new ParameterizedTypeReference<List<String>>() {});
+                .exchange(builder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
         List<String> medias;
         ObjectMapper mapper = new ObjectMapper();
         try {
