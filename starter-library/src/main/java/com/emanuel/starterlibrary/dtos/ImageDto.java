@@ -22,6 +22,7 @@ public class ImageDto extends MediaDto {
         this.resolutionQuality = resolutionQuality;
     }
 
+    @SuppressWarnings("squid:S00107")
     public ImageDto(Long id, String title, String description, String fileName, String extension, Date uploadDate,
                     String mimeType, byte[] content, Long size, Integer width, Integer height, Integer resolutionQuality) {
         super(id, title, description, fileName, extension, uploadDate, mimeType, content, size);
