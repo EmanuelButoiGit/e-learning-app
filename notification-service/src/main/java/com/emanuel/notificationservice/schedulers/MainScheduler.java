@@ -1,8 +1,8 @@
 package com.emanuel.notificationservice.schedulers;
 
-import com.emanuel.notificationservice.dtos.MetricDto;
 import com.emanuel.notificationservice.services.MetricService;
 import com.emanuel.notificationservice.services.NotificationService;
+import com.emanuel.starterlibrary.dtos.MetricDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;

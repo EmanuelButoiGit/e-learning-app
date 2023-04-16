@@ -1,6 +1,6 @@
 package com.emanuel.notificationservice.services;
 
-import com.emanuel.notificationservice.dtos.MetricDto;
+import com.emanuel.starterlibrary.dtos.MetricDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
