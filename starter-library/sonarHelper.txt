@@ -1,0 +1,1 @@
+gradlew.bat sonar -Dsonar.projectKey=starter-library -Dsonar.projectName='starter-library' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=?
