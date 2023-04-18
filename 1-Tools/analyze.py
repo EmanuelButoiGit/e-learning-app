@@ -48,7 +48,7 @@ print("\n")
 answer = input("Which project/service do you want to analyze? (0 - " + str(count - 1) + ")\n")
 system = service_name(int(answer))
 if system != "all":
-    command = "gradlew.bat sonar -Dsonar.projectKey=" + system + " -Dsonar.projectName=" + system + " -Dsonar.host.url=http://localhost:9000 -Dsonar.token=" + global_token
+    command = "gradlew.bat test sonar -Dsonar.projectKey=" + system + " -Dsonar.projectName=" + system + " -Dsonar.host.url=http://localhost:9000 -Dsonar.token=" + global_token
     os.chdir(root_path)
     path = root_path + "\\" + system
     ifExist = os.path.exists(path)
@@ -57,7 +57,7 @@ if system != "all":
     os.system(command)
 else: 
     for service in services:
-        command = "gradlew.bat sonar -Dsonar.projectKey=" + service + " -Dsonar.projectName=" + service + " -Dsonar.host.url=http://localhost:9000 -Dsonar.token=" + global_token
+        command = "gradlew.bat test sonar -Dsonar.projectKey=" + service + " -Dsonar.projectName=" + service + " -Dsonar.host.url=http://localhost:9000 -Dsonar.token=" + global_token
         os.chdir(root_path)
         path = root_path + "\\" + service
         ifExist = os.path.exists(path)
