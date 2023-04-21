@@ -31,3 +31,7 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+bootJar {
+	mainClass = 'com.emanuel.discoveryserver.DiscoveryServerApplication'
+}
