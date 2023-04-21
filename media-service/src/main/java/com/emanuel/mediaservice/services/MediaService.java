@@ -3,6 +3,7 @@ package com.emanuel.mediaservice.services;
 import com.emanuel.mediaservice.converters.MediaConverter;
 import com.emanuel.mediaservice.entities.MediaEntity;
 import com.emanuel.mediaservice.options.FileOption;
+import com.emanuel.mediaservice.proxies.NotificationServiceProxy;
 import com.emanuel.mediaservice.repositories.MediaRepository;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
@@ -21,7 +22,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,6 +32,8 @@ public class MediaService {
     private final ScanService scanService;
     private final MediaRepository mediaRepository;
     private final MediaConverter mediaConverter;
+
+    NotificationServiceProxy notificationServiceProxy;
 
     public MediaDto uploadMedia(MultipartFile file, String title, String description) {
         String extension = validationService.validateFile(FileOption.getMEDIA_EXTENSIONS(), file);
@@ -53,7 +55,9 @@ public class MediaService {
     }
 
     @SneakyThrows
-    public void sendNotification(String name) {
+    @SuppressWarnings("unused")
+    public void sendNotificationWithRest(String name){
+        // This is how it used to be before adding FEIGN for load balancing
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8083/api/notification/new/media")
                     .queryParam("newMedia", "{name}");
@@ -62,6 +66,10 @@ public class MediaService {
         } catch (RestClientException e) {
             throw new RestClientException("Can't send notification", e);
         }
+    }
+
+    public void sendNotification(String name) {
+        notificationServiceProxy.sendNewMediaNotification(name);
     }
 
     @SneakyThrows
@@ -87,7 +95,7 @@ public class MediaService {
             List<MediaEntity> allMedias = mediaRepository.findAll();
             return allMedias.stream()
                     .map(mediaConverter::toDto)
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Exception e) {
             throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
         }
