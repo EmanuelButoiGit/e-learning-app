@@ -35,6 +35,10 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	// for tracing
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-sleuth-brave'
+	implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
 	// for logging (compatible for java 8)
 	implementation 'org.slf4j:slf4j-api:1.7.30'
 	implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
