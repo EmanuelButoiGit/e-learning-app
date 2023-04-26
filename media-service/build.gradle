@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '2.7.9'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id "org.sonarqube" version "4.0.0.2929"
+	id 'com.palantir.docker' version '0.35.0'
 }
 
 group = 'com.emanuel'
@@ -16,6 +17,17 @@ configurations {
 
 repositories {
 	mavenCentral()
+}
+
+docker {
+	name "media-service"
+	dockerfile file('src/main/docker/Dockerfile')
+	copySpec.from(jar).rename(".*", "media-service.jar")
+	buildArgs(['JAR_FILE': "media-service.jar"])
+}
+
+bootJar {
+	mainClass = 'com.emanuel.mediaservice.MediaServiceApplication'
 }
 
 ext {
