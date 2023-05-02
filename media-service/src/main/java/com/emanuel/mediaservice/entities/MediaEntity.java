@@ -48,6 +48,6 @@ public class MediaEntity {
     private byte[] content;
 
     @NotNull
-    @Positive
+    @Min(value = 0) 
     private Long size;
 }

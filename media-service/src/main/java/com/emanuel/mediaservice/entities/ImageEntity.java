@@ -3,6 +3,7 @@ package com.emanuel.mediaservice.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -14,13 +15,13 @@ import javax.validation.constraints.Positive;
 @EqualsAndHashCode(callSuper = true)
 public class ImageEntity extends MediaEntity {
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Integer width;
     @NotNull
-    @Positive
+    @Min(value = 0) 
     private Integer height;
     @NotNull
-    @Positive
+    @Min(value = 0) 
     private Integer resolutionQuality;
 
     public ImageEntity(MediaEntity mediaEntity, Integer width, Integer height, Integer resolutionQuality) {

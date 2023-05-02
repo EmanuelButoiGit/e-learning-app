@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -14,13 +15,13 @@ import javax.validation.constraints.Positive;
 @EqualsAndHashCode(callSuper = true)
 public class VideoDto extends ImageDto {
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Long duration;
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Double aspectRatio;
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Double fps;
 
     public VideoDto(ImageDto imageDto, Long duration, Double aspectRatio, Double fps) {

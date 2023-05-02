@@ -2,6 +2,7 @@ package com.emanuel.starterlibrary.dtos;
 
 import lombok.*;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Date;
@@ -12,13 +13,13 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 public class ImageDto extends MediaDto {
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Integer width;
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Integer height;
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Integer resolutionQuality;
 
     public ImageDto(MediaDto mediaDto, Integer width, Integer height, Integer resolutionQuality) {

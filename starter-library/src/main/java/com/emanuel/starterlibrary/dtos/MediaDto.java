@@ -45,6 +45,6 @@ public class MediaDto {
     private byte[] content;
 
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Long size;
 }
