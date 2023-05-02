@@ -101,4 +101,17 @@ class ExceptionTest {
         WrongExtensionException wrongException = new WrongExtensionException(fileName, wrongMime, wrongExtension);
         Assertions.assertEquals(String.format(wrongMessage, fileName, wrongMime, wrongExtension), wrongException.getMessage());
     }
+
+    @Test
+    void SanitizationExceptionWithMessage() {
+        String message = "Test sanitization exception message";
+        SanitizationException exception = new SanitizationException(message);
+        Assertions.assertEquals(message, exception.getMessage());
+    }
+
+    @Test
+    void SanitizationExceptionWithNullMessage() {
+        SanitizationException exception = new SanitizationException(null);
+        Assertions.assertNull(exception.getMessage());
+    }
 }
