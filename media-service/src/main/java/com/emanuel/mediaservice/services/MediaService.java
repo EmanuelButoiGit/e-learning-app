@@ -18,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -102,27 +104,27 @@ public class MediaService {
     }
 
     @SneakyThrows
-    public MediaDto getMediaById(Long id) {
+    public MediaDto getMediaById(@NotNull @Min(value = 0) Long id) {
         MediaEntity media = new MediaEntity();
         final MediaEntity entity = media;
         media = mediaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return mediaConverter.toDto(media);
     }
 
-    public MediaDto deleteMedia(Long id) {
+    public MediaDto deleteMedia(@NotNull @Min(value = 0) Long id) {
         MediaDto media = getMediaById(id);
         mediaRepository.delete(mediaConverter.toEntity(media));
         return media;
     }
 
-    public MediaDto updateMedia(Long id, MediaDto dto) {
+    public MediaDto updateMedia(@NotNull @Min(value = 0) Long id, MediaDto dto) {
         MediaDto media = updateMediaFields(id, dto);
         MediaEntity mediaEntity = mediaRepository.save(mediaConverter.toEntity(media));
         return mediaConverter.toDto(mediaEntity);
     }
 
     @SneakyThrows
-    public MediaDto updateMediaFields(Long id, MediaDto dto) {
+    public MediaDto updateMediaFields(@NotNull @Min(value = 0) Long id, MediaDto dto) {
         dto.setTitle(sanitizationService.sanitizeString(dto.getTitle()));
         dto.setDescription(sanitizationService.sanitizeString(dto.getDescription()));
         boolean isInfected = scanService.scanContentForViruses(dto.getContent(), dto.getFileName());

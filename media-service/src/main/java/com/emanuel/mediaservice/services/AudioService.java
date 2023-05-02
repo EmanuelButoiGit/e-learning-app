@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -84,21 +86,21 @@ public class AudioService {
     }
 
     @SneakyThrows
-    public AudioDto getAudioById(Long id) {
+    public AudioDto getAudioById(@NotNull @Min(value = 0) Long id) {
         AudioEntity audio = new AudioEntity();
         final AudioEntity entity = audio;
         audio = audioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return audioConverter.toDto(audio);
     }
 
-    public AudioDto deleteAudio(Long id) {
+    public AudioDto deleteAudio(@NotNull @Min(value = 0) Long id) {
         AudioDto audio = getAudioById(id);
         audioRepository.delete(audioConverter.toEntity(audio));
         return audio;
     }
 
     @SneakyThrows
-    public AudioDto updateAudio(Long id, AudioDto dto) {
+    public AudioDto updateAudio(@NotNull @Min(value = 0) Long id, AudioDto dto) {
         MediaDto media = mediaService.updateMediaFields(id, dto);
         AudioDto updatedAudio = new AudioDto(media, dto.getDuration(), dto.getSampleRate());
         AudioEntity audioEntity = audioRepository.save(audioConverter.toEntity(updatedAudio));

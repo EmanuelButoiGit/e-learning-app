@@ -6,6 +6,8 @@ import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -15,13 +17,12 @@ import java.util.Objects;
 public class ValidationService {
 
     @SneakyThrows
-    public String validateFile(String[] fileFormat, MultipartFile file){
+    public String validateFile(String[] fileFormat, @NotNull @NotEmpty MultipartFile file){
         // validate file and extension
-        Objects.requireNonNull(file, "File cannot be null");
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File cannot be empty");
-        }
         String fileName = Objects.requireNonNull(file.getOriginalFilename());
+        if (file.isEmpty() || fileName.isBlank()){
+            throw new IllegalArgumentException("File is empty or file name is blank");
+        }
         String[] parts = fileName.split("\\.");
         String extension = parts[parts.length - 1];
         if (Arrays.stream(fileFormat).noneMatch(ext -> ext.equalsIgnoreCase(extension))) {
