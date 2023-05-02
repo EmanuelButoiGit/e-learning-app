@@ -31,36 +31,36 @@ public class RatingDto {
     @NotNull(message = "Tutor rating cannot be null")
     @Positive(message = "Tutor rating must be positive")
     @DecimalMin(value = "0.0", message = "Tutor rating must be greater than or equal to 0")
-    @DecimalMax(value = "10.0", inclusive = false, message = "Tutor rating must be less than or equal to 10")
+    @DecimalMax(value = "10.0", message = "Tutor rating must be less than or equal to 10")
     private Float tutorRating;
 
     @NotNull(message = "Content rating cannot be null")
     @Positive(message = "Content rating must be positive")
     @DecimalMin(value = "0.0", message = "Content rating must be greater than or equal to 0")
-    @DecimalMax(value = "10.0", inclusive = false, message = "Content rating must be less than or equal to 10")
+    @DecimalMax(value = "10.0", message = "Content rating must be less than or equal to 10")
     private Float contentRating;
 
     @NotNull(message = "Content structure rating cannot be null")
     @Positive(message = "Content structure rating must be positive")
     @DecimalMin(value = "0.0", message = "Content structure rating must be greater than or equal to 0")
-    @DecimalMax(value = "10.0", inclusive = false, message = "Content structure rating must be less than or equal to 10")
+    @DecimalMax(value = "10.0", message = "Content structure rating must be less than or equal to 10")
     private Float contentStructureRating;
 
     @NotNull(message = "Presentation rating cannot be null")
     @Positive(message = "Presentation rating must be positive")
     @DecimalMin(value = "0.0", message = "Presentation rating must be greater than or equal to 0")
-    @DecimalMax(value = "10.0", inclusive = false, message = "Presentation rating must be less than or equal to 10")
+    @DecimalMax(value = "10.0", message = "Presentation rating must be less than or equal to 10")
     private Float presentationRating;
 
     @NotNull(message = "Engagement rating cannot be null")
     @Positive(message = "Engagement rating must be positive")
     @DecimalMin(value = "0.0", message = "Engagement rating must be greater than or equal to 0")
-    @DecimalMax(value = "10.0", inclusive = false, message = "Engagement rating must be less than or equal to 10")
+    @DecimalMax(value = "10.0", message = "Engagement rating must be less than or equal to 10")
     private Float engagementRating;
 
     @NotNull(message = "Difficulty rating cannot be null")
     @Positive(message = "Difficulty rating must be positive")
     @DecimalMin(value = "0.0", message = "Difficulty rating must be greater than or equal to 0")
-    @DecimalMax(value = "10.0", inclusive = false, message = "Difficulty rating must be less than or equal to 10")
+    @DecimalMax(value = "10.0", message = "Difficulty rating must be less than or equal to 10")
     private Float difficultyRating;
 }

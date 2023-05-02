@@ -26,10 +26,27 @@ public class MediaDto {
     @Size(min = 10, max = 200, message = "Description must be between 10 and 200 characters")
     private String description;
 
+    @NotBlank
+    @Positive
     private String fileName;
+
+    @NotBlank
+    @Positive
     private String extension;
+
+    @NotNull
+    @Positive
     private Date uploadDate;
+
+    @NotBlank
+    @Positive
     private String mimeType;
+
+    @NotNull
+    @Positive
     private byte[] content;
+
+    @NotNull
+    @Positive
     private Long size;
 }
