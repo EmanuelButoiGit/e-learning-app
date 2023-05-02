@@ -10,11 +10,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/media")
@@ -28,16 +35,19 @@ public class MediaController {
     @Operation(summary = "Upload a media file")
     @ApiResponse(responseCode = "201", description = "Media uploaded")
     public MediaDto uploadMedia(
+            @NotEmpty @NotNull
             @RequestParam("file") MultipartFile file,
             @Parameter(
                     description = "title",
                     schema = @Schema(defaultValue = "Title test")
             )
+            @NotEmpty @NotBlank
             String title,
             @Parameter(
                     description = "description",
                     schema = @Schema(defaultValue = "Description test")
             )
+            @NotEmpty @NotBlank
             String description
     )
     {
@@ -58,7 +68,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a specific media file based on a giving media id")
     @ApiResponse(responseCode = "200", description = "Specific media file retrieved based on a giving media id")
-    public MediaDto getMediaById(@PathVariable Long id)
+    public MediaDto getMediaById(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return mediaService.getMediaById(id);
     }
@@ -67,7 +77,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a specific media file based on a giving media id")
     @ApiResponse(responseCode = "200", description = "Specific media file was deleted based on a giving media id")
-    public MediaDto deleteMedia(@PathVariable Long id)
+    public MediaDto deleteMedia(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return mediaService.deleteMedia(id);
     }
@@ -76,7 +86,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a specific media file based on a giving media id")
     @ApiResponse(responseCode = "200", description = "Specific media file was updated based on a giving media id")
-    public MediaDto updateMedia(@PathVariable("id") Long id, @RequestBody() MediaDto media) {
+    public MediaDto updateMedia(@PathVariable @NotNull @Min(value = 0) Long id, @Valid @RequestBody() MediaDto media) {
         return mediaService.updateMedia(id, media);
     }
 

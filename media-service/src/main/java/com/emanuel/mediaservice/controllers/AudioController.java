@@ -10,11 +10,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/audio")
@@ -28,16 +35,19 @@ public class AudioController {
     @Operation(summary = "Upload a audio file")
     @ApiResponse(responseCode = "201", description = "Audio uploaded")
     public AudioDto uploadAudio(
+            @NotEmpty @NotNull
             @RequestParam("file") MultipartFile file,
             @Parameter(
                     description = "title",
                     schema = @Schema(defaultValue = "Title test")
             )
+            @NotEmpty @NotBlank
             String title,
             @Parameter(
                     description = "description",
                     schema = @Schema(defaultValue = "Description test")
             )
+            @NotEmpty @NotBlank
             String description
     )
     {
@@ -58,7 +68,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a specific audio file based on a giving audio id")
     @ApiResponse(responseCode = "200", description = "Specific audio file retrieved based on a giving audio id")
-    public AudioDto getAudioById(@PathVariable Long id)
+    public AudioDto getAudioById(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return audioService.getAudioById(id);
     }
@@ -67,7 +77,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a specific audio file based on a giving audio id")
     @ApiResponse(responseCode = "200", description = "Specific audio file was deleted based on a giving audio id")
-    public AudioDto deleteAudio(@PathVariable Long id)
+    public AudioDto deleteAudio(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return audioService.deleteAudio(id);
     }
@@ -76,7 +86,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a specific audio file based on a giving audio id")
     @ApiResponse(responseCode = "200", description = "Specific audio file was updated based on a giving audio id")
-    public AudioDto updateAudio(@PathVariable("id") Long id, @RequestBody() AudioDto audio) {
+    public AudioDto updateAudio(@PathVariable @NotNull @Min(value = 0) Long id, @Valid @RequestBody() AudioDto audio) {
         return audioService.updateAudio(id, audio);
     }
 

@@ -10,11 +10,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/video")
@@ -28,16 +35,19 @@ public class VideoController {
     @Operation(summary = "Upload a video file")
     @ApiResponse(responseCode = "201", description = "Video uploaded")
     public VideoDto uploadVideo(
+            @NotEmpty @NotNull
             @RequestParam("file") MultipartFile file,
             @Parameter(
                     description = "title",
                     schema = @Schema(defaultValue = "Title test")
             )
+            @NotEmpty @NotBlank
             String title,
             @Parameter(
                     description = "description",
                     schema = @Schema(defaultValue = "Description test")
             )
+            @NotEmpty @NotBlank
             String description
     )
     {
@@ -58,7 +68,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a specific video file based on a giving video id")
     @ApiResponse(responseCode = "200", description = "Specific video file retrieved based on a giving video id")
-    public VideoDto getVideoById(@PathVariable Long id)
+    public VideoDto getVideoById(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return videoService.getVideoById(id);
     }
@@ -67,7 +77,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a specific video file based on a giving video id")
     @ApiResponse(responseCode = "200", description = "Specific video file was deleted based on a giving video id")
-    public VideoDto deleteVideo(@PathVariable Long id)
+    public VideoDto deleteVideo(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return videoService.deleteVideo(id);
     }
@@ -76,7 +86,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a specific video file based on a giving video id")
     @ApiResponse(responseCode = "200", description = "Specific video file was updated based on a giving video id")
-    public VideoDto updateVideo(@PathVariable("id") Long id, @RequestBody() VideoDto video) {
+    public VideoDto updateVideo(@PathVariable @NotNull @Min(value = 0) Long id, @Valid @RequestBody() VideoDto video) {
         return videoService.updateVideo(id, video);
     }
 
