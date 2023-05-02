@@ -9,14 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 @Service
 public class SanitizationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SanitizationService.class);
     @SneakyThrows
-    public String sanitizeString(@Valid String input){
+    public String sanitizeString(@NotBlank @NotEmpty String input){
         try {
             Safelist safelist = Safelist.basic();
             Cleaner cleaner = new Cleaner(safelist);

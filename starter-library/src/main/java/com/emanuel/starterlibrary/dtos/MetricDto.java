@@ -5,21 +5,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotEmpty;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MetricDto {
     @NotBlank
-    @Positive
+    @NotEmpty
     private String name;
 
     @NotBlank
-    @Positive
+    @NotEmpty
     private String description;
 
     @NotBlank
-    @Positive
+    @NotEmpty
     private String emoji;
 }

@@ -2,8 +2,8 @@ package com.emanuel.starterlibrary.dtos;
 
 import lombok.*;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 @Data
 @NoArgsConstructor
@@ -11,7 +11,7 @@ import javax.validation.constraints.Positive;
 @EqualsAndHashCode(callSuper = true)
 public class DocumentDto extends MediaDto {
     @NotNull
-    @Positive
+    @Min(value = 0)
     private Integer numberOfPages;
 
     public DocumentDto(MediaDto mediaDto, Integer numberOfPages) {

@@ -11,18 +11,20 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 public class RatingDto {
     @NotNull(message = "ID cannot be null")
-    @Positive(message = "ID must be positive")
+    @Min(value = 0, message = "ID must be non-negative")
     private Long id;
 
     @NotNull(message = "Media ID cannot be null")
-    @Positive(message = "Media ID must be positive")
+    @Min(value = 0, message = "Media ID must be non-negative")
     private Long mediaId;
 
     @NotBlank(message = "Title cannot be blank")
+    @NotEmpty(message = "Title cannot be empty")
     @Size(min = 5, max = 50, message = "Title must be between 5 and 50 characters")
     private String title;
 
     @NotBlank(message = "Description cannot be blank")
+    @NotEmpty(message = "Description cannot be empty")
     @Size(min = 10, max = 200, message = "Description must be between 10 and 200 characters")
     private String description;
 
