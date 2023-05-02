@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public class QualityService {
     private static final Logger LOGGER = LoggerFactory.getLogger(QualityService.class);
 
+    @SuppressWarnings("squid:S3776")
     public Integer calculateResolutionQuality(Integer width, Integer height) {
         if (width <= 144 && height <= 144) {
             LOGGER.info("This media resolution quality is 144p");

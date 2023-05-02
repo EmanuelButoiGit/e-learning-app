@@ -30,7 +30,7 @@ public class ScanService {
 
         // Build the API request URL
         String apiUrl = "https://www.virustotal.com/vtapi/v2/file/scan";
-        String urlParameters = "apikey=" + VIRUS_TOTAL_API_KEY + "&file=" + URLEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()), "UTF-8");
+        String urlParameters = "apikey=" + VIRUS_TOTAL_API_KEY + "&file=" + URLEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()), StandardCharsets.UTF_8);
         URL url = new URL(apiUrl + "?" + urlParameters);
 
         return sendRequest(url, encodedFileContent);
@@ -44,7 +44,7 @@ public class ScanService {
 
         // Build the API request URL
         String apiUrl = "https://www.virustotal.com/vtapi/v2/file/scan";
-        String urlParameters = "apikey=" + VIRUS_TOTAL_API_KEY + "&file=" + URLEncoder.encode(Objects.requireNonNull(fileName), "UTF-8");
+        String urlParameters = "apikey=" + VIRUS_TOTAL_API_KEY + "&file=" + URLEncoder.encode(Objects.requireNonNull(fileName), StandardCharsets.UTF_8);
         URL url = new URL(apiUrl + "?" + urlParameters);
 
         return sendRequest(url, encodedFileContent);

@@ -19,6 +19,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,21 +81,21 @@ public class DocumentService {
     }
 
     @SneakyThrows
-    public DocumentDto getDocumentById(Long id) {
+    public DocumentDto getDocumentById(@NotNull @Min(value = 0) Long id) {
         DocumentEntity document = new DocumentEntity();
         final DocumentEntity entity = document;
         document = documentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return documentConverter.toDto(document);
     }
 
-    public DocumentDto deleteDocument(Long id) {
+    public DocumentDto deleteDocument(@NotNull @Min(value = 0) Long id) {
         DocumentDto document = getDocumentById(id);
         documentRepository.delete(documentConverter.toEntity(document));
         return document;
     }
 
     @SneakyThrows
-    public DocumentDto updateDocument(Long id, DocumentDto dto) {
+    public DocumentDto updateDocument(@NotNull @Min(value = 0) Long id, DocumentDto dto) {
         MediaDto media = mediaService.updateMediaFields(id, dto);
         DocumentDto updatedDocument = new DocumentDto(media, dto.getNumberOfPages());
         DocumentEntity documentEntity = documentRepository.save(documentConverter.toEntity(updatedDocument));

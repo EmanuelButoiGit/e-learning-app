@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Data
 @Entity
@@ -15,12 +18,25 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class VideoEntity extends MediaEntity {
+    @NotNull
+    @Min(value = 0)
     private Integer width;
+    @NotNull
+    @Min(value = 0) 
     private Integer height;
+    @NotNull
+    @Min(value = 0) 
     private Integer resolutionQuality;
+    @NotNull
+    @Min(value = 0) 
     private Long duration;
+    @NotNull
+    @Min(value = 0) 
     private Double aspectRatio;
+    @NotNull
+    @Min(value = 0) 
     private Double fps;
+
 
     public VideoEntity(MediaEntity mediaEntity, Integer width, Integer height, Integer resolutionQuality,
                        Long duration, Double aspectRatio, Double fps) {

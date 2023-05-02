@@ -3,6 +3,8 @@ package com.emanuel.mediaservice.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -11,6 +13,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class DocumentEntity extends MediaEntity {
+    @NotNull
+    @Min(value = 0)
     private Integer numberOfPages;
 
     public DocumentEntity(MediaEntity mediaEntity, Integer numberOfPages) {

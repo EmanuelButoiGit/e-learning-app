@@ -34,6 +34,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// for sanitizing
 	implementation 'org.jsoup:jsoup:1.15.4'
+	// for logging (compatible for java 8)
+	implementation 'org.slf4j:slf4j-api:1.7.30'
+	implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
+	implementation 'org.slf4j:log4j-over-slf4j:1.7.30'
+	implementation 'ch.qos.logback:logback-classic:1.2.3'
 }
 
 tasks.named('test') {

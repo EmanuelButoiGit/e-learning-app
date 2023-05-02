@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,19 +73,19 @@ public class VideoService {
         }
     }
 
-    public VideoDto getVideoById(Long id) {
+    public VideoDto getVideoById(@NotNull @Min(value = 0) Long id) {
         VideoEntity video = videoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("VideoEntity not found with id " + id));
         return videoConverter.toDto(video);
     }
 
-    public VideoDto deleteVideo(Long id) {
+    public VideoDto deleteVideo(@NotNull @Min(value = 0) Long id) {
         VideoDto video = getVideoById(id);
         videoRepository.delete(videoConverter.toEntity(video));
         return video;
     }
 
     @SneakyThrows
-    public VideoDto updateVideo(Long id, VideoDto dto) {
+    public VideoDto updateVideo(@NotNull @Min(value = 0) Long id, VideoDto dto) {
         MediaDto media = mediaService.updateMediaFields(id, dto);
         ImageDto image = new ImageDto(media, dto.getWidth(), dto.getHeight(), dto.getResolutionQuality());
         VideoDto updatedVideo = new VideoDto(image, dto.getDuration(), dto.getAspectRatio(), dto.getFps());

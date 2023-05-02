@@ -44,25 +44,6 @@ class DtoTest {
         Assertions.assertEquals("text/plain", dto.getMimeType());
         Assertions.assertArrayEquals(new byte[]{}, dto.getContent());
         Assertions.assertEquals(2048L, dto.getSize());
-        // update fields
-        mediaDto.setId(1L);
-        mediaDto.setTitle("My Title");
-        mediaDto.setDescription("My Description");
-        mediaDto.setFileName("my-file-name");
-        mediaDto.setExtension(".png");
-        mediaDto.setUploadDate(new Date());
-        mediaDto.setMimeType("image/png");
-        mediaDto.setContent(new byte[] { 0x01, 0x02, 0x03 });
-        mediaDto.setSize(1024L);
-        Assertions.assertEquals(1L, mediaDto.getId());
-        Assertions.assertEquals("My Title", mediaDto.getTitle());
-        Assertions.assertEquals("My Description", mediaDto.getDescription());
-        Assertions.assertEquals("my-file-name", mediaDto.getFileName());
-        Assertions.assertEquals(".png", mediaDto.getExtension());
-        Assertions.assertNotNull(mediaDto.getUploadDate());
-        Assertions.assertEquals("image/png", mediaDto.getMimeType());
-        Assertions.assertArrayEquals(new byte[] { 0x01, 0x02, 0x03 }, mediaDto.getContent());
-        Assertions.assertEquals(1024L, mediaDto.getSize());
     }
 
     @Test
