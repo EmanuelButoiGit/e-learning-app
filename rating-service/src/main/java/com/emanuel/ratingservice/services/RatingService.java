@@ -15,6 +15,9 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.webjars.NotFoundException;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,7 +32,7 @@ public class RatingService {
     private final RatingConverter ratingConverter;
 
     @SneakyThrows
-    public RatingDto addRating(RatingDto rating) {
+    public RatingDto addRating(@Valid RatingDto rating) {
         // check if the media id is valid
         try {
            new RestTemplate().getForEntity("http://localhost:8080/api/media/" + rating.getMediaId(), MediaDto.class);
@@ -83,21 +86,21 @@ public class RatingService {
     }
 
     @SneakyThrows
-    public RatingDto getRatingById(Long id) {
+    public RatingDto getRatingById(@NotNull @Min(value = 0) Long id) {
         RatingEntity rating = new RatingEntity();
         final RatingEntity entity = rating;
         rating = ratingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("%s not found with id %s ", entity.getClass(), id));
         return ratingConverter.toDto(rating);
     }
 
-    public RatingDto deleteRating(Long id) {
+    public RatingDto deleteRating(@NotNull @Min(value = 0) Long id) {
         RatingDto rating = getRatingById(id);
         ratingRepository.delete(ratingConverter.toEntity(rating));
         return rating;
     }
 
     @SneakyThrows
-    public RatingDto updateRating(Long id, RatingDto updatedRating) {
+    public RatingDto updateRating(@NotNull @Min(value = 0) Long id, @Valid RatingDto updatedRating) {
         // check if the media id is valid
         try {
             new RestTemplate().getForEntity("http://localhost:8080/api/media/" + updatedRating.getMediaId(), MediaDto.class);
@@ -137,7 +140,7 @@ public class RatingService {
     }
 
     @SneakyThrows
-    public RatingDto getMediaByRatingId(Long id) {
+    public RatingDto getMediaByRatingId(@NotNull @Min(value = 0) Long id) {
         List<RatingDto> allRatings = getAllRatings();
         Optional<RatingDto> rating = allRatings.stream().filter(ratingDto -> ratingDto.getMediaId().equals(id)).findFirst();
         if(!rating.isPresent()){
