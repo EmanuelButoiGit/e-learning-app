@@ -7,10 +7,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/recommendation/document")
@@ -22,7 +26,7 @@ public class DocumentRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all recommended document files")
     @ApiResponse(responseCode = "200", description = "All recommended document retrieved")
-    public List<DocumentDto> getRecommendedDocument(@RequestParam int numberOfDocuments)
+    public List<DocumentDto> getRecommendedDocument(@RequestParam @NotNull @Min(value = 1) int numberOfDocuments)
     {
         return documentRecommendationService.getRecommendedDocument(numberOfDocuments);
     }
