@@ -13,6 +13,11 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class VideoRecommendationService {
+    private static final double RATING_WEIGHT = 0.50;
+    private static final double QUALITY_WEIGHT = 0.15;
+    private static final double DURATION_WEIGHT = 0.10;
+    private static final double ASPECT_RATIO_WEIGHT = 0.10;
+    private static final double FPS_WEIGHT = 0.15;
     private final RecommendationService recommendationService;
 
     public List<VideoDto> getRecommendedVideo(int numberOfVideos) {
@@ -20,17 +25,11 @@ public class VideoRecommendationService {
         if (videos.size() < numberOfVideos){
             throw new ArithmeticException("The database has less number of videos than you are trying to retrieve");
         }
-        // set weights for each criterion
-        double ratingWeight = 0.50;
-        double qualityWeight = 0.15;
-        double durationWeight = 0.10;
-        double aspectRatioWeight = 0.10;
-        double fpsWeight = 0.15;
-        Map<Long, Double> scores = getImageScores(videos, ratingWeight, qualityWeight, durationWeight, aspectRatioWeight, fpsWeight);
+        Map<Long, Double> scores = getImageScores(videos);
         return recommendationService.getSortedMedia(numberOfVideos, videos, scores);
     }
 
-    private Map<Long, Double> getImageScores(List<VideoDto> videos, double ratingWeight, double qualityWeight, double durationWeight, double aspectRatioWeight, double fpsWeight) {
+    private Map<Long, Double> getImageScores(List<VideoDto> videos) {
         return videos.stream().collect(Collectors.toMap(ImageDto::getId, videoDto -> {
             Float generalRating = 0f;
             int durationScore = 0;
@@ -53,7 +52,7 @@ public class VideoRecommendationService {
             // calculate FPS score
             double fps = Optional.ofNullable(videoDto.getFps()).orElse(0.0);
             int fpsScore = getFpsScore(fps);
-            return generalRating * ratingWeight + resolutionQualityScore * qualityWeight + durationScore * durationWeight + aspectRatioScore * aspectRatioWeight + fpsScore * fpsWeight;
+            return generalRating * RATING_WEIGHT + resolutionQualityScore * QUALITY_WEIGHT + durationScore * DURATION_WEIGHT + aspectRatioScore * ASPECT_RATIO_WEIGHT + fpsScore * FPS_WEIGHT;
         }));
     }
 
