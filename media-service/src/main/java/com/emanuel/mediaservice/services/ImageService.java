@@ -71,7 +71,7 @@ public class ImageService {
                     .map(imageConverter::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
+            throw new DataBaseException(MediaService.DB_FETCH_EXCEPTION + e);
         }
     }
 
