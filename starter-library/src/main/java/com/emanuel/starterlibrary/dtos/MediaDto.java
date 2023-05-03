@@ -34,7 +34,6 @@ public class MediaDto {
     private String extension;
 
     @NotNull
-    @NotEmpty
     private Date uploadDate;
 
     @NotBlank
