@@ -34,7 +34,7 @@ public class RatingService {
         try {
            new RestTemplate().getForEntity("http://localhost:8080/api/media/" + rating.getMediaId(), MediaDto.class);
         } catch (RestClientException e) {
-            throw new EntityNotFoundException("Entity not found with id: " + rating.getMediaId());
+            throw new EntityNotFoundException(rating.getMediaId());
         }
         // check if a rating already has been added by the user
         List<RatingDto> allRatings = getAllRatings();
@@ -102,7 +102,7 @@ public class RatingService {
         try {
             new RestTemplate().getForEntity("http://localhost:8080/api/media/" + updatedRating.getMediaId(), MediaDto.class);
         } catch (RestClientException e) {
-            throw new EntityNotFoundException("Entity not found with id: " + updatedRating.getMediaId());
+            throw new EntityNotFoundException(updatedRating.getMediaId());
         }
         // check if a rating already has been added by the user
         List<RatingDto> allRatings = getAllRatings();
