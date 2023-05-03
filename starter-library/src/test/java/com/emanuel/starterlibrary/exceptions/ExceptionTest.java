@@ -56,9 +56,11 @@ class ExceptionTest {
     }
 
     @Test
-    void entityNotFoundExceptionWithNullMessage() {
-        EntityNotFoundException exception = new EntityNotFoundException(null);
-        Assertions.assertNull(exception.getMessage());
+    void entityNotFoundExceptionWithLong() {
+        Long id = 0L;
+        String expectedMessage = "Entity not found with id: ";
+        EntityNotFoundException exception = new EntityNotFoundException(id);
+        Assertions.assertEquals(expectedMessage + id, exception.getMessage());
     }
 
     @Test
