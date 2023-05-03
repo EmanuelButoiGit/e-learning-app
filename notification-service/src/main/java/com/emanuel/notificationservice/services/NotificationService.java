@@ -2,6 +2,7 @@ package com.emanuel.notificationservice.services;
 
 import com.emanuel.starterlibrary.dtos.MetricDto;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
+import com.emanuel.starterlibrary.exceptions.EmailException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -90,7 +91,11 @@ public class NotificationService {
         helper.setTo(username);
         helper.setSubject(subject);
         helper.setText(messageBody, true);
-        javaMailSender.send(message);
+        try {
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            throw new EmailException(e, subject);
+        }
         LOGGER.info("The mail with the following subject \"{}\" was sent", subject);
     }
 
