@@ -28,6 +28,7 @@ public class RatingDto {
     @Size(min = 10, max = 200, message = "Description must be between 10 and 200 characters")
     private String description;
 
+    @NotNull(message = "General rating cannot be null")
     private Float generalRating;
 
     @NotNull(message = "Tutor rating cannot be null")
