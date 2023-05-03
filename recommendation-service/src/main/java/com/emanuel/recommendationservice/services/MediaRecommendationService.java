@@ -4,6 +4,8 @@ import com.emanuel.starterlibrary.dtos.MediaDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Service
@@ -12,7 +14,7 @@ public class MediaRecommendationService {
     private final RecommendationService recommendationService;
     private static final String MEDIA = "media";
 
-    public List<MediaDto> getRecommendedMedia(int numberOfMedias) {
+    public List<MediaDto> getRecommendedMedia(@NotNull @Min(value = 1) int numberOfMedias) {
         return recommendationService.getMediasBasedOnRating(MediaDto.class, MEDIA, numberOfMedias);
     }
 
@@ -20,7 +22,7 @@ public class MediaRecommendationService {
         return recommendationService.getRandomRecommendedMedia(MediaDto.class, MEDIA);
     }
 
-    public List<String> getTopMedia(int numberOfMedias) {
+    public List<String> getTopMedia(@NotNull @Min(value = 1) int numberOfMedias) {
         return recommendationService.getTitlesOfMediasBasedOnRating(MediaDto.class, MEDIA, numberOfMedias);
     }
 }
