@@ -7,11 +7,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/recommendation/video")
@@ -23,7 +27,7 @@ public class VideoRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all recommended video files")
     @ApiResponse(responseCode = "200", description = "All recommended video retrieved")
-    public List<VideoDto> getRecommendedVideo(@RequestParam int numberOfVideos)
+    public List<VideoDto> getRecommendedVideo(@RequestParam @NotNull @Min(value = 1) int numberOfVideos)
     {
         return videoRecommendationService.getRecommendedVideo(numberOfVideos);
     }

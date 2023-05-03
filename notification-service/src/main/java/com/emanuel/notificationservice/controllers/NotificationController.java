@@ -7,8 +7,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/notification")
@@ -29,6 +34,7 @@ public class NotificationController {
     @Operation(summary = "Send alert notification")
     @ApiResponse(responseCode = "200", description = "Alert notification sent")
     public void sendAlert(
+            @NotEmpty @NotBlank
             @Parameter(
                     description = "alert",
                     schema = @Schema(defaultValue = "Alert test")
@@ -44,6 +50,7 @@ public class NotificationController {
     @Operation(summary = "Send new media notification")
     @ApiResponse(responseCode = "200", description = "New media notification sent")
     public void sendNewMediaNotification(
+            @NotEmpty @NotBlank
             @Parameter(
                     description = "new media",
                     schema = @Schema(defaultValue = "New media test")

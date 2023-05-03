@@ -56,9 +56,11 @@ class ExceptionTest {
     }
 
     @Test
-    void entityNotFoundExceptionWithNullMessage() {
-        EntityNotFoundException exception = new EntityNotFoundException(null);
-        Assertions.assertNull(exception.getMessage());
+    void entityNotFoundExceptionWithLong() {
+        Long id = 0L;
+        String expectedMessage = "Entity not found with id: ";
+        EntityNotFoundException exception = new EntityNotFoundException(id);
+        Assertions.assertEquals(expectedMessage + id, exception.getMessage());
     }
 
     @Test
@@ -88,7 +90,7 @@ class ExceptionTest {
     }
 
     @Test
-    void WrongExtensionExceptionWithMessage() {
+    void wrongExtensionExceptionWithMessage() {
         String unsupportedMessage = "The application does not support .%s extension for this operation";
         String unsupportedExtension = ".exe";
         WrongExtensionException unsupportedException = new WrongExtensionException(unsupportedExtension);
@@ -103,15 +105,24 @@ class ExceptionTest {
     }
 
     @Test
-    void SanitizationExceptionWithMessage() {
+    void sanitizationExceptionWithMessage() {
         String message = "Test sanitization exception message";
         SanitizationException exception = new SanitizationException(message);
         Assertions.assertEquals(message, exception.getMessage());
     }
 
     @Test
-    void SanitizationExceptionWithNullMessage() {
+    void sanitizationExceptionWithNullMessage() {
         SanitizationException exception = new SanitizationException(null);
         Assertions.assertNull(exception.getMessage());
+    }
+
+    @Test
+    void emailExceptionWithMessage() {
+        String subject = "Test email subject";
+        Exception e = new Exception("Test exception");
+        EmailException exception = new EmailException(e, subject);
+        String expectedMessage = "Cannot send mail with the following subject: \"" + subject + "\". " + e;
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
     }
 }

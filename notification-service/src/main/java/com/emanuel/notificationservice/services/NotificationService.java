@@ -2,9 +2,12 @@ package com.emanuel.notificationservice.services;
 
 import com.emanuel.starterlibrary.dtos.MetricDto;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
+import com.emanuel.starterlibrary.exceptions.EmailException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
@@ -18,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.internet.MimeMessage;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.util.*;
 
@@ -31,6 +36,7 @@ public class NotificationService {
     private JavaMailSender javaMailSender;
     @Value("${spring.mail.username}")
     private String username;
+    private static final String CLOSE_TITLE_TAGS = "</h1> <br>";
     private static final String H3STYLE = "<h3 style='font-weight: normal;'>";
     private static final String H2STYLE = "<h2 style='font-weight: normal;'>";
     private static final String INTRO = "<h3 style='font-weight: normal;'> Dear Administrator, <br><br>" +
@@ -48,9 +54,12 @@ public class NotificationService {
                 "https://github.com/EmanuelButoiGit<br>" +
                 "</h3> <br>";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
+
     public void sendActuatorMetrics() {
+        String subject = "Daily Actuator Metrics";
         StringBuilder messageBodyBuilder = new StringBuilder();
-        messageBodyBuilder.append("<h1>&#x1F31E; Daily Actuator Metrics</h1> <br>");
+        messageBodyBuilder.append("<h1>&#x1F31E; ").append(subject).append(CLOSE_TITLE_TAGS);
         messageBodyBuilder.append(INTRO).append(
                 " As part of our ongoing effort to monitor and improve the performance of our systems, " +
                 "we would like to provide you with the latest Daily Actuator Metrics report. </h3> <br>");
@@ -71,23 +80,29 @@ public class NotificationService {
                 "We are committed to providing you with the best possible experience, " +
                 "and we appreciate your ongoing support.")
                 .append(ENDING);
-        sendEmail(messageBodyBuilder, "Daily Actuator Metrics");
+        sendEmail(messageBodyBuilder, subject);
     }
 
     @SneakyThrows
-    private void sendEmail(StringBuilder messageBodyBuilder, String subject) {
+    private void sendEmail(StringBuilder messageBodyBuilder,  @NotEmpty @NotBlank String subject) {
         String messageBody = messageBodyBuilder.toString();
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(username);
         helper.setSubject(subject);
         helper.setText(messageBody, true);
-        javaMailSender.send(message);
+        try {
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            throw new EmailException(e, subject);
+        }
+        LOGGER.info("The mail with the following subject \"{}\" was sent", subject);
     }
 
-    public void sendAlert(String alertMessage) {
+    public void sendAlert(@NotEmpty @NotBlank String alertMessage) {
         StringBuilder messageBodyBuilder = new StringBuilder();
-        messageBodyBuilder.append("<h1>&#9888; IMPORTANT! System Alert!</h1> <br>");
+        String subject = "IMPORTANT! System Alert!";
+        messageBodyBuilder.append("<h1>&#9888; ").append(subject).append(CLOSE_TITLE_TAGS);
         messageBodyBuilder.append(INTRO).append(
                 "As part of our ongoing effort to maintain the reliability and stability of our systems, " +
                 "we would like to inform you of a <b>critical issue</b> that requires your attention. " +
@@ -100,7 +115,7 @@ public class NotificationService {
                         "or disruption this may cause.<br> " +
                         "If you have any questions or concerns, please do not hesitate to contact us.")
                 .append(ENDING);
-        sendEmail(messageBodyBuilder, "Daily Actuator Metrics");
+        sendEmail(messageBodyBuilder, subject);
     }
 
     @SneakyThrows
@@ -122,7 +137,8 @@ public class NotificationService {
         }
 
         StringBuilder messageBodyBuilder = new StringBuilder();
-        messageBodyBuilder.append("<h1>&#11088; Weekly top medias</h1> <br>");
+        String subject = "Weekly top medias";
+        messageBodyBuilder.append("<h1>&#11088; ").append(subject).append(CLOSE_TITLE_TAGS);
         messageBodyBuilder.append(INTRO).append(
                 "I am writing to provide you with a weekly update on the top medias on our platform.<br>" +
                         "Over the past week, we have seen a significant increase in user engagement, " +
@@ -136,12 +152,12 @@ public class NotificationService {
         messageBodyBuilder.append("<br>");
         messageBodyBuilder.append(OUTRO)
                 .append(ENDING);
-        sendEmail(messageBodyBuilder, "Weekly top medias");
+        sendEmail(messageBodyBuilder, subject);
     }
 
-    public void sendNewMediaNotification(String mediaName){
+    public void sendNewMediaNotification(@NotEmpty @NotBlank String mediaName){
         StringBuilder messageBodyBuilder = new StringBuilder();
-        messageBodyBuilder.append("<h1>&#127881; New media created!</h1> <br>");
+        messageBodyBuilder.append("<h1>&#127881; New media created!").append(CLOSE_TITLE_TAGS);
         messageBodyBuilder.append(INTRO).append(
                 "I am pleased to inform you that a user has successfully created a new media in our system." +
                 "</h3><br>");

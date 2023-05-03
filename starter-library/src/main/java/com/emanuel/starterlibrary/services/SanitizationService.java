@@ -5,8 +5,6 @@ import lombok.SneakyThrows;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Safelist;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
@@ -14,8 +12,6 @@ import javax.validation.constraints.NotEmpty;
 
 @Service
 public class SanitizationService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SanitizationService.class);
     @SneakyThrows
     public String sanitizeString(@NotBlank @NotEmpty String input){
         try {
@@ -23,8 +19,7 @@ public class SanitizationService {
             Cleaner cleaner = new Cleaner(safelist);
             return cleaner.clean(Jsoup.parse(input)).text();
         } catch (Exception e){
-            String errorMessage = "Could not sanitize the input. " + e.getMessage();
-            LOGGER.error(e.getMessage());
+            String errorMessage = "Could not sanitize the input. " + e;
             throw new SanitizationException(errorMessage);
         }
     }

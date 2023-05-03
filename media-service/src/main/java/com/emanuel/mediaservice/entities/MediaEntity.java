@@ -36,7 +36,6 @@ public class MediaEntity {
     private String extension;
 
     @NotNull
-    @NotEmpty
     private Date uploadDate;
 
     @NotBlank

@@ -49,7 +49,7 @@ public class DocumentService {
                 numberOfPages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
                 document.close();
             } catch (IOException e) {
-                throw new DocumentException("Can't process the document: " + e.getMessage());
+                throw new DocumentException("Can't process the document: " + e);
             }
         } else if ("pdf".equalsIgnoreCase(extension)){
             try (InputStream inputStream = file.getInputStream()) {
@@ -57,7 +57,7 @@ public class DocumentService {
                 numberOfPages = document.getNumberOfPages();
                 document.close();
             } catch (IOException e) {
-                throw new DocumentException("Can't close the document: " + e.getMessage());
+                throw new DocumentException("Can't close the document: " + e);
             }
         }
 
@@ -76,7 +76,7 @@ public class DocumentService {
                     .map(documentConverter::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
+            throw new DataBaseException(MediaService.DB_FETCH_EXCEPTION + e);
         }
     }
 

@@ -17,6 +17,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -138,7 +140,7 @@ public class RecommendationService {
     }
 
     @SneakyThrows
-    public <T extends MediaDto> List<String> getTitlesOfMediasBasedOnRating(Class<T> mediaClassType, String mediaType, int numberOfMedias) {
+    public <T extends MediaDto> List<String> getTitlesOfMediasBasedOnRating(Class<T> mediaClassType, String mediaType, @NotNull @Min(value = 1) int numberOfMedias) {
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
@@ -170,7 +172,7 @@ public class RecommendationService {
     }
 
     @SneakyThrows
-    public <T extends MediaDto> List<T> getMediasBasedOnRating(Class<T> mediaClassType, String mediaType, int numberOfMedias) {
+    public <T extends MediaDto> List<T> getMediasBasedOnRating(Class<T> mediaClassType, String mediaType, @NotNull @Min(value = 1) int numberOfMedias) {
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);

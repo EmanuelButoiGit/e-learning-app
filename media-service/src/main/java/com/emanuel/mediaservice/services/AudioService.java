@@ -62,7 +62,7 @@ public class AudioService {
                 sampleRate = audioFile.getAudioHeader().getSampleRateAsNumber();
                 duration = audioFile.getAudioHeader().getTrackLength();
             } catch (Exception e) {
-                throw new Mp3Exception("Couldn't get mp3 fields: " + e.getMessage());
+                throw new Mp3Exception("Couldn't get mp3 fields: " + e);
             }
         }
 
@@ -81,7 +81,7 @@ public class AudioService {
                     .map(audioConverter::toDto)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
+            throw new DataBaseException(MediaService.DB_FETCH_EXCEPTION + e);
         }
     }
 

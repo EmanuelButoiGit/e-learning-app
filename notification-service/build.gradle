@@ -24,7 +24,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+	// for logging (compatible for java 8)
+	implementation 'org.slf4j:slf4j-api:1.7.30'
+	implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
+	implementation 'org.slf4j:log4j-over-slf4j:1.7.30'
+	implementation 'ch.qos.logback:logback-classic:1.2.3'
 	// for cloud
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
