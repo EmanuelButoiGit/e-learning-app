@@ -1,4 +1,4 @@
-To not leak password I created this helper.
+Put your own credentials.
 Please don't forget to add this application.properties:
 
 server.port=8083
