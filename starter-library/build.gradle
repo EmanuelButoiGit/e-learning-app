@@ -39,6 +39,10 @@ dependencies {
 	implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
 	implementation 'org.slf4j:log4j-over-slf4j:1.7.30'
 	implementation 'ch.qos.logback:logback-classic:1.2.3'
+	// for tracing
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-sleuth-brave'
+	implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
 }
 
 tasks.named('test') {
