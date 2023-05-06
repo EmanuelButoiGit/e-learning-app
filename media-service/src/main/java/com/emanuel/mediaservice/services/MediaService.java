@@ -34,10 +34,9 @@ public class MediaService {
     private final ScanService scanService;
     private final MediaRepository mediaRepository;
     private final MediaConverter mediaConverter;
+    private final NotificationServiceProxy notificationServiceProxy;
 
     public static final String DB_FETCH_EXCEPTION = "Couldn't fetch data from database: ";
-
-    NotificationServiceProxy notificationServiceProxy;
 
     public MediaDto uploadMedia(MultipartFile file, String title, String description) {
         String extension = validationService.validateFile(FileOption.getMEDIA_EXTENSIONS(), file);
