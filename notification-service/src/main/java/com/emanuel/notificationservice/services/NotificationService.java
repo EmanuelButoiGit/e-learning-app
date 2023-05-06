@@ -1,5 +1,6 @@
 package com.emanuel.notificationservice.services;
 
+import com.emanuel.notificationservice.proxies.RecommendationServiceProxy;
 import com.emanuel.starterlibrary.dtos.MetricDto;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.emanuel.starterlibrary.exceptions.EmailException;
@@ -36,6 +37,8 @@ public class NotificationService {
     private JavaMailSender javaMailSender;
     @Value("${spring.mail.username}")
     private String username;
+
+    private RecommendationServiceProxy recommendationServiceProxy;
     private static final String CLOSE_TITLE_TAGS = "</h1> <br>";
     private static final String H3STYLE = "<h3 style='font-weight: normal;'>";
     private static final String H2STYLE = "<h2 style='font-weight: normal;'>";
@@ -120,22 +123,10 @@ public class NotificationService {
 
     @SneakyThrows
     public void sendTopMedias() {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8082/api/recommendation/media/top")
-                .queryParam("numberOfMedias", 10);
-        ResponseEntity<List<String>> response = new RestTemplate()
-                .exchange(builder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
-        List<String> medias;
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            medias = mapper.readValue(mapper.writeValueAsString(response.getBody()),
-                    mapper.getTypeFactory().constructCollectionType(List.class, String.class));
-            if (medias == null) {
-                throw new NullPointerException("The list is empty!");
-            }
-        } catch (IOException e) {
-            throw new DeserializationException("Failed to deserialize response: " + e.getMessage());
+        List<String> medias = recommendationServiceProxy.getTopMedia(10);
+        if (medias == null) {
+            throw new NullPointerException("The list is empty!");
         }
-
         StringBuilder messageBodyBuilder = new StringBuilder();
         String subject = "Weekly top medias";
         messageBodyBuilder.append("<h1>&#11088; ").append(subject).append(CLOSE_TITLE_TAGS);
@@ -153,6 +144,26 @@ public class NotificationService {
         messageBodyBuilder.append(OUTRO)
                 .append(ENDING);
         sendEmail(messageBodyBuilder, subject);
+    }
+
+    @SuppressWarnings("unused")
+    private List<String> getTopMediaWithRest() throws DeserializationException {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8082/api/recommendation/media/top")
+                .queryParam("numberOfMedias", 10);
+        ResponseEntity<List<String>> response = new RestTemplate()
+                .exchange(builder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+        List<String> medias;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            medias = mapper.readValue(mapper.writeValueAsString(response.getBody()),
+                    mapper.getTypeFactory().constructCollectionType(List.class, String.class));
+            if (medias == null) {
+                throw new NullPointerException("The list is empty!");
+            }
+        } catch (IOException e) {
+            throw new DeserializationException("Failed to deserialize response: " + e.getMessage());
+        }
+        return medias;
     }
 
     public void sendNewMediaNotification(@NotEmpty @NotBlank String mediaName){
