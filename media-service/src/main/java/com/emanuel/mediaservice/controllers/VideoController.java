@@ -35,7 +35,7 @@ public class VideoController {
     @Operation(summary = "Upload a video file")
     @ApiResponse(responseCode = "201", description = "Video uploaded")
     public VideoDto uploadVideo(
-            @NotEmpty @NotNull
+            @NotNull
             @RequestParam("file") MultipartFile file,
             @Parameter(
                     description = "title",
