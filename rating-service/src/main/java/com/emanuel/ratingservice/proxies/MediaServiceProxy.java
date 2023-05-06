@@ -14,7 +14,8 @@ import javax.validation.constraints.NotNull;
 
 @FeignClient(name = "media-service")
 public interface MediaServiceProxy {
-    @GetMapping("/{id}")
+    @SuppressWarnings("UnusedReturnValue")
+    @GetMapping("api/media/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a specific media file based on a giving media id")
     @ApiResponse(responseCode = "200", description = "Specific media file retrieved based on a giving media id")
