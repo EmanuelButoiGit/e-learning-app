@@ -33,7 +33,7 @@ public class DocumentRecommendationService {
             double extensionScore = 0;
             double numberOfPagesScore = 0;
             // get rating score
-            Float generalRating = recommendationService.getMediaByRatingId(documentDto);
+            Float generalRating = recommendationService.getGeneralRatingBasedOnMedia(documentDto);
             // calculate extension score
             String extension = Optional.ofNullable(documentDto.getExtension()).orElse("");
             if (extension.equalsIgnoreCase("pdf")) {

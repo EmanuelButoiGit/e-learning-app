@@ -7,7 +7,6 @@ import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ public class RecommendationService {
         }
     }
 
-    public  <T extends MediaDto> Float getMediaByRatingId(T media) {
+    public <T extends MediaDto> Float getGeneralRatingBasedOnMedia(T media) {
         RatingDto rating;
         try {
             rating = ratingServiceProxy.getMediaByRatingId(media.getId());
@@ -113,7 +112,7 @@ public class RecommendationService {
         }
         List<T> passMedias = new ArrayList<>();
         for (T media : medias) {
-            Float generalRating = getMediaByRatingId(media);
+            Float generalRating = getGeneralRatingBasedOnMedia(media);
             if (generalRating >= minRating) {
                 passMedias.add(media);
             }
@@ -156,7 +155,7 @@ public class RecommendationService {
         }
         HashMap<String, Float> map = new HashMap<>();
         for (T media : medias) {
-            Float generalRating = getMediaByRatingId(media);
+            Float generalRating = getGeneralRatingBasedOnMedia(media);
             map.put(media.getTitle(), generalRating);
         }
         if (map.isEmpty()) {
@@ -176,20 +175,10 @@ public class RecommendationService {
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
         }
-        Float generalRating;
         HashMap<T, Float> map = new HashMap<>();
         for (T media : medias) {
-            try {
-                ResponseEntity<RatingDto> ratingResponse = new RestTemplate()
-                        .getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
-                RatingDto rating = ratingResponse.getBody();
-                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
-                    generalRating = rating.getGeneralRating();
-                    map.put(media, generalRating);
-                }
-            } catch (HttpClientErrorException | HttpServerErrorException ex) {
-                LOGGER.info(ex.getMessage());
-            }
+            Float generalRating = getGeneralRatingBasedOnMedia(media);
+            map.put(media, generalRating);
         }
         if (map.isEmpty()) {
             LOGGER.info("No media has a rating");
