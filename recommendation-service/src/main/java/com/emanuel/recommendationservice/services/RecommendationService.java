@@ -1,5 +1,6 @@
 package com.emanuel.recommendationservice.services;
 
+import com.emanuel.recommendationservice.proxies.MediaServiceProxy;
 import com.emanuel.recommendationservice.proxies.RatingServiceProxy;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
@@ -31,13 +32,15 @@ public class RecommendationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
     private static final String RATING_MEDIA_ENDPOINT = "http://localhost:8081/api/rating/media/";
     private static final String DB_MEDIA_EXCEPTION = "Can't get random recommended media. The database is empty. Please upload something";
+    private final MediaServiceProxy mediaServiceProxy;
     private final RatingServiceProxy ratingServiceProxy;
     private final Random random = new Random();
     @Value("${minRating}")
     private float minRating;
 
+    @SuppressWarnings("unused")
     @SneakyThrows
-    public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
+    public <T extends MediaDto> List<T> getDtoListFromDatabaseWithRest(Class<T> mediaClassType, String mediaType) {
         ResponseEntity<List<T>> response = new RestTemplate()
                 .exchange("http://localhost:8080/api/" + mediaType + "/", HttpMethod.GET, null,
                         new ParameterizedTypeReference<>() {});
@@ -52,6 +55,34 @@ public class RecommendationService {
         } catch (IOException e) {
             throw new DeserializationException("Failed to deserialize response: " + e.getMessage());
         }
+    }
+
+    @SneakyThrows
+    public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
+        List<?> medias = null;
+        switch (mediaType){
+            case "media":
+                medias = mediaServiceProxy.getAllMedias();
+                break;
+            case "audio":
+                medias = mediaServiceProxy.getAllAudios();
+                break;
+            case "document":
+                medias = mediaServiceProxy.getAllDocuments();
+                break;
+            case "image":
+                medias = mediaServiceProxy.getAllImages();
+                break;
+            case "video":
+                medias = mediaServiceProxy.getAllVideos();
+            break;
+        }
+        if (medias == null) {
+            throw new NullPointerException("The table is empty!");
+        }
+        return medias.stream()
+                .map(mediaClassType::cast)
+                .collect(Collectors.toList());
     }
 
     public <T extends MediaDto> Float getGeneralRatingBasedOnMedia(T media) {
