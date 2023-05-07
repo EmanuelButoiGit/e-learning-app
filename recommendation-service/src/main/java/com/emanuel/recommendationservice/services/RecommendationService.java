@@ -6,6 +6,7 @@ import com.emanuel.starterlibrary.dtos.RatingDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -26,13 +27,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class RecommendationService {
-
-    private RatingServiceProxy ratingServiceProxy;
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
     private static final String RATING_MEDIA_ENDPOINT = "http://localhost:8081/api/rating/media/";
     private static final String DB_MEDIA_EXCEPTION = "Can't get random recommended media. The database is empty. Please upload something";
+    private final RatingServiceProxy ratingServiceProxy;
     private final Random random = new Random();
     @Value("${minRating}")
     private float minRating;
@@ -59,6 +59,9 @@ public class RecommendationService {
         RatingDto rating;
         try {
             rating = ratingServiceProxy.getMediaByRatingId(media.getId());
+            if (rating == null){
+                return 0f;
+            }
         } catch (Exception e) {
             LOGGER.info(e.getMessage());
             return 0F;
@@ -151,20 +154,10 @@ public class RecommendationService {
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
         }
-        Float generalRating;
         HashMap<String, Float> map = new HashMap<>();
         for (T media : medias) {
-            try {
-                ResponseEntity<RatingDto> ratingResponse = new RestTemplate()
-                        .getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
-                RatingDto rating = ratingResponse.getBody();
-                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
-                    generalRating = rating.getGeneralRating();
-                    map.put(media.getTitle(), generalRating);
-                }
-            } catch (HttpClientErrorException | HttpServerErrorException ex) {
-                LOGGER.info(ex.getMessage());
-            }
+            Float generalRating = getMediaByRatingId(media);
+            map.put(media.getTitle(), generalRating);
         }
         if (map.isEmpty()) {
             LOGGER.info("No media has a rating");
