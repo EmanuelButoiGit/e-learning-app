@@ -34,7 +34,7 @@ public class AudioRecommendationService {
             double extensionScore = 0;
             double sampleScore = 0;
             // get rating score
-            generalRating = recommendationService.getRating(audioDto);
+            generalRating = recommendationService.getMediaByRatingId(audioDto);
             // calculate duration score
             long duration = Optional.ofNullable(audioDto.getDuration()).orElse(0L);
             if (duration > 600 && duration < 1200){

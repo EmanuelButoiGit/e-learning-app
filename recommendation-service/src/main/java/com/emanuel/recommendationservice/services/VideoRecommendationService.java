@@ -34,7 +34,7 @@ public class VideoRecommendationService {
             int durationScore = 0;
             int aspectRatioScore = 0;
             // get rating score
-            Float generalRating = recommendationService.getRating(videoDto);
+            Float generalRating = recommendationService.getMediaByRatingId(videoDto);
             // calculate quality score
             int resolutionQuality = Optional.ofNullable(videoDto.getResolutionQuality()).orElse(0);
             int resolutionQualityScore = recommendationService.calculateResolutionQuality(resolutionQuality);

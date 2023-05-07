@@ -55,7 +55,7 @@ public class RecommendationService {
         }
     }
 
-    public  <T extends MediaDto> Float getRating(T media) {
+    public  <T extends MediaDto> Float getMediaByRatingId(T media) {
         RatingDto rating;
         try {
             rating = ratingServiceProxy.getMediaByRatingId(media.getId());
@@ -67,7 +67,7 @@ public class RecommendationService {
     }
 
     @SuppressWarnings("unused")
-    private <T extends MediaDto> Float getRatingByIdWithRest(T media, Float generalRating) {
+    private <T extends MediaDto> Float getMediaByRatingIdWithRest(T media, Float generalRating) {
         try {
             ResponseEntity<RatingDto> ratingResponse = new RestTemplate().getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
             RatingDto rating = ratingResponse.getBody();
