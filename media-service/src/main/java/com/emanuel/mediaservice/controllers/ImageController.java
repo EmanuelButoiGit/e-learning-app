@@ -35,7 +35,7 @@ public class ImageController {
     @Operation(summary = "Upload a image file")
     @ApiResponse(responseCode = "201", description = "Image uploaded")
     public ImageDto uploadImage(
-            @NotEmpty @NotNull
+            @NotNull
             @RequestParam("file") MultipartFile file,
             @Parameter(
                     description = "title",

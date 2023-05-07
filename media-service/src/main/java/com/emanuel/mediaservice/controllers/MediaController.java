@@ -35,7 +35,7 @@ public class MediaController {
     @Operation(summary = "Upload a media file")
     @ApiResponse(responseCode = "201", description = "Media uploaded")
     public MediaDto uploadMedia(
-            @NotEmpty @NotNull
+            @NotNull
             @RequestParam("file") MultipartFile file,
             @Parameter(
                     description = "title",

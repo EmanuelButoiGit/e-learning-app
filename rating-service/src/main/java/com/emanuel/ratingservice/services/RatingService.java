@@ -2,6 +2,7 @@ package com.emanuel.ratingservice.services;
 
 import com.emanuel.ratingservice.components.RatingConverter;
 import com.emanuel.ratingservice.entities.RatingEntity;
+import com.emanuel.ratingservice.proxies.MediaServiceProxy;
 import com.emanuel.ratingservice.repositories.RatingRepository;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
@@ -11,7 +12,6 @@ import com.emanuel.starterlibrary.services.SanitizationService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.webjars.NotFoundException;
 
@@ -27,26 +27,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class RatingService {
 
+    private final MediaServiceProxy mediaServiceProxy;
     private final RatingRepository ratingRepository;
     private final SanitizationService sanitizationService;
     private final RatingConverter ratingConverter;
 
     @SneakyThrows
     public RatingDto addRating(@Valid RatingDto rating) {
-        // check if the media id is valid
-        try {
-           new RestTemplate().getForEntity("http://localhost:8080/api/media/" + rating.getMediaId(), MediaDto.class);
-        } catch (RestClientException e) {
-            throw new EntityNotFoundException(rating.getMediaId());
-        }
-        // check if a rating already has been added by the user
+        checkIfMediaIdIsValid(rating);
         List<RatingDto> allRatings = getAllRatings();
-        Optional<RatingDto> matchingRating = allRatings.stream()
-                .filter(it -> Objects.equals(it.getMediaId(), rating.getMediaId()))
-                .findFirst();
-        if (matchingRating.isPresent()) {
-            throw new DataBaseException("A rating already exists for the given media id: " + rating.getMediaId());
-        }
+        checkIfRatingHasAlreadyBeenAddedByTheUser(rating, allRatings);
         rating.setTitle(sanitizationService.sanitizeString(rating.getTitle()));
         rating.setDescription(sanitizationService.sanitizeString(rating.getDescription()));
         RatingEntity ratingEntity =
@@ -65,6 +55,34 @@ public class RatingService {
                 );
         RatingEntity savedEntity = ratingRepository.save(ratingEntity);
         return ratingConverter.toDto(savedEntity);
+    }
+
+    private void checkIfRatingHasAlreadyBeenAddedByTheUser(RatingDto rating, List<RatingDto> allRatings) throws DataBaseException {
+        Optional<RatingDto> matchingRating = allRatings.stream()
+                .filter(it -> Objects.equals(it.getMediaId(), rating.getMediaId()))
+                .findFirst();
+        if (matchingRating.isPresent()) {
+            throw new DataBaseException("A rating already exists for the given media id: " + rating.getMediaId());
+        }
+    }
+
+    @SneakyThrows
+    @SuppressWarnings("unused")
+    private void checkIfMediaIdIsValidWithRest(RatingDto rating) {
+        try {
+           new RestTemplate().getForEntity("http://localhost:8080/api/media/" + rating.getMediaId(), MediaDto.class);
+        } catch (Exception e) {
+            throw new EntityNotFoundException(rating.getMediaId());
+        }
+    }
+
+    @SneakyThrows
+    private void checkIfMediaIdIsValid(RatingDto rating){
+        try {
+            mediaServiceProxy.getMediaById(rating.getMediaId());
+        } catch (Exception e) {
+            throw new EntityNotFoundException(rating.getMediaId());
+        }
     }
 
     private Float calculateGeneralRating(Float tutorRating, Float contentRating, Float contentStructureRating,
@@ -101,20 +119,9 @@ public class RatingService {
 
     @SneakyThrows
     public RatingDto updateRating(@NotNull @Min(value = 0) Long id, @Valid RatingDto updatedRating) {
-        // check if the media id is valid
-        try {
-            new RestTemplate().getForEntity("http://localhost:8080/api/media/" + updatedRating.getMediaId(), MediaDto.class);
-        } catch (RestClientException e) {
-            throw new EntityNotFoundException(updatedRating.getMediaId());
-        }
-        // check if a rating already has been added by the user
+        checkIfMediaIdIsValid(updatedRating);
         List<RatingDto> allRatings = getAllRatings();
-        Optional<RatingDto> matchingRating = allRatings.stream()
-                .filter(it -> Objects.equals(it.getMediaId(), updatedRating.getMediaId()))
-                .findFirst();
-        if (matchingRating.isPresent() && !Objects.equals(matchingRating.get().getMediaId(), updatedRating.getMediaId())) {
-            throw new DataBaseException("A rating already exists for the given media id: " + updatedRating.getMediaId());
-        }
+        checkIfRatingHasAlreadyBeenAddedByTheUser(updatedRating, allRatings);
         RatingDto rating = getRatingById(id);
         updatedRating.setTitle(sanitizationService.sanitizeString(rating.getTitle()));
         updatedRating.setDescription(sanitizationService.sanitizeString(rating.getDescription()));

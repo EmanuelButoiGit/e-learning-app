@@ -35,7 +35,7 @@ public class DocumentController {
     @Operation(summary = "Upload a document file")
     @ApiResponse(responseCode = "201", description = "Document uploaded")
     public DocumentDto uploadDocument(
-            @NotEmpty @NotNull
+            @NotNull
             @RequestParam("file") MultipartFile file,
             @Parameter(
                     description = "title",

@@ -35,7 +35,7 @@ public class AudioController {
     @Operation(summary = "Upload a audio file")
     @ApiResponse(responseCode = "201", description = "Audio uploaded")
     public AudioDto uploadAudio(
-            @NotEmpty @NotNull
+            @NotNull
             @RequestParam("file") MultipartFile file,
             @Parameter(
                     description = "title",
