@@ -31,11 +31,10 @@ public class VideoRecommendationService {
 
     private Map<Long, Double> getImageScores(List<VideoDto> videos) {
         return videos.stream().collect(Collectors.toMap(ImageDto::getId, videoDto -> {
-            Float generalRating = 0f;
             int durationScore = 0;
             int aspectRatioScore = 0;
             // get rating score
-            generalRating = recommendationService.getRating(videoDto, generalRating);
+            Float generalRating = recommendationService.getRating(videoDto);
             // calculate quality score
             int resolutionQuality = Optional.ofNullable(videoDto.getResolutionQuality()).orElse(0);
             int resolutionQualityScore = recommendationService.calculateResolutionQuality(resolutionQuality);

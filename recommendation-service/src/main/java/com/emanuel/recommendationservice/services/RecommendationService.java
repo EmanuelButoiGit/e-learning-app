@@ -1,10 +1,12 @@
 package com.emanuel.recommendationservice.services;
 
+import com.emanuel.recommendationservice.proxies.RatingServiceProxy;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +26,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class RecommendationService {
 
+    private RatingServiceProxy ratingServiceProxy;
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
     private static final String RATING_MEDIA_ENDPOINT = "http://localhost:8081/api/rating/media/";
-    private  static final String DB_MEDIA_EXCEPTION = "Can't get random recommended media. The database is empty. Please upload something";
+    private static final String DB_MEDIA_EXCEPTION = "Can't get random recommended media. The database is empty. Please upload something";
     private final Random random = new Random();
     @Value("${minRating}")
     private float minRating;
@@ -51,15 +55,27 @@ public class RecommendationService {
         }
     }
 
-    public  <T extends MediaDto> Float getRating(T media, Float generalRating) {
+    public  <T extends MediaDto> Float getRating(T media) {
+        RatingDto rating;
+        try {
+            rating = ratingServiceProxy.getMediaByRatingId(media.getId());
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            return 0F;
+        }
+        return rating.getGeneralRating();
+    }
+
+    @SuppressWarnings("unused")
+    private <T extends MediaDto> Float getRatingByIdWithRest(T media, Float generalRating) {
         try {
             ResponseEntity<RatingDto> ratingResponse = new RestTemplate().getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
             RatingDto rating = ratingResponse.getBody();
             if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
                 generalRating = rating.getGeneralRating();
             }
-        } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            LOGGER.info(ex.getMessage());
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            LOGGER.info(e.getMessage());
         }
         return generalRating;
     }

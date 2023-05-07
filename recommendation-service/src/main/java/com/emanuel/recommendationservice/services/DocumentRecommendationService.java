@@ -30,11 +30,10 @@ public class DocumentRecommendationService {
 
     private Map<Long, Double> getDocumentScores(List<DocumentDto> documents) {
         return documents.stream().collect(Collectors.toMap(DocumentDto::getId, documentDto -> {
-            Float generalRating = 0f;
             double extensionScore = 0;
             double numberOfPagesScore = 0;
             // get rating score
-            generalRating = recommendationService.getRating(documentDto, generalRating);
+            Float generalRating = recommendationService.getRating(documentDto);
             // calculate extension score
             String extension = Optional.ofNullable(documentDto.getExtension()).orElse("");
             if (extension.equalsIgnoreCase("pdf")) {
