@@ -108,19 +108,9 @@ public class RecommendationService {
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
         }
-        Float generalRating = 0f;
         List<T> passMedias = new ArrayList<>();
         for (T media : medias) {
-            try {
-                ResponseEntity<RatingDto> ratingResponse = new RestTemplate()
-                        .getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
-                RatingDto rating = ratingResponse.getBody();
-                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
-                    generalRating = rating.getGeneralRating();
-                }
-            } catch (HttpClientErrorException | HttpServerErrorException ex) {
-                LOGGER.info(ex.getMessage());
-            }
+            Float generalRating = getMediaByRatingId(media);
             if (generalRating >= minRating) {
                 passMedias.add(media);
             }
