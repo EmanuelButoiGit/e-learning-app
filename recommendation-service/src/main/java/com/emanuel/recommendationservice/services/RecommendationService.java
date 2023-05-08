@@ -7,7 +7,6 @@ import com.emanuel.starterlibrary.dtos.RatingDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
