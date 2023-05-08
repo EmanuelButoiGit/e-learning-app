@@ -8,6 +8,7 @@ import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RecommendationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
     private static final String RATING_MEDIA_ENDPOINT = "http://localhost:8081/api/rating/media/";
