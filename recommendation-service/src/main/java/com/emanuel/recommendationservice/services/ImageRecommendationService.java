@@ -30,8 +30,7 @@ public class ImageRecommendationService {
     private Map<Long, Double> getImageScores(List<ImageDto> images) {
         return images.stream().collect(Collectors.toMap(ImageDto::getId, imageDto -> {
             // get rating score
-            Float generalRating = 0f;
-            generalRating = recommendationService.getRating(imageDto, generalRating);
+            Float generalRating = recommendationService.getGeneralRatingBasedOnMedia(imageDto);
             // calculate quality score
             int resolutionQuality = Optional.ofNullable(imageDto.getResolutionQuality()).orElse(0);
             int resolutionQualityScore = recommendationService.calculateResolutionQuality(resolutionQuality);

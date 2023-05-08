@@ -1,10 +1,13 @@
 package com.emanuel.recommendationservice.services;
 
+import com.emanuel.recommendationservice.proxies.MediaServiceProxy;
+import com.emanuel.recommendationservice.proxies.RatingServiceProxy;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +27,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class RecommendationService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
     private static final String RATING_MEDIA_ENDPOINT = "http://localhost:8081/api/rating/media/";
-    private  static final String DB_MEDIA_EXCEPTION = "Can't get random recommended media. The database is empty. Please upload something";
+    private static final String DB_MEDIA_EXCEPTION = "Can't get random recommended media. The database is empty. Please upload something";
+    private final MediaServiceProxy mediaServiceProxy;
+    private final RatingServiceProxy ratingServiceProxy;
     private final Random random = new Random();
     @Value("${minRating}")
     private float minRating;
 
+    @SuppressWarnings("unused")
     @SneakyThrows
-    public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
+    public <T extends MediaDto> List<T> getDtoListFromDatabaseWithRest(Class<T> mediaClassType, String mediaType) {
         ResponseEntity<List<T>> response = new RestTemplate()
                 .exchange("http://localhost:8080/api/" + mediaType + "/", HttpMethod.GET, null,
                         new ParameterizedTypeReference<>() {});
@@ -51,15 +57,58 @@ public class RecommendationService {
         }
     }
 
-    public  <T extends MediaDto> Float getRating(T media, Float generalRating) {
+    @SneakyThrows
+    public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
+        List<?> medias = null;
+        switch (mediaType){
+            case "media":
+                medias = mediaServiceProxy.getAllMedias();
+                break;
+            case "audio":
+                medias = mediaServiceProxy.getAllAudios();
+                break;
+            case "document":
+                medias = mediaServiceProxy.getAllDocuments();
+                break;
+            case "image":
+                medias = mediaServiceProxy.getAllImages();
+                break;
+            case "video":
+                medias = mediaServiceProxy.getAllVideos();
+            break;
+        }
+        if (medias == null) {
+            throw new NullPointerException("The table is empty!");
+        }
+        return medias.stream()
+                .map(mediaClassType::cast)
+                .collect(Collectors.toList());
+    }
+
+    public <T extends MediaDto> Float getGeneralRatingBasedOnMedia(T media) {
+        RatingDto rating;
+        try {
+            rating = ratingServiceProxy.getMediaByRatingId(media.getId());
+            if (rating == null){
+                return 0f;
+            }
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            return 0F;
+        }
+        return rating.getGeneralRating();
+    }
+
+    @SuppressWarnings("unused")
+    private <T extends MediaDto> Float getMediaByRatingIdWithRest(T media, Float generalRating) {
         try {
             ResponseEntity<RatingDto> ratingResponse = new RestTemplate().getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
             RatingDto rating = ratingResponse.getBody();
             if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
                 generalRating = rating.getGeneralRating();
             }
-        } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            LOGGER.info(ex.getMessage());
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            LOGGER.info(e.getMessage());
         }
         return generalRating;
     }
@@ -92,19 +141,9 @@ public class RecommendationService {
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
         }
-        Float generalRating = 0f;
         List<T> passMedias = new ArrayList<>();
         for (T media : medias) {
-            try {
-                ResponseEntity<RatingDto> ratingResponse = new RestTemplate()
-                        .getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
-                RatingDto rating = ratingResponse.getBody();
-                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
-                    generalRating = rating.getGeneralRating();
-                }
-            } catch (HttpClientErrorException | HttpServerErrorException ex) {
-                LOGGER.info(ex.getMessage());
-            }
+            Float generalRating = getGeneralRatingBasedOnMedia(media);
             if (generalRating >= minRating) {
                 passMedias.add(media);
             }
@@ -145,20 +184,10 @@ public class RecommendationService {
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
         }
-        Float generalRating;
         HashMap<String, Float> map = new HashMap<>();
         for (T media : medias) {
-            try {
-                ResponseEntity<RatingDto> ratingResponse = new RestTemplate()
-                        .getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
-                RatingDto rating = ratingResponse.getBody();
-                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
-                    generalRating = rating.getGeneralRating();
-                    map.put(media.getTitle(), generalRating);
-                }
-            } catch (HttpClientErrorException | HttpServerErrorException ex) {
-                LOGGER.info(ex.getMessage());
-            }
+            Float generalRating = getGeneralRatingBasedOnMedia(media);
+            map.put(media.getTitle(), generalRating);
         }
         if (map.isEmpty()) {
             LOGGER.info("No media has a rating");
@@ -177,20 +206,10 @@ public class RecommendationService {
         if(medias.isEmpty()){
             throw new DataBaseException(DB_MEDIA_EXCEPTION);
         }
-        Float generalRating;
         HashMap<T, Float> map = new HashMap<>();
         for (T media : medias) {
-            try {
-                ResponseEntity<RatingDto> ratingResponse = new RestTemplate()
-                        .getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
-                RatingDto rating = ratingResponse.getBody();
-                if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
-                    generalRating = rating.getGeneralRating();
-                    map.put(media, generalRating);
-                }
-            } catch (HttpClientErrorException | HttpServerErrorException ex) {
-                LOGGER.info(ex.getMessage());
-            }
+            Float generalRating = getGeneralRatingBasedOnMedia(media);
+            map.put(media, generalRating);
         }
         if (map.isEmpty()) {
             LOGGER.info("No media has a rating");

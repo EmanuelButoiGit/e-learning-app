@@ -29,12 +29,11 @@ public class AudioRecommendationService {
 
     private Map<Long, Double> getAudioScores(List<AudioDto> audios) {
         return audios.stream().collect(Collectors.toMap(AudioDto::getId, audioDto -> {
-            Float generalRating = 0f;
             double durationScore = 0;
             double extensionScore = 0;
             double sampleScore = 0;
             // get rating score
-            generalRating = recommendationService.getRating(audioDto, generalRating);
+            Float generalRating = recommendationService.getGeneralRatingBasedOnMedia(audioDto);
             // calculate duration score
             long duration = Optional.ofNullable(audioDto.getDuration()).orElse(0L);
             if (duration > 600 && duration < 1200){
