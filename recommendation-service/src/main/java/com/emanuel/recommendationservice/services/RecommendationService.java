@@ -9,8 +9,7 @@ import com.emanuel.starterlibrary.exceptions.DeserializationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -26,10 +25,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecommendationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
     private static final String RATING_MEDIA_ENDPOINT = "http://localhost:8081/api/rating/media/";
     private static final String DB_MEDIA_EXCEPTION = "Can't get random recommended media. The database is empty. Please upload something";
     private final MediaServiceProxy mediaServiceProxy;
@@ -93,7 +92,7 @@ public class RecommendationService {
                 return 0f;
             }
         } catch (Exception e) {
-            LOGGER.info(e.getMessage());
+            log.info(e.getMessage());
             return 0F;
         }
         return rating.getGeneralRating();
@@ -108,7 +107,7 @@ public class RecommendationService {
                 generalRating = rating.getGeneralRating();
             }
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            LOGGER.info(e.getMessage());
+            log.info(e.getMessage());
         }
         return generalRating;
     }
@@ -150,7 +149,7 @@ public class RecommendationService {
         }
         int randomNumber = random.nextInt(passMedias.size());
         if (passMedias.isEmpty()) {
-            LOGGER.info("No media has a rating above {}", minRating);
+            log.info("No media has a rating above {}", minRating);
             return medias.get(randomNumber);
         }
         return passMedias.get(randomNumber);
@@ -190,7 +189,7 @@ public class RecommendationService {
             map.put(media.getTitle(), generalRating);
         }
         if (map.isEmpty()) {
-            LOGGER.info("No media has a rating");
+            log.info("No media has a rating");
         }
         List<Map.Entry<String, Float>> entries = new ArrayList<>(map.entrySet());
         entries.sort(Map.Entry.<String, Float>comparingByValue().reversed());
@@ -212,7 +211,7 @@ public class RecommendationService {
             map.put(media, generalRating);
         }
         if (map.isEmpty()) {
-            LOGGER.info("No media has a rating");
+            log.info("No media has a rating");
         }
         List<Map.Entry<T, Float>> entries = new ArrayList<>(map.entrySet());
         entries.sort(Map.Entry.<T, Float>comparingByValue().reversed());

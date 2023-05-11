@@ -12,8 +12,7 @@ import com.emanuel.starterlibrary.exceptions.DataBaseException;
 import com.emanuel.starterlibrary.exceptions.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,18 +25,16 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ImageService {
-
     private final ValidationService validationService;
     private final MediaService mediaService;
     private final MediaConverter mediaConverter;
     private final QualityService qualityService;
     private final ImageRepository imageRepository;
     private final ImageConverter imageConverter;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImageService.class);
 
     @SneakyThrows
     public ImageDto uploadImage(MultipartFile file, String title, String description) {
@@ -47,7 +44,7 @@ public class ImageService {
         try (InputStream inputStream = file.getInputStream()) {
             image = ImageIO.read(inputStream);
         }  catch (IOException e){
-            LOGGER.error("Error reading image file: {}", e.getMessage());
+            log.error("Error reading image file: {}", e.getMessage());
         }
         if (image == null){
             throw new NullPointerException("Error image file is null");

@@ -7,8 +7,7 @@ import com.emanuel.starterlibrary.exceptions.EmailException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
@@ -27,6 +26,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -56,8 +56,6 @@ public class NotificationService {
                 "Butoi Emanuel-Sebastian<br>" +
                 "https://github.com/EmanuelButoiGit<br>" +
                 "</h3> <br>";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
 
     public void sendActuatorMetrics() {
         String subject = "Daily Actuator Metrics";
@@ -99,7 +97,7 @@ public class NotificationService {
         } catch (Exception e) {
             throw new EmailException(e, subject);
         }
-        LOGGER.info("The mail with the following subject \"{}\" was sent", subject);
+        log.info("The mail with the following subject \"{}\" was sent", subject);
     }
 
     public void sendAlert(@NotEmpty @NotBlank String alertMessage) {
