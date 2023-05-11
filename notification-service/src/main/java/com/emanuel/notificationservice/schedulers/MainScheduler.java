@@ -4,8 +4,7 @@ import com.emanuel.notificationservice.services.MetricService;
 import com.emanuel.notificationservice.services.NotificationService;
 import com.emanuel.starterlibrary.dtos.MetricDto;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MainScheduler {
@@ -24,18 +24,16 @@ public class MainScheduler {
     private Double jvmMemoryMax;
     private Double jvmMemoryUsed;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainScheduler.class);
-
     @Scheduled(cron = "0 0 12 * * ?") // every day at noon
     public void sendActuatorMetrics() {
         notificationService.sendActuatorMetrics();
-        LOGGER.info("Scheduled job sendActuatorMetrics was executed");
+        log.info("Scheduled job sendActuatorMetrics was executed");
     }
 
     @Scheduled(cron = "0 0 9 ? * MON") // every monday at 9 AM
     public void sendTopMedias() {
         notificationService.sendTopMedias();
-        LOGGER.info("Scheduled job sendTopMedias was executed");
+        log.info("Scheduled job sendTopMedias was executed");
     }
 
     @Scheduled(initialDelay = 3600000, fixedRate = 60000) // run every 1 minute with an initial delay of 1 hour
@@ -52,7 +50,7 @@ public class MainScheduler {
         if (jvmMemoryUsage >= 80) {
             notificationService.sendAlert("JVM memory usage is high, it is " + jvmMemoryUsage + "%");
         }
-        LOGGER.info("Scheduled job checkMetrics was executed");
+        log.info("Scheduled job checkMetrics was executed");
     }
 
     @SuppressWarnings("squid:S3776")
