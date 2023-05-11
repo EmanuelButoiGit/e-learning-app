@@ -1,8 +1,7 @@
 package com.emanuel.mediaservice.services;
 
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,11 +15,11 @@ import java.util.Base64;
 import java.util.Objects;
 import java.util.Scanner;
 
+@Slf4j
 @Service
 public class ScanService {
 
     private static final String VIRUS_TOTAL_API_KEY = "bed0e74e6e29e063b54e04cca27a28dd7e0499f3fcdb4fd5e8f942a34d83e637";
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScanService.class);
 
     @SneakyThrows
     public boolean scanFileForViruses(MultipartFile file) {
@@ -52,7 +51,7 @@ public class ScanService {
 
     private boolean sendRequest(URL url, String encodedFileContent) throws IOException {
         if (encodedFileContent.isEmpty()){
-            LOGGER.warn("The file content is empty");
+            log.warn("The file content is empty");
         }
         // Send the API request and capture the response
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -68,10 +67,10 @@ public class ScanService {
         try (Scanner scanner = new Scanner(connection.getInputStream())) {
             response = scanner.useDelimiter("\\A").next();
         } catch (IOException e) {
-            LOGGER.error("Failed to get API response: {}", e.getMessage());
+            log.error("Failed to get API response: {}", e.getMessage());
             return true;
         }
-        LOGGER.info("Virus Total, API response: {}", response);
+        log.info("Virus Total, API response: {}", response);
         return response.contains("\"response_code\": 1");
     }
 }

@@ -1,41 +1,40 @@
 package com.emanuel.mediaservice.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class QualityService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(QualityService.class);
 
     @SuppressWarnings("squid:S3776")
     public Integer calculateResolutionQuality(Integer width, Integer height) {
         if (width <= 144 && height <= 144) {
-            LOGGER.info("This media resolution quality is 144p");
+            log.info("This media resolution quality is 144p");
             return height;
         } else if (width <= 360 && height <= 360) {
-            LOGGER.info("This media resolution quality is 360p");
+            log.info("This media resolution quality is 360p");
             return height;
         } else if (width <= 640 && height <= 480) {
-            LOGGER.info("This media resolution quality is SD (480p)");
+            log.info("This media resolution quality is SD (480p)");
             return height;
         } else if (width <= 1280 && height <= 720) {
-            LOGGER.info("This media resolution quality is HD (720p)");
+            log.info("This media resolution quality is HD (720p)");
             return height;
         } else if (width <= 1920 && height <= 1080) {
-            LOGGER.info("This media resolution quality is Full HD (1080p)");
+            log.info("This media resolution quality is Full HD (1080p)");
             return height;
         } else if (width <= 2560 && height <= 1440) {
-            LOGGER.info("This media resolution quality is 2K (1440p)");
+            log.info("This media resolution quality is 2K (1440p)");
             return height;
         } else if (width <= 3840 && height <= 2160) {
-            LOGGER.info("This media resolution quality is 4K or Ultra HD (2160p)");
+            log.info("This media resolution quality is 4K or Ultra HD (2160p)");
             return height;
         } else if (width <= 7680 && height <= 4320) {
-            LOGGER.info("This media resolution quality is 8K or Full Ultra HD (4320p)");
+            log.info("This media resolution quality is 8K or Full Ultra HD (4320p)");
             return height;
         } else {
-            LOGGER.info("This media resolution standard is UNKNOWN");
+            log.info("This media resolution standard is UNKNOWN");
             return 0;
         }
     }
