@@ -1,6 +1,7 @@
 package com.emanuel.mediaservice.controllers;
 
 import com.emanuel.mediaservice.services.VideoService;
+import com.emanuel.starterlibrary.annotations.Resilient;
 import com.emanuel.starterlibrary.dtos.VideoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Resilient
 @Validated
 @RestController
 @RequiredArgsConstructor
