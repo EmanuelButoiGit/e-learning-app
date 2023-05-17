@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +38,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Upload a media file")
     @ApiResponse(responseCode = "201", description = "Media uploaded")
+    @CacheEvict(value = {"mediaById", "allMedias"}, allEntries = true)
     public MediaDto uploadMedia(
             @NotNull
             @RequestParam("file") MultipartFile file,
@@ -61,6 +64,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all media files")
     @ApiResponse(responseCode = "200", description = "All media files retrieved")
+    @Cacheable(value = "allMedias", cacheManager = "cacheManager")
     public List<MediaDto> getAllMedias()
     {
         return mediaService.getAllMedias();
@@ -70,6 +74,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a specific media file based on a giving media id")
     @ApiResponse(responseCode = "200", description = "Specific media file retrieved based on a giving media id")
+    @Cacheable(value = "mediaById", key = "#id", cacheManager = "cacheManager")
     public MediaDto getMediaById(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return mediaService.getMediaById(id);
@@ -79,6 +84,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a specific media file based on a giving media id")
     @ApiResponse(responseCode = "200", description = "Specific media file was deleted based on a giving media id")
+    @CacheEvict(value = {"mediaById", "allMedias"}, allEntries = true)
     public MediaDto deleteMedia(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return mediaService.deleteMedia(id);
@@ -88,6 +94,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a specific media file based on a giving media id")
     @ApiResponse(responseCode = "200", description = "Specific media file was updated based on a giving media id")
+    @CacheEvict(value = {"mediaById", "allMedias"}, allEntries = true)
     public MediaDto updateMedia(@PathVariable @NotNull @Min(value = 0) Long id, @Valid @RequestBody() MediaDto media) {
         return mediaService.updateMedia(id, media);
     }
@@ -96,6 +103,7 @@ public class MediaController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete all media files")
     @ApiResponse(responseCode = "204", description = "All media files were deleted")
+    @CacheEvict(value = {"mediaById", "allMedias"}, allEntries = true)
     public void deleteAllMedias(){
         mediaService.deleteAllMedias();
     }
