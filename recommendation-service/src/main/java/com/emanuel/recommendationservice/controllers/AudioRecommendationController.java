@@ -1,6 +1,7 @@
 package com.emanuel.recommendationservice.controllers;
 
 import com.emanuel.recommendationservice.services.AudioRecommendationService;
+import com.emanuel.starterlibrary.annotations.Resilient;
 import com.emanuel.starterlibrary.dtos.AudioDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Resilient
 @Validated
 @RestController
 @RequiredArgsConstructor

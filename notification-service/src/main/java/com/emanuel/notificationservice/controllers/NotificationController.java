@@ -1,6 +1,7 @@
 package com.emanuel.notificationservice.controllers;
 
 import com.emanuel.notificationservice.services.NotificationService;
+import com.emanuel.starterlibrary.annotations.Resilient;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
+@Resilient
 @Validated
 @RestController
 @RequiredArgsConstructor
