@@ -37,8 +37,7 @@ public class NotificationService {
     private JavaMailSender javaMailSender;
     @Value("${spring.mail.username}")
     private String username;
-
-    private RecommendationServiceProxy recommendationServiceProxy;
+    private final RecommendationServiceProxy recommendationServiceProxy;
     private static final String CLOSE_TITLE_TAGS = "</h1> <br>";
     private static final String H3STYLE = "<h3 style='font-weight: normal;'>";
     private static final String H2STYLE = "<h2 style='font-weight: normal;'>";

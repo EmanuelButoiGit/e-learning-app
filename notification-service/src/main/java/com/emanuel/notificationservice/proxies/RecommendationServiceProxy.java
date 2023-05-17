@@ -13,9 +13,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@FeignClient(name = "media-service")
+@FeignClient(name = "recommendation-service")
 public interface RecommendationServiceProxy {
-    @SneakyThrows
     @GetMapping("api/recommendation/media/top")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get the top media files by name")
