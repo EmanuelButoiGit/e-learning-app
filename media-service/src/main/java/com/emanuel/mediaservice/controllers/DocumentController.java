@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +38,7 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Upload a document file")
     @ApiResponse(responseCode = "201", description = "Document uploaded")
+    @CacheEvict(value = {"documentById", "allDocuments"}, allEntries = true)
     public DocumentDto uploadDocument(
             @NotNull
             @RequestParam("file") MultipartFile file,
@@ -61,6 +64,7 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all document files")
     @ApiResponse(responseCode = "200", description = "All document files retrieved")
+    @Cacheable(value = "allDocuments", cacheManager = "cacheManager")
     public List<DocumentDto> getAllDocuments()
     {
         return documentService.getAllDocuments();
@@ -70,6 +74,7 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a specific document file based on a giving document id")
     @ApiResponse(responseCode = "200", description = "Specific document file retrieved based on a giving document id")
+    @Cacheable(value = "documentById", key = "#id", cacheManager = "cacheManager")
     public DocumentDto getDocumentById(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return documentService.getDocumentById(id);
@@ -79,6 +84,7 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a specific document file based on a giving document id")
     @ApiResponse(responseCode = "200", description = "Specific document file was deleted based on a giving document id")
+    @CacheEvict(value = {"documentById", "allDocuments"}, allEntries = true)
     public DocumentDto deleteDocument(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return documentService.deleteDocument(id);
@@ -88,6 +94,7 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a specific document file based on a giving document id")
     @ApiResponse(responseCode = "200", description = "Specific document file was updated based on a giving document id")
+    @CacheEvict(value = {"documentById", "allDocuments"}, allEntries = true)
     public DocumentDto updateDocument(@PathVariable @NotNull @Min(value = 0) Long id, @Valid @RequestBody() DocumentDto document) {
         return documentService.updateDocument(id, document);
     }
@@ -96,6 +103,7 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete all document files")
     @ApiResponse(responseCode = "204", description = "All document files were deleted")
+    @CacheEvict(value = {"documentById", "allDocuments"}, allEntries = true)
     public void deleteAllDocuments(){
         documentService.deleteAllDocuments();
     }
