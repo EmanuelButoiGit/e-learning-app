@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class VideoRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all recommended video files")
     @ApiResponse(responseCode = "200", description = "All recommended video retrieved")
+    @Cacheable(value = "recommendedVideos", key = "#numberOfVideos", cacheManager = "cacheManager")
     public List<VideoDto> getRecommendedVideo(@RequestParam @NotNull @Min(value = 1) int numberOfVideos)
     {
         return videoRecommendationService.getRecommendedVideo(numberOfVideos);
@@ -39,6 +41,7 @@ public class VideoRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get random recommended video file")
     @ApiResponse(responseCode = "200", description = "Random video retrieved")
+    @Cacheable(value = "randomRecommendedVideo", cacheManager = "cacheManager")
     public VideoDto getRandomRecommendedVideo()
     {
         return videoRecommendationService.getRandomRecommendedVideo();
