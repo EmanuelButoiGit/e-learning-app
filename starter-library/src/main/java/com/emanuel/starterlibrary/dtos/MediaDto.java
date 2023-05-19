@@ -5,12 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MediaDto {
+public class MediaDto implements Serializable {
     @NotNull(message = "ID cannot be null")
     @Min(value = 0, message = "ID must be non-negative")
     private Long id;

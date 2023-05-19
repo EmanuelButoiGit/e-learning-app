@@ -5,11 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RatingDto {
+public class RatingDto implements Serializable {
     @NotNull(message = "ID cannot be null")
     @Min(value = 0, message = "ID must be non-negative")
     private Long id;

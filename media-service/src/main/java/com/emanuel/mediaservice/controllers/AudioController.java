@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +38,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Upload a audio file")
     @ApiResponse(responseCode = "201", description = "Audio uploaded")
+    @CacheEvict(value = {"audioById", "allAudios"}, allEntries = true)
     public AudioDto uploadAudio(
             @NotNull
             @RequestParam("file") MultipartFile file,
@@ -61,6 +64,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all audio files")
     @ApiResponse(responseCode = "200", description = "All audio audio retrieved")
+    @Cacheable(value = "allAudios", cacheManager = "cacheManager")
     public List<AudioDto> getAllAudios()
     {
         return audioService.getAllAudios();
@@ -70,6 +74,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a specific audio file based on a giving audio id")
     @ApiResponse(responseCode = "200", description = "Specific audio file retrieved based on a giving audio id")
+    @Cacheable(value = "audioById", key = "#id", cacheManager = "cacheManager")
     public AudioDto getAudioById(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return audioService.getAudioById(id);
@@ -79,6 +84,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a specific audio file based on a giving audio id")
     @ApiResponse(responseCode = "200", description = "Specific audio file was deleted based on a giving audio id")
+    @CacheEvict(value = {"audioById", "allAudios"}, allEntries = true)
     public AudioDto deleteAudio(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return audioService.deleteAudio(id);
@@ -88,6 +94,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a specific audio file based on a giving audio id")
     @ApiResponse(responseCode = "200", description = "Specific audio file was updated based on a giving audio id")
+    @CacheEvict(value = {"audioById", "allAudios"}, allEntries = true)
     public AudioDto updateAudio(@PathVariable @NotNull @Min(value = 0) Long id, @Valid @RequestBody() AudioDto audio) {
         return audioService.updateAudio(id, audio);
     }
@@ -96,6 +103,7 @@ public class AudioController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete all audio files")
     @ApiResponse(responseCode = "204", description = "All audio files were deleted")
+    @CacheEvict(value = {"audioById", "allAudios"}, allEntries = true)
     public void deleteAllAudios(){
         audioService.deleteAllAudios();
     }

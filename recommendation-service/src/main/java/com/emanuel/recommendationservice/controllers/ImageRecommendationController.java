@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class ImageRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all recommended image files")
     @ApiResponse(responseCode = "200", description = "All recommended image retrieved")
+    @Cacheable(value = "recommendedImages", key = "#numberOfImages", cacheManager = "cacheManager")
     public List<ImageDto> getRecommendedImage(@RequestParam @NotNull @Min(value = 1) int numberOfImages)
     {
         return imageRecommendationService.getRecommendedImage(numberOfImages);
@@ -39,6 +41,7 @@ public class ImageRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get random recommended image file")
     @ApiResponse(responseCode = "200", description = "Random image retrieved")
+    @Cacheable(value = "randomRecommendedImage", cacheManager = "cacheManager")
     public ImageDto getRandomRecommendedImage()
     {
         return imageRecommendationService.getRandomRecommendedImage();

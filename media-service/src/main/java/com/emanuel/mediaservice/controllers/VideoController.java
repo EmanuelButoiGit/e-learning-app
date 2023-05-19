@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +38,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Upload a video file")
     @ApiResponse(responseCode = "201", description = "Video uploaded")
+    @CacheEvict(value = {"videoById", "allVideos"}, allEntries = true)
     public VideoDto uploadVideo(
             @NotNull
             @RequestParam("file") MultipartFile file,
@@ -61,6 +64,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all video files")
     @ApiResponse(responseCode = "200", description = "All video files retrieved")
+    @Cacheable(value = "allVideos", cacheManager = "cacheManager")
     public List<VideoDto> getAllVideos()
     {
         return videoService.getAllVideos();
@@ -70,6 +74,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a specific video file based on a giving video id")
     @ApiResponse(responseCode = "200", description = "Specific video file retrieved based on a giving video id")
+    @Cacheable(value = "videoById", key = "#id", cacheManager = "cacheManager")
     public VideoDto getVideoById(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return videoService.getVideoById(id);
@@ -79,6 +84,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a specific video file based on a giving video id")
     @ApiResponse(responseCode = "200", description = "Specific video file was deleted based on a giving video id")
+    @CacheEvict(value = {"videoById", "allVideos"}, allEntries = true)
     public VideoDto deleteVideo(@PathVariable @NotNull @Min(value = 0) Long id)
     {
         return videoService.deleteVideo(id);
@@ -88,6 +94,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a specific video file based on a giving video id")
     @ApiResponse(responseCode = "200", description = "Specific video file was updated based on a giving video id")
+    @CacheEvict(value = {"videoById", "allVideos"}, allEntries = true)
     public VideoDto updateVideo(@PathVariable @NotNull @Min(value = 0) Long id, @Valid @RequestBody() VideoDto video) {
         return videoService.updateVideo(id, video);
     }
@@ -96,6 +103,7 @@ public class VideoController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete all video files")
     @ApiResponse(responseCode = "204", description = "All video files were deleted")
+    @CacheEvict(value = {"videoById", "allVideos"}, allEntries = true)
     public void deleteAllVideos(){
         videoService.deleteAllVideos();
     }
