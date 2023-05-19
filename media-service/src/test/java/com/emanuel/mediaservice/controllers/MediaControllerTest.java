@@ -133,4 +133,37 @@ class MediaControllerTest {
         assertThat(mediaFromRequest.getDescription()).isEqualTo(DESCRIPTION);
     }
 
+    @Test
+    void updateMediaTest() {
+        // assume
+        MediaDto media = uploadMedia(TITLE, DESCRIPTION);
+        final Long id = media.getId();
+        final String newTitle = TITLE + " new";
+        final String newDescription = DESCRIPTION + " new";
+        media.setTitle(newTitle);
+        media.setDescription(newDescription);
+
+        // act
+        HttpEntity<MediaDto> requestEntity = new HttpEntity<>(media);
+        ResponseEntity<MediaDto> result = rest.exchange(
+                "/api/media/" + id,
+                HttpMethod.PUT,
+                requestEntity,
+                MediaDto.class
+        );
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().getTitle()).isEqualTo(newTitle);
+        assertThat(result.getBody().getDescription()).isEqualTo(newDescription);
+
+        // Verify the media was actually updated
+        ResponseEntity<MediaDto> updatedMediaResult = rest.getForEntity("/api/media/" + id, MediaDto.class);
+        assertThat(updatedMediaResult.getBody()).isNotNull();
+        assertThat(updatedMediaResult.getBody().getTitle()).isEqualTo(newTitle);
+        assertThat(updatedMediaResult.getBody().getDescription()).isEqualTo(newDescription);
+    }
+
+
 }
