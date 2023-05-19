@@ -111,4 +111,26 @@ class MediaControllerTest {
         assertThat(mediaFromRequest.getDescription()).isEqualTo(DESCRIPTION);
     }
 
+    @Test
+    void deleteMediaTest() {
+        // assume
+        MediaDto media = uploadMedia(TITLE, DESCRIPTION);
+        final Long id = media.getId();
+
+        // act
+        ResponseEntity<MediaDto> result = rest.exchange(
+                "/api/media/" + id,
+                HttpMethod.DELETE,
+                null,
+                MediaDto.class
+        );
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        MediaDto mediaFromRequest = result.getBody();
+        assertThat(mediaFromRequest).isNotNull();
+        assertThat(mediaFromRequest.getTitle()).isEqualTo(TITLE);
+        assertThat(mediaFromRequest.getDescription()).isEqualTo(DESCRIPTION);
+    }
+
 }
