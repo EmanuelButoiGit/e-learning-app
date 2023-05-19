@@ -76,16 +76,15 @@ class MediaControllerTest {
     @Test
     void getMediasTest() {
         // assume
-        MediaDto media = uploadMedia(TITLE, DESCRIPTION);
-        MediaDto media2 = uploadMedia(TITLE + "2", DESCRIPTION + "2");
+        uploadMedia(TITLE, DESCRIPTION);
+        uploadMedia(TITLE + "2", DESCRIPTION + "2");
 
         // act
         ResponseEntity<List<MediaDto>> result = rest.exchange(
                 "/api/media",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<>() {
-                }
+                new ParameterizedTypeReference<>() {}
         );
 
         // assert
@@ -165,5 +164,21 @@ class MediaControllerTest {
         assertThat(updatedMediaResult.getBody().getDescription()).isEqualTo(newDescription);
     }
 
+    @Test
+    void deleteAllMediasTest() {
+        // assume
+        uploadMedia(TITLE, DESCRIPTION);
+
+        // act
+        ResponseEntity<Void> result = rest.exchange("/api/media", HttpMethod.DELETE, null, Void.class);
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        // Verify all medias are deleted
+        ResponseEntity<MediaDto[]> getAllResult = rest.getForEntity("/api/media", MediaDto[].class);
+        assertThat(getAllResult.getBody()).isNotNull();
+        assertThat(getAllResult.getBody()).isEmpty();
+    }
 
 }
