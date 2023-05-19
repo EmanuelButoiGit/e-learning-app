@@ -153,15 +153,17 @@ class MediaControllerTest {
 
         // assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().getTitle()).isEqualTo(newTitle);
-        assertThat(result.getBody().getDescription()).isEqualTo(newDescription);
+        MediaDto updatedMediaResult = result.getBody();
+        assertThat(updatedMediaResult).isNotNull();
+        assertThat(updatedMediaResult.getTitle()).isEqualTo(newTitle);
+        assertThat(updatedMediaResult.getDescription()).isEqualTo(newDescription);
 
         // Verify the media was actually updated
-        ResponseEntity<MediaDto> updatedMediaResult = rest.getForEntity("/api/media/" + id, MediaDto.class);
-        assertThat(updatedMediaResult.getBody()).isNotNull();
-        assertThat(updatedMediaResult.getBody().getTitle()).isEqualTo(newTitle);
-        assertThat(updatedMediaResult.getBody().getDescription()).isEqualTo(newDescription);
+        ResponseEntity<MediaDto> responseFromGetRequest = rest.getForEntity("/api/media/" + id, MediaDto.class);
+        MediaDto mediaFromGetRequest = responseFromGetRequest.getBody();
+        assertThat(mediaFromGetRequest).isNotNull();
+        assertThat(mediaFromGetRequest.getTitle()).isEqualTo(newTitle);
+        assertThat(mediaFromGetRequest.getDescription()).isEqualTo(newDescription);
     }
 
     @Test
@@ -175,10 +177,9 @@ class MediaControllerTest {
         // assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        // Verify all medias are deleted
+        // verify if all medias are deleted
         ResponseEntity<MediaDto[]> getAllResult = rest.getForEntity("/api/media", MediaDto[].class);
-        assertThat(getAllResult.getBody()).isNotNull();
-        assertThat(getAllResult.getBody()).isEmpty();
+        assertThat(getAllResult.getBody()).isNotNull().isEmpty();
     }
 
 }
