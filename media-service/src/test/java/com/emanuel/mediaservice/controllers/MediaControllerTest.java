@@ -26,7 +26,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MediaControllerTest {
     @Autowired
     private MediaService mediaService;
@@ -35,12 +34,16 @@ class MediaControllerTest {
     @MockBean
     private NotificationServiceProxy notificationServiceProxy;
 
+    private final static String TITLE = "Test title";
+    private final static String DESCRIPTION = "Test description";
+
     @Test
-    @Order(1)
     void uploadMediaTest() {
+        uploadMedia(TITLE, DESCRIPTION);
+    }
+
+    private MediaDto uploadMedia(String title, String description) {
         // assume
-        final String title = "Test title";
-        final String description = "Test description";
         ByteArrayResource resource = new ByteArrayResource("test data".getBytes()) {
             @Override
             public String getFilename() {
@@ -64,9 +67,27 @@ class MediaControllerTest {
 
         // assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        MediaDto media = result.getBody();
+        assertThat(media).isNotNull();
+        assertThat(Objects.requireNonNull(media).getTitle()).isEqualTo(title);
+        assertThat(media.getDescription()).isEqualTo(description);
+
+        return media;
+    }
+
+    @Test
+    void getMediaByIdTest() {
+        // assume
+        MediaDto media = uploadMedia(TITLE, DESCRIPTION);
+        final Long id = media.getId();
+
+        // act
+        ResponseEntity<MediaDto> result = rest.getForEntity("/api/media/" + id, MediaDto.class);
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isNotNull();
-        assertThat(Objects.requireNonNull(result.getBody()).getTitle()).isEqualTo(title);
-        assertThat(result.getBody().getDescription()).isEqualTo(description);
+        assertThat(result.getBody().getId()).isEqualTo(id);
     }
 
 }
