@@ -26,8 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase
 class MediaControllerTest {
     @Autowired
-    private MediaService mediaService;
-    @Autowired
     private TestRestTemplate rest;
     @MockBean
     private NotificationServiceProxy notificationServiceProxy;
