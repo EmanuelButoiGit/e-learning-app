@@ -3,25 +3,23 @@ package com.emanuel.mediaservice.controllers;
 import com.emanuel.mediaservice.proxies.NotificationServiceProxy;
 import com.emanuel.mediaservice.services.MediaService;
 import com.emanuel.starterlibrary.dtos.MediaDto;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.Objects;
+import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
@@ -69,10 +67,31 @@ class MediaControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         MediaDto media = result.getBody();
         assertThat(media).isNotNull();
-        assertThat(Objects.requireNonNull(media).getTitle()).isEqualTo(title);
+        assertThat(media.getTitle()).isEqualTo(title);
         assertThat(media.getDescription()).isEqualTo(description);
 
         return media;
+    }
+
+    @Test
+    void getMediasTest() {
+        // assume
+        MediaDto media = uploadMedia(TITLE, DESCRIPTION);
+        MediaDto media2 = uploadMedia(TITLE + "2", DESCRIPTION + "2");
+
+        // act
+        ResponseEntity<List<MediaDto>> result = rest.exchange(
+                "/api/media",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<MediaDto> mediaListFromRequest = result.getBody();
+        assertThat(mediaListFromRequest).isNotNull().hasSizeGreaterThanOrEqualTo(2);
     }
 
     @Test
@@ -86,8 +105,10 @@ class MediaControllerTest {
 
         // assert
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().getId()).isEqualTo(id);
+        MediaDto mediaFromRequest = result.getBody();
+        assertThat(mediaFromRequest).isNotNull();
+        assertThat(mediaFromRequest.getTitle()).isEqualTo(TITLE);
+        assertThat(mediaFromRequest.getDescription()).isEqualTo(DESCRIPTION);
     }
 
 }
