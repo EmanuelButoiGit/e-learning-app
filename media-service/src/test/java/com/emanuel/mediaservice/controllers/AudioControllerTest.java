@@ -1,10 +1,13 @@
 package com.emanuel.mediaservice.controllers;
 
 import com.emanuel.starterlibrary.dtos.AudioDto;
+import com.emanuel.starterlibrary.dtos.MediaDto;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
@@ -14,6 +17,7 @@ import org.springframework.util.MultiValueMap;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +27,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AudioControllerTest extends BaseTestController {
 
     @Test
-    void uploadAudioTest() throws IOException {
+    void uploadAudioTest() {
+        uploadAudio(TITLE, DESCRIPTION);
+    }
+
+    @SneakyThrows
+    private AudioDto uploadAudio(String title, String description)  {
         // Get the bytes of your real audio file
         byte[] audioBytes = Files.readAllBytes(Paths.get("src/test/resources/samples/test.mp3"));
         ByteArrayResource resource = new ByteArrayResource(audioBytes) {
@@ -33,10 +42,6 @@ class AudioControllerTest extends BaseTestController {
             }
         };
 
-        uploadAudio(TITLE, DESCRIPTION, resource);
-    }
-
-    private AudioDto uploadAudio(String title, String description, ByteArrayResource resource) {
         // assume
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", resource);
@@ -60,5 +65,25 @@ class AudioControllerTest extends BaseTestController {
         assertThat(audio.getDescription()).isEqualTo(description);
 
         return audio;
+    }
+
+    @Test
+    void getAudiosTest() {
+        // assume
+        uploadAudio(TITLE, DESCRIPTION);
+        uploadAudio(TITLE + "2", DESCRIPTION + "2");
+
+        // act
+        ResponseEntity<List<AudioDto>> result = rest.exchange(
+                "/api/audio",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<AudioDto> audioListFromRequest = result.getBody();
+        assertThat(audioListFromRequest).isNotNull().hasSizeGreaterThanOrEqualTo(2);
     }
 }
