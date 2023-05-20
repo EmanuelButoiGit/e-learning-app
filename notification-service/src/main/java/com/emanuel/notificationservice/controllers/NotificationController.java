@@ -74,7 +74,7 @@ public class NotificationController {
         notificationService.sendTopMedias();
     }
 
-    @PostMapping("/metrics")
+    @PostMapping("/monitor")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Check if the metrics are ok")
     @ApiResponse(responseCode = "200", description = "The verification was successful")
