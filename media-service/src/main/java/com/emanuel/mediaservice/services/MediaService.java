@@ -57,20 +57,6 @@ public class MediaService {
         return mediaConverter.toDto(savedEntity);
     }
 
-    @SneakyThrows
-    @SuppressWarnings("unused")
-    public void sendNotificationWithRest(String name){
-        // This is how it used to be before adding FEIGN for load balancing
-        try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8083/api/notification/new/media")
-                    .queryParam("newMedia", "{name}");
-            String url = builder.buildAndExpand(name).toUriString();
-            new RestTemplate().postForEntity(url, Void.class, Void.class);
-        } catch (RestClientException e) {
-            throw new RestClientException("Can't send notification", e);
-        }
-    }
-
     public void sendNotification(String name) {
         notificationServiceProxy.sendNewMediaNotification(name);
     }
