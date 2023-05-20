@@ -1,15 +1,10 @@
 package com.emanuel.mediaservice.controllers;
 
-import com.emanuel.mediaservice.proxies.NotificationServiceProxy;
-import com.emanuel.mediaservice.services.MediaService;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -24,14 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
-class MediaControllerTest {
-    @Autowired
-    private TestRestTemplate rest;
-    @MockBean
-    private NotificationServiceProxy notificationServiceProxy;
-
-    private final static String TITLE = "Test title";
-    private final static String DESCRIPTION = "Test description";
+class MediaControllerTest extends BaseTestController{
 
     @Test
     void uploadMediaTest() {
