@@ -1,5 +1,6 @@
 package com.emanuel.notificationservice.controllers;
 
+import com.emanuel.notificationservice.services.MetricService;
 import com.emanuel.notificationservice.services.NotificationService;
 import com.emanuel.starterlibrary.annotations.Resilient;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotEmpty;
 @RequestMapping("api/notification")
 public class NotificationController {
     private final NotificationService notificationService;
+    private final MetricService metricService;
 
     @PostMapping("/actuator")
     @ResponseStatus(HttpStatus.OK)
@@ -70,5 +72,14 @@ public class NotificationController {
     public void sendTopMedias()
     {
         notificationService.sendTopMedias();
+    }
+
+    @PostMapping("/monitor")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Check if the metrics are ok")
+    @ApiResponse(responseCode = "200", description = "The verification was successful")
+    public void checkMetrics()
+    {
+        metricService.checkMetrics();
     }
 }
