@@ -144,7 +144,7 @@ class MediaControllerTest extends BaseTestController{
         assertThat(updatedMediaResult.getTitle()).isEqualTo(newTitle);
         assertThat(updatedMediaResult.getDescription()).isEqualTo(newDescription);
 
-        // Verify the media was actually updated
+        // verify the media was actually updated
         ResponseEntity<MediaDto> responseFromGetRequest = rest.getForEntity("/api/media/" + id, MediaDto.class);
         MediaDto mediaFromGetRequest = responseFromGetRequest.getBody();
         assertThat(mediaFromGetRequest).isNotNull();

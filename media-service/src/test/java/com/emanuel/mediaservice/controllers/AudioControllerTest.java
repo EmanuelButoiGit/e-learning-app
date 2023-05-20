@@ -152,12 +152,28 @@ class AudioControllerTest extends BaseTestController {
         assertThat(updatedAudioResult.getTitle()).isEqualTo(newTitle);
         assertThat(updatedAudioResult.getDescription()).isEqualTo(newDescription);
 
-        // Verify the audio was actually updated
+        // verify the audio was actually updated
         ResponseEntity<AudioDto> responseFromGetRequest = rest.getForEntity("/api/audio/" + id, AudioDto.class);
         AudioDto audioFromGetRequest = responseFromGetRequest.getBody();
         assertThat(audioFromGetRequest).isNotNull();
         assertThat(audioFromGetRequest.getTitle()).isEqualTo(newTitle);
         assertThat(audioFromGetRequest.getDescription()).isEqualTo(newDescription);
+    }
+
+    @Test
+    void deleteAllAudiosTest() {
+        // assume
+        uploadAudio(TITLE, DESCRIPTION);
+
+        // act
+        ResponseEntity<Void> result = rest.exchange("/api/audio", HttpMethod.DELETE, null, Void.class);
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        // verify if all audios are deleted
+        ResponseEntity<AudioDto[]> getAllResult = rest.getForEntity("/api/audio", AudioDto[].class);
+        assertThat(getAllResult.getBody()).isNotNull().isEmpty();
     }
 
 }
