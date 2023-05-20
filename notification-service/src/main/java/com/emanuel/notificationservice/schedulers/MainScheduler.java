@@ -5,6 +5,7 @@ import com.emanuel.notificationservice.services.NotificationService;
 import com.emanuel.starterlibrary.dtos.MetricDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,10 +20,6 @@ import java.util.Optional;
 public class MainScheduler {
     private final NotificationService notificationService;
     private final MetricService metricService;
-    @Autowired
-    private MetricsEndpoint metricsEndpoint;
-    private Double jvmMemoryMax;
-    private Double jvmMemoryUsed;
 
     @Scheduled(cron = "0 0 12 * * ?") // every day at noon
     public void sendActuatorMetrics() {
@@ -38,45 +35,7 @@ public class MainScheduler {
 
     @Scheduled(initialDelay = 3600000, fixedRate = 60000) // run every 1 minute with an initial delay of 1 hour
     public void checkMetrics() {
-        List<MetricDto> metrics = metricService.getMetrics();
-        metrics.forEach(metric -> {
-            double metricValue = Optional.ofNullable(metricsEndpoint.metric(metric.getName(), null))
-                    .map(metricsSummary -> metricsSummary.getMeasurements().get(0).getValue())
-                    .orElse(0.0);
-            metricValue = metricService.parseMetric(metricValue, metric);
-            checkMetricValue(metric, metricValue);
-        });
-        double jvmMemoryUsage = this.jvmMemoryUsed / this.jvmMemoryMax;
-        if (jvmMemoryUsage >= 80) {
-            notificationService.sendAlert("JVM memory usage is high, it is " + jvmMemoryUsage + "%");
-        }
+        metricService.checkMetrics();
         log.info("Scheduled job checkMetrics was executed");
-    }
-
-    @SuppressWarnings("squid:S3776")
-    private void checkMetricValue(MetricDto metric, double metricValue) {
-        if (metric.getName().equals("http.server.requests") && metricValue == 0) {
-            notificationService.sendAlert("HTTP requests count is 0");
-        } else if (metric.getName().equals("system.cpu.usage") && metricValue == 0) {
-            notificationService.sendAlert("CPU usage is 0");
-        } else if (metric.getName().equals("tomcat.sessions.rejected") && metricValue == 0){
-            notificationService.sendAlert("Tomcat sessions are being rejected");
-        } else if (metric.getName().equals("tomcat.sessions.alive.max") && metricValue == 0) {
-            notificationService.sendAlert("Maximum session alive time in Tomcat is 0");
-        } else if (metric.getName().equals("process.cpu.usage") && metricValue >= 75) {
-            notificationService.sendAlert("Process CPU usage is high, " + metricValue + "%");
-        } else if (metric.getName().equals("jvm.threads.live") && metricValue >= 100) {
-            notificationService.sendAlert("Number of live threads in JVM is high, it is equal to " + metricValue);
-        } else if (metric.getName().equals("disk.free") && metricValue <= 50) {
-            notificationService.sendAlert("Free disk space is low. The system has " + metricValue + " GB left.");
-        } else if (metric.getName().equals("jvm.memory.max")) {
-            this.jvmMemoryMax = metricValue;
-        } else if (metric.getName().equals("jvm.gc.pause") && metricValue >= 500) {
-            notificationService.sendAlert("GC pause time is high, it is equal to " + metricValue + "ms");
-        } else if (metric.getName().equals("jvm.memory.used")) {
-            this.jvmMemoryUsed = metricValue;
-        } else if (metric.getName().equals("tomcat.sessions.active.max") && metricValue >= 100) {
-            notificationService.sendAlert("Max active sessions in Tomcat is high, it is equal to " + metricValue);
-        }
     }
 }
