@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
-class MediaControllerTest extends BaseTestController{
+class MediaControllerTest extends BaseControllerTest {
 
     @Test
     void uploadMediaTest() {

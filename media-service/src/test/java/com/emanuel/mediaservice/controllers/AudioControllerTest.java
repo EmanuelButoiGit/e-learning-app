@@ -1,7 +1,6 @@
 package com.emanuel.mediaservice.controllers;
 
 import com.emanuel.starterlibrary.dtos.AudioDto;
-import com.emanuel.starterlibrary.dtos.MediaDto;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -24,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
-class AudioControllerTest extends BaseTestController {
+class AudioControllerTest extends BaseControllerTest {
 
     @Test
     void uploadAudioTest() {
