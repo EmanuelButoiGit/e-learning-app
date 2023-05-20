@@ -31,7 +31,7 @@ class AudioControllerTest extends BaseControllerTest {
 
     @SneakyThrows
     private AudioDto uploadAudio(String title, String description)  {
-        // Get the bytes of your real audio file
+        // get the bytes of your real audio file
         byte[] audioBytes = Files.readAllBytes(Paths.get("src/test/resources/samples/test.mp3"));
         ByteArrayResource resource = new ByteArrayResource(audioBytes) {
             @Override

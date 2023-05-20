@@ -31,7 +31,7 @@ class ImageControllerTest extends BaseControllerTest {
 
     @SneakyThrows
     private ImageDto uploadImage(String title, String description)  {
-        // Get the bytes of your real image file
+        // get the bytes of your real image file
         byte[] imageBytes = Files.readAllBytes(Paths.get("src/test/resources/samples/test.jpg"));
         ByteArrayResource resource = new ByteArrayResource(imageBytes) {
             @Override

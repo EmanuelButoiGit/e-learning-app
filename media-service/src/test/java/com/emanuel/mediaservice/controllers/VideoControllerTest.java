@@ -31,7 +31,7 @@ class VideoControllerTest extends BaseControllerTest {
 
     @SneakyThrows
     private VideoDto uploadVideo(String title, String description)  {
-        // Get the bytes of your real video file
+        // get the bytes of your real video file
         byte[] videoBytes = Files.readAllBytes(Paths.get("src/test/resources/samples/test.avi"));
         ByteArrayResource resource = new ByteArrayResource(videoBytes) {
             @Override
