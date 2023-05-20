@@ -1,6 +1,7 @@
 package com.emanuel.mediaservice.controllers;
 
 import com.emanuel.starterlibrary.dtos.DocumentDto;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -12,6 +13,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,21 +23,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase
 class DocumentControllerTest extends BaseControllerTest {
-
+    private static final String PDF_EXTENSION = "pdf";
+    private static final String WORD_EXTENSION = "docx";
     @Test
     void uploadDocumentTest() {
-        uploadDocument(TITLE, DESCRIPTION);
+        uploadDocument(TITLE, DESCRIPTION, PDF_EXTENSION);
+        uploadDocument(TITLE + "2", DESCRIPTION + "2", WORD_EXTENSION);
     }
 
-    private DocumentDto uploadDocument(String title, String description) {
-        // assume
-        ByteArrayResource resource = new ByteArrayResource("test data".getBytes()) {
+    @SneakyThrows
+    private DocumentDto uploadDocument(String title, String description, String extension) {
+        // get the bytes of your real image file
+        byte[] imageBytes = Files.readAllBytes(Paths.get("src/test/resources/samples/test." + extension));
+        ByteArrayResource resource = new ByteArrayResource(imageBytes) {
             @Override
             public String getFilename() {
-                return "test.txt";
+                return "test." + extension;
             }
         };
 
+        // assume
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", resource);
         body.add("title", title);
@@ -62,8 +70,8 @@ class DocumentControllerTest extends BaseControllerTest {
     @Test
     void getDocumentsTest() {
         // assume
-        uploadDocument(TITLE, DESCRIPTION);
-        uploadDocument(TITLE + "2", DESCRIPTION + "2");
+        uploadDocument(TITLE, DESCRIPTION, PDF_EXTENSION);
+        uploadDocument(TITLE + "2", DESCRIPTION + "2", WORD_EXTENSION);
 
         // act
         ResponseEntity<List<DocumentDto>> result = rest.exchange(
@@ -82,7 +90,7 @@ class DocumentControllerTest extends BaseControllerTest {
     @Test
     void getDocumentByIdTest() {
         // assume
-        DocumentDto document = uploadDocument(TITLE, DESCRIPTION);
+        DocumentDto document = uploadDocument(TITLE, DESCRIPTION, PDF_EXTENSION);
         final Long id = document.getId();
 
         // act
@@ -99,7 +107,7 @@ class DocumentControllerTest extends BaseControllerTest {
     @Test
     void deleteDocumentTest() {
         // assume
-        DocumentDto document = uploadDocument(TITLE, DESCRIPTION);
+        DocumentDto document = uploadDocument(TITLE, DESCRIPTION, PDF_EXTENSION);
         final Long id = document.getId();
 
         // act
@@ -121,7 +129,7 @@ class DocumentControllerTest extends BaseControllerTest {
     @Test
     void updateDocumentTest() {
         // assume
-        DocumentDto document = uploadDocument(TITLE, DESCRIPTION);
+        DocumentDto document = uploadDocument(TITLE, DESCRIPTION, PDF_EXTENSION);
         final Long id = document.getId();
         final String newTitle = TITLE + " new";
         final String newDescription = DESCRIPTION + " new";
@@ -155,7 +163,7 @@ class DocumentControllerTest extends BaseControllerTest {
     @Test
     void deleteAllDocumentsTest() {
         // assume
-        uploadDocument(TITLE, DESCRIPTION);
+        uploadDocument(TITLE, DESCRIPTION, PDF_EXTENSION);
 
         // act
         ResponseEntity<Void> result = rest.exchange("/api/document", HttpMethod.DELETE, null, Void.class);
