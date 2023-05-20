@@ -103,4 +103,27 @@ class AudioControllerTest extends BaseTestController {
         assertThat(audioFromRequest.getTitle()).isEqualTo(TITLE);
         assertThat(audioFromRequest.getDescription()).isEqualTo(DESCRIPTION);
     }
+
+    @Test
+    void deleteAudioTest() {
+        // assume
+        AudioDto audio = uploadAudio(TITLE, DESCRIPTION);
+        final Long id = audio.getId();
+
+        // act
+        ResponseEntity<AudioDto> result = rest.exchange(
+                "/api/audio/" + id,
+                HttpMethod.DELETE,
+                null,
+                AudioDto.class
+        );
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        AudioDto audioFromRequest = result.getBody();
+        assertThat(audioFromRequest).isNotNull();
+        assertThat(audioFromRequest.getTitle()).isEqualTo(TITLE);
+        assertThat(audioFromRequest.getDescription()).isEqualTo(DESCRIPTION);
+    }
+
 }
