@@ -126,4 +126,38 @@ class AudioControllerTest extends BaseTestController {
         assertThat(audioFromRequest.getDescription()).isEqualTo(DESCRIPTION);
     }
 
+    @Test
+    void updateAudioTest() {
+        // assume
+        AudioDto audio = uploadAudio(TITLE, DESCRIPTION);
+        final Long id = audio.getId();
+        final String newTitle = TITLE + " new";
+        final String newDescription = DESCRIPTION + " new";
+        audio.setTitle(newTitle);
+        audio.setDescription(newDescription);
+
+        // act
+        HttpEntity<AudioDto> requestEntity = new HttpEntity<>(audio);
+        ResponseEntity<AudioDto> result = rest.exchange(
+                "/api/audio/" + id,
+                HttpMethod.PUT,
+                requestEntity,
+                AudioDto.class
+        );
+
+        // assert
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        AudioDto updatedAudioResult = result.getBody();
+        assertThat(updatedAudioResult).isNotNull();
+        assertThat(updatedAudioResult.getTitle()).isEqualTo(newTitle);
+        assertThat(updatedAudioResult.getDescription()).isEqualTo(newDescription);
+
+        // Verify the audio was actually updated
+        ResponseEntity<AudioDto> responseFromGetRequest = rest.getForEntity("/api/audio/" + id, AudioDto.class);
+        AudioDto audioFromGetRequest = responseFromGetRequest.getBody();
+        assertThat(audioFromGetRequest).isNotNull();
+        assertThat(audioFromGetRequest.getTitle()).isEqualTo(newTitle);
+        assertThat(audioFromGetRequest.getDescription()).isEqualTo(newDescription);
+    }
+
 }
