@@ -3,7 +3,15 @@ plugins {
 	id 'org.springframework.boot' version '2.7.10'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id "org.sonarqube" version "4.0.0.2929"
+	id 'jacoco'
 }
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+	}
+}
+test.finalizedBy jacocoTestReport
 
 group = 'com.emanuel'
 version = '0.0.1-SNAPSHOT'
