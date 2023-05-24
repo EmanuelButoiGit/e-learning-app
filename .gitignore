@@ -1,2 +1,3 @@
 media-service/src/main/resources/application.properties
+media-service/src/test/resources/application.properties
 notification-service/src/main/resources/application.properties
