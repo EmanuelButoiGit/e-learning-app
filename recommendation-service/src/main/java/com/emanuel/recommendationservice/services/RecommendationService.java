@@ -5,25 +5,15 @@ import com.emanuel.recommendationservice.proxies.RatingServiceProxy;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
-import com.emanuel.starterlibrary.exceptions.DeserializationException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -39,30 +29,20 @@ public class RecommendationService {
 
     @SneakyThrows
     public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
-        List<?> medias = null;
-        switch (mediaType){
-            case "media":
-                medias = mediaServiceProxy.getAllMedias();
-                break;
-            case "audio":
-                medias = mediaServiceProxy.getAllAudios();
-                break;
-            case "document":
-                medias = mediaServiceProxy.getAllDocuments();
-                break;
-            case "image":
-                medias = mediaServiceProxy.getAllImages();
-                break;
-            case "video":
-                medias = mediaServiceProxy.getAllVideos();
-            break;
-        }
+        List<?> medias = switch (mediaType) {
+            case "media" -> mediaServiceProxy.getAllMedias();
+            case "audio" -> mediaServiceProxy.getAllAudios();
+            case "document" -> mediaServiceProxy.getAllDocuments();
+            case "image" -> mediaServiceProxy.getAllImages();
+            case "video" -> mediaServiceProxy.getAllVideos();
+            default -> null;
+        };
         if (medias == null) {
             throw new NullPointerException("The table is empty!");
         }
         return medias.stream()
                 .map(mediaClassType::cast)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public <T extends MediaDto> Float getGeneralRatingBasedOnMedia(T media) {
@@ -87,7 +67,7 @@ public class RecommendationService {
         List<Long> mediaIds = sortedScores.stream()
                 .limit(numberOfMedias)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .toList();
 
         List<T> sortedMedia = new ArrayList<>();
         for (Long id : mediaIds) {
@@ -102,7 +82,6 @@ public class RecommendationService {
     }
 
     @SneakyThrows
-    @SuppressWarnings("ConstantConditions")
     public <T extends MediaDto> T getRandomRecommendedMedia(Class<T> mediaClassType, String mediaType) {
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         if(medias.isEmpty()){
@@ -115,12 +94,11 @@ public class RecommendationService {
                 passMedias.add(media);
             }
         }
-        int randomNumber = random.nextInt(passMedias.size());
         if (passMedias.isEmpty()) {
             log.info("No media has a rating above {}", minRating);
-            return medias.get(randomNumber);
+            return medias.get(random.nextInt(medias.size()));
         }
-        return passMedias.get(randomNumber);
+        return passMedias.get(random.nextInt(passMedias.size()));
     }
 
     public Integer calculateResolutionQuality(Integer quality) {
@@ -164,7 +142,7 @@ public class RecommendationService {
         return entries.stream()
                 .map(Map.Entry::getKey)
                 .limit(numberOfMedias)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @SneakyThrows
@@ -186,6 +164,6 @@ public class RecommendationService {
         return entries.stream()
                 .map(Map.Entry::getKey)
                 .limit(numberOfMedias)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

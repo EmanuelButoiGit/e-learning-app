@@ -2,6 +2,7 @@ package com.emanuel.mediaservice.services;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +20,8 @@ import java.util.Scanner;
 @Service
 public class ScanService {
 
-    private static final String VIRUS_TOTAL_API_KEY = "bed0e74e6e29e063b54e04cca27a28dd7e0499f3fcdb4fd5e8f942a34d83e637";
+    @Value("${virusTotalApiKey}")
+    private String virusTotalApiKey;
 
     @SneakyThrows
     public boolean scanFileForViruses(MultipartFile file) {
@@ -29,7 +31,7 @@ public class ScanService {
 
         // Build the API request URL
         String apiUrl = "https://www.virustotal.com/vtapi/v2/file/scan";
-        String urlParameters = "apikey=" + VIRUS_TOTAL_API_KEY + "&file=" + URLEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()), StandardCharsets.UTF_8);
+        String urlParameters = "apikey=" + virusTotalApiKey + "&file=" + URLEncoder.encode(Objects.requireNonNull(file.getOriginalFilename()), StandardCharsets.UTF_8);
         URL url = new URL(apiUrl + "?" + urlParameters);
 
         return sendRequest(url, encodedFileContent);
@@ -43,7 +45,7 @@ public class ScanService {
 
         // Build the API request URL
         String apiUrl = "https://www.virustotal.com/vtapi/v2/file/scan";
-        String urlParameters = "apikey=" + VIRUS_TOTAL_API_KEY + "&file=" + URLEncoder.encode(Objects.requireNonNull(fileName), StandardCharsets.UTF_8);
+        String urlParameters = "apikey=" + virusTotalApiKey + "&file=" + URLEncoder.encode(Objects.requireNonNull(fileName), StandardCharsets.UTF_8);
         URL url = new URL(apiUrl + "?" + urlParameters);
 
         return sendRequest(url, encodedFileContent);

@@ -40,7 +40,6 @@ public class AudioRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get random recommended audio file")
     @ApiResponse(responseCode = "200", description = "Random audio retrieved")
-    @Cacheable(value = "randomRecommendedAudio", cacheManager = "cacheManager")
     public AudioDto getRandomRecommendedAudio()
     {
         return audioRecommendationService.getRandomRecommendedAudio();

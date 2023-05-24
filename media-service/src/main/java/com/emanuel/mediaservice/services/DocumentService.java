@@ -74,7 +74,7 @@ public class DocumentService {
             List<DocumentEntity> allDocuments = documentRepository.findAll();
             return allDocuments.stream()
                     .map(documentConverter::toDto)
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Exception e) {
             throw new DataBaseException(MediaService.DB_FETCH_EXCEPTION + e);
         }

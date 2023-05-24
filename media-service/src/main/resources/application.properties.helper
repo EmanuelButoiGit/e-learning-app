@@ -6,6 +6,8 @@ spring.application.name=media-service
 spring.cloud.config.enabled=false
 eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
 
+virusTotalApiKey=?
+
 # tracing settings
 spring.sleuth.sampler.probability=1.0
 

@@ -79,7 +79,7 @@ public class AudioService {
             List<AudioEntity> allAudios = audioRepository.findAll();
             return allAudios.stream()
                     .map(audioConverter::toDto)
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Exception e) {
             throw new DataBaseException(MediaService.DB_FETCH_EXCEPTION + e);
         }

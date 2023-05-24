@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @FeignClient(name = "rating-service")
 public interface RatingServiceProxy {

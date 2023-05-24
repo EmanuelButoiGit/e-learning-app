@@ -67,7 +67,7 @@ public class VideoService {
             List<VideoEntity> allVideos = videoRepository.findAll();
             return allVideos.stream()
                     .map(videoConverter::toDto)
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Exception e) {
             throw new DataBaseException(MediaService.DB_FETCH_EXCEPTION + e);
         }
