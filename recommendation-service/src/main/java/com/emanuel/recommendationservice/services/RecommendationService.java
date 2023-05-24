@@ -94,12 +94,11 @@ public class RecommendationService {
                 passMedias.add(media);
             }
         }
-        int randomNumber = random.nextInt(medias.size());
         if (passMedias.isEmpty()) {
             log.info("No media has a rating above {}", minRating);
-            return medias.get(randomNumber);
+            return medias.get(random.nextInt(medias.size()));
         }
-        return passMedias.get(randomNumber);
+        return passMedias.get(random.nextInt(passMedias.size()));
     }
 
     public Integer calculateResolutionQuality(Integer quality) {
