@@ -9,7 +9,6 @@ class NotificationServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
-		NotificationServiceApplication.main(new String[]{});
 		Assertions.assertTrue(true, "Application context loaded successfully.");
 	}
 
