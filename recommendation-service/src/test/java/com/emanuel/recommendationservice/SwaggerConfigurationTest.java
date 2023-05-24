@@ -27,7 +27,7 @@ class SwaggerConfigurationTest {
         Info info = openAPI.getInfo();
         assertNotNull(info);
         assertEquals("Documentation", info.getTitle());
-        assertEquals("2.7", info.getVersion());
+        assertEquals("2.8", info.getVersion());
 
         Contact contact = info.getContact();
         assertNotNull(contact);
