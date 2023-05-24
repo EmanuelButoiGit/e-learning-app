@@ -15,7 +15,7 @@ class SwaggerConfigurationTest {
 
         assertNotNull(openAPI, "OpenAPI bean should not be null");
         assertEquals("Documentation", openAPI.getInfo().getTitle());
-        assertEquals("2.2", openAPI.getInfo().getVersion());
+        assertEquals("2.3", openAPI.getInfo().getVersion());
         assertEquals("Butoi Emanuel-Sebastian", openAPI.getInfo().getContact().getName());
         assertEquals("https://www.linkedin.com/in/emanuel-sebastian-butoi-929271213/", openAPI.getInfo().getContact().getUrl());
         assertEquals("This service is responsible with sending the admin notifications", openAPI.getInfo().getDescription());
