@@ -50,7 +50,6 @@ public class MediaRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get the top media files by name")
     @ApiResponse(responseCode = "200", description = "All media names retrieved")
-    @Cacheable(value = "topMedias", key = "#numberOfMedias", cacheManager = "cacheManager")
     public List<String> getTopMedia(@RequestParam @NotNull @Min(value = 1) int numberOfMedias)
     {
         return mediaRecommendationService.getTopMedia(numberOfMedias);
