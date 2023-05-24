@@ -87,7 +87,7 @@ public class RatingService {
             List<RatingEntity> allRatings = ratingRepository.findAll();
             return allRatings.stream()
                     .map(ratingConverter::toDto)
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Exception e) {
             throw new DataBaseException("Couldn't fetch data from database: " + e.getMessage());
         }
