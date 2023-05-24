@@ -39,30 +39,20 @@ public class RecommendationService {
 
     @SneakyThrows
     public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
-        List<?> medias = null;
-        switch (mediaType){
-            case "media":
-                medias = mediaServiceProxy.getAllMedias();
-                break;
-            case "audio":
-                medias = mediaServiceProxy.getAllAudios();
-                break;
-            case "document":
-                medias = mediaServiceProxy.getAllDocuments();
-                break;
-            case "image":
-                medias = mediaServiceProxy.getAllImages();
-                break;
-            case "video":
-                medias = mediaServiceProxy.getAllVideos();
-            break;
-        }
+        List<?> medias = switch (mediaType) {
+            case "media" -> mediaServiceProxy.getAllMedias();
+            case "audio" -> mediaServiceProxy.getAllAudios();
+            case "document" -> mediaServiceProxy.getAllDocuments();
+            case "image" -> mediaServiceProxy.getAllImages();
+            case "video" -> mediaServiceProxy.getAllVideos();
+            default -> null;
+        };
         if (medias == null) {
             throw new NullPointerException("The table is empty!");
         }
         return medias.stream()
                 .map(mediaClassType::cast)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public <T extends MediaDto> Float getGeneralRatingBasedOnMedia(T media) {
@@ -87,7 +77,7 @@ public class RecommendationService {
         List<Long> mediaIds = sortedScores.stream()
                 .limit(numberOfMedias)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .toList();
 
         List<T> sortedMedia = new ArrayList<>();
         for (Long id : mediaIds) {
@@ -164,7 +154,7 @@ public class RecommendationService {
         return entries.stream()
                 .map(Map.Entry::getKey)
                 .limit(numberOfMedias)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @SneakyThrows
@@ -186,6 +176,6 @@ public class RecommendationService {
         return entries.stream()
                 .map(Map.Entry::getKey)
                 .limit(numberOfMedias)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
