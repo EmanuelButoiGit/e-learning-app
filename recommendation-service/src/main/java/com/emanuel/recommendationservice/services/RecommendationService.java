@@ -37,25 +37,6 @@ public class RecommendationService {
     @Value("${minRating}")
     private float minRating;
 
-    @SuppressWarnings("unused")
-    @SneakyThrows
-    public <T extends MediaDto> List<T> getDtoListFromDatabaseWithRest(Class<T> mediaClassType, String mediaType) {
-        ResponseEntity<List<T>> response = new RestTemplate()
-                .exchange("http://localhost:8080/api/" + mediaType + "/", HttpMethod.GET, null,
-                        new ParameterizedTypeReference<>() {});
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            List<T> medias =mapper.readValue(mapper.writeValueAsString(response.getBody()),
-                    mapper.getTypeFactory().constructCollectionType(List.class, mediaClassType));
-            if (medias == null) {
-                throw new NullPointerException("The table is empty!");
-            }
-            return medias;
-        } catch (IOException e) {
-            throw new DeserializationException("Failed to deserialize response: " + e.getMessage());
-        }
-    }
-
     @SneakyThrows
     public <T> List<T> getDtoListFromDatabase(Class<T> mediaClassType, String mediaType) {
         List<?> medias = null;
@@ -98,19 +79,6 @@ public class RecommendationService {
         return rating.getGeneralRating();
     }
 
-    @SuppressWarnings("unused")
-    private <T extends MediaDto> Float getMediaByRatingIdWithRest(T media, Float generalRating) {
-        try {
-            ResponseEntity<RatingDto> ratingResponse = new RestTemplate().getForEntity(RATING_MEDIA_ENDPOINT + media.getId(), RatingDto.class);
-            RatingDto rating = ratingResponse.getBody();
-            if (ratingResponse.getStatusCode().is2xxSuccessful() && rating != null) {
-                generalRating = rating.getGeneralRating();
-            }
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            log.info(e.getMessage());
-        }
-        return generalRating;
-    }
 
     public <T extends MediaDto> List<T> getSortedMedia(int numberOfMedias, List<T> medias, Map<Long, Double> scores) {
         List<Map.Entry<Long, Double>> sortedScores = new ArrayList<>(scores.entrySet());
