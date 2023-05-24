@@ -5,25 +5,15 @@ import com.emanuel.recommendationservice.proxies.RatingServiceProxy;
 import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
 import com.emanuel.starterlibrary.exceptions.DataBaseException;
-import com.emanuel.starterlibrary.exceptions.DeserializationException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -92,7 +82,6 @@ public class RecommendationService {
     }
 
     @SneakyThrows
-    @SuppressWarnings("ConstantConditions")
     public <T extends MediaDto> T getRandomRecommendedMedia(Class<T> mediaClassType, String mediaType) {
         List<T> medias = getDtoListFromDatabase(mediaClassType, mediaType);
         if(medias.isEmpty()){
@@ -105,7 +94,7 @@ public class RecommendationService {
                 passMedias.add(media);
             }
         }
-        int randomNumber = random.nextInt(passMedias.size());
+        int randomNumber = random.nextInt(medias.size());
         if (passMedias.isEmpty()) {
             log.info("No media has a rating above {}", minRating);
             return medias.get(randomNumber);
