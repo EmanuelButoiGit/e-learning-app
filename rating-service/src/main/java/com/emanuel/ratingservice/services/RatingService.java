@@ -111,8 +111,10 @@ public class RatingService {
     public RatingDto updateRating(@NotNull @Min(value = 0) Long id, @Valid RatingDto updatedRating) {
         checkIfMediaIdIsValid(updatedRating);
         List<RatingDto> allRatings = getAllRatings();
-        checkIfRatingHasAlreadyBeenAddedByTheUser(updatedRating, allRatings);
         RatingDto rating = getRatingById(id);
+        if(!Objects.equals(rating.getMediaId(), updatedRating.getMediaId())) {
+            checkIfRatingHasAlreadyBeenAddedByTheUser(updatedRating, allRatings);
+        }
         updatedRating.setTitle(sanitizationService.sanitizeString(rating.getTitle()));
         updatedRating.setDescription(sanitizationService.sanitizeString(rating.getDescription()));
         rating.setId(updatedRating.getId());
