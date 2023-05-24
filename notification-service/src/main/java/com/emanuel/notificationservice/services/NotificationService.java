@@ -143,26 +143,6 @@ public class NotificationService {
         sendEmail(messageBodyBuilder, subject);
     }
 
-    @SuppressWarnings("unused")
-    private List<String> getTopMediaWithRest() throws DeserializationException {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8082/api/recommendation/media/top")
-                .queryParam("numberOfMedias", 10);
-        ResponseEntity<List<String>> response = new RestTemplate()
-                .exchange(builder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
-        List<String> medias;
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            medias = mapper.readValue(mapper.writeValueAsString(response.getBody()),
-                    mapper.getTypeFactory().constructCollectionType(List.class, String.class));
-            if (medias == null) {
-                throw new NullPointerException("The list is empty!");
-            }
-        } catch (IOException e) {
-            throw new DeserializationException("Failed to deserialize response: " + e.getMessage());
-        }
-        return medias;
-    }
-
     public void sendNewMediaNotification(@NotEmpty @NotBlank String mediaName){
         StringBuilder messageBodyBuilder = new StringBuilder();
         messageBodyBuilder.append("<h1>&#127881; New media created!").append(CLOSE_TITLE_TAGS);

@@ -5,8 +5,9 @@ import time
 root_path = "C:\Users\Emanuel\Documents\GitHub\e-learning-app"
 global_token = "?"
 services = [
+    "api-gateway",
+    "discovery-server",
     "media-service",
-    "metrics-master",
     "notification-service",
     "rating-service",
     "recommendation-service",
@@ -22,7 +23,8 @@ def service_name(number):
         3: services[2],
         4: services[3],
         5: services[4],
-        6: services[5]
+        6: services[5],
+        7: services[6]
     }
     return switcher.get(number, "Invalid input")
 

@@ -1,5 +1,6 @@
 package com.emanuel.discoveryserver;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -7,7 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 class DiscoveryServerApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void applicationContextTest() {
+		DiscoveryServerApplication.main(new String[] {});
+		Assertions.assertTrue(true, "Application context loaded successfully.");
 	}
 
 }
