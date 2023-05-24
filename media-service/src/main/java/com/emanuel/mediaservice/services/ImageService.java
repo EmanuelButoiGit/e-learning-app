@@ -66,7 +66,7 @@ public class ImageService {
             List<ImageEntity> allImages = imageRepository.findAll();
             return allImages.stream()
                     .map(imageConverter::toDto)
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Exception e) {
             throw new DataBaseException(MediaService.DB_FETCH_EXCEPTION + e);
         }
