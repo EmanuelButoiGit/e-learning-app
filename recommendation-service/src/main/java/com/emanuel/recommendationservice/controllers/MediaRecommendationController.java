@@ -40,7 +40,6 @@ public class MediaRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get random recommended media file")
     @ApiResponse(responseCode = "200", description = "Random media retrieved")
-    @Cacheable(value = "randomRecommendedMedia", cacheManager = "cacheManager")
     public MediaDto getRandomRecommendedMedia()
     {
         return mediaRecommendationService.getRandomRecommendedMedia();

@@ -40,7 +40,6 @@ public class DocumentRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get random recommended document file")
     @ApiResponse(responseCode = "200", description = "Random document retrieved")
-    @Cacheable(value = "randomRecommendedDocument", cacheManager = "cacheManager")
     public DocumentDto getRandomRecommendedAudio()
     {
         return documentRecommendationService.getRandomRecommendedDocument();

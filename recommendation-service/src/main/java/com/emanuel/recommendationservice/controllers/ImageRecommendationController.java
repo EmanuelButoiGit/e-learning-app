@@ -41,7 +41,6 @@ public class ImageRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get random recommended image file")
     @ApiResponse(responseCode = "200", description = "Random image retrieved")
-    @Cacheable(value = "randomRecommendedImage", cacheManager = "cacheManager")
     public ImageDto getRandomRecommendedImage()
     {
         return imageRecommendationService.getRandomRecommendedImage();

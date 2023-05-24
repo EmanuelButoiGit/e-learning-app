@@ -41,7 +41,6 @@ public class VideoRecommendationController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get random recommended video file")
     @ApiResponse(responseCode = "200", description = "Random video retrieved")
-    @Cacheable(value = "randomRecommendedVideo", cacheManager = "cacheManager")
     public VideoDto getRandomRecommendedVideo()
     {
         return videoRecommendationService.getRandomRecommendedVideo();
