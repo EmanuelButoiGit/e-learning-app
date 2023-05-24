@@ -67,16 +67,6 @@ public class RatingService {
     }
 
     @SneakyThrows
-    @SuppressWarnings("unused")
-    private void checkIfMediaIdIsValidWithRest(RatingDto rating) {
-        try {
-           new RestTemplate().getForEntity("http://localhost:8080/api/media/" + rating.getMediaId(), MediaDto.class);
-        } catch (Exception e) {
-            throw new EntityNotFoundException(rating.getMediaId());
-        }
-    }
-
-    @SneakyThrows
     private void checkIfMediaIdIsValid(RatingDto rating){
         try {
             mediaServiceProxy.getMediaById(rating.getMediaId());
