@@ -30,7 +30,7 @@ class SwaggerConfigurationTest {
         OpenAPI openAPI = applicationContext.getBean(OpenAPI.class);
 
         Assertions.assertEquals("Documentation", openAPI.getInfo().getTitle());
-        Assertions.assertEquals("2.1", openAPI.getInfo().getVersion());
+        Assertions.assertEquals("2.2", openAPI.getInfo().getVersion());
         Assertions.assertEquals("Butoi Emanuel-Sebastian", openAPI.getInfo().getContact().getName());
         Assertions.assertEquals("https://www.linkedin.com/in/emanuel-sebastian-butoi-929271213/", openAPI.getInfo().getContact().getUrl());
         Assertions.assertEquals("This service is responsible with all the operations related to ratings", openAPI.getInfo().getDescription());
