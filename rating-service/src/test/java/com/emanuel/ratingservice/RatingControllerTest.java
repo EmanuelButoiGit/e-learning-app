@@ -1,87 +1,103 @@
 package com.emanuel.ratingservice;
 
-import com.emanuel.ratingservice.proxies.MediaServiceProxy;
+import com.emanuel.ratingservice.controllers.RatingController;
 import com.emanuel.ratingservice.services.RatingService;
-import com.emanuel.starterlibrary.dtos.MediaDto;
 import com.emanuel.starterlibrary.dtos.RatingDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Collections;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(controllers = RatingController.class)
 class RatingControllerTest {
 
-
     @Autowired
-    protected TestRestTemplate rest;
-    private final HttpHeaders httpHeaders = new HttpHeaders();
+    private MockMvc mockMvc;
 
     @MockBean
-    protected MediaServiceProxy mediaServiceProxy;
+    private RatingService ratingService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private final RatingDto rating = new RatingDto(
+            1L,
+            1L,
+            "A nice media",
+            "I think it was the most informative",
+            10.0F,
+            10.0F,
+            10.0F,
+            10.0F,
+            10.0F,
+            10.0F,
+            10.0F
+    );
 
     @Test
-    void addRatingTest() {
-        // assume
-        final RatingDto ratingDto = new RatingDto(
-                1L,
-                1L,
-                "Test Title",
-                "Test Description",
-                0f,
-                7.5f,
-                7.5f,
-                7.5f,
-                7.5f,
-                7.5f,
-                7.5f);
+    @SneakyThrows
+    void testAddRating() {
+        Mockito.when(ratingService.addRating(any(RatingDto.class))).thenReturn(rating);
 
-        HttpEntity<RatingDto> requestEntity = new HttpEntity<>(ratingDto, httpHeaders);
-        Mockito.when(mediaServiceProxy.getMediaById(ratingDto.getMediaId()))
-                .thenReturn(new MediaDto());
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/rating")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(rating)))
+                .andExpect(status().isCreated());
 
-        // act
-        ResponseEntity<RatingDto> result = rest.exchange("/api/rating", HttpMethod.POST, requestEntity, RatingDto.class);
-
-        // assert
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        RatingDto ratingFromServer = result.getBody();
-        assertThat(ratingFromServer).isNotNull();
-        assertEquals(ratingDto.getId(), ratingFromServer.getId());
-        assertEquals(ratingDto.getTitle(), ratingFromServer.getTitle());
-        assertEquals(ratingDto.getDescription(), ratingFromServer.getDescription());
-        Float expectedGeneralRating = calculateGeneralRating(
-                ratingDto.getTutorRating(),
-                ratingDto.getContentRating(),
-                ratingDto.getContentStructureRating(),
-                ratingDto.getPresentationRating(),
-                ratingDto.getEngagementRating(),
-                ratingDto.getDifficultyRating()
-        );
-        assertEquals(expectedGeneralRating, ratingFromServer.getGeneralRating());
-        assertEquals(ratingDto.getTutorRating(), ratingFromServer.getTutorRating());
-        assertEquals(ratingDto.getContentRating(), ratingFromServer.getContentRating());
-        assertEquals(ratingDto.getContentStructureRating(), ratingFromServer.getContentStructureRating());
-        assertEquals(ratingDto.getPresentationRating(), ratingFromServer.getPresentationRating());
-        assertEquals(ratingDto.getEngagementRating(), ratingFromServer.getEngagementRating());
-        assertEquals(ratingDto.getDifficultyRating(), ratingFromServer.getDifficultyRating());
+        verify(ratingService, times(1)).addRating(any(RatingDto.class));
     }
 
-    private Float calculateGeneralRating(Float tutorRating, Float contentRating, Float contentStructureRating,
-                                         Float presentationRating, Float engagementRating, Float difficultyRating){
-        float sumOfRatings = tutorRating + contentRating + contentStructureRating + presentationRating + engagementRating + difficultyRating;
-        return sumOfRatings / 6;
+    @Test
+    @SneakyThrows
+    void testGetAllRatings() {
+        Mockito.when(ratingService.getAllRatings()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/rating")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(ratingService, times(1)).getAllRatings();
     }
 
+    @Test
+    @SneakyThrows
+    void testDeleteAllRatings() {
+        Mockito.doNothing().when(ratingService).deleteAllRatings();
 
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/api/rating")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        verify(ratingService, times(1)).deleteAllRatings();
+    }
+
+    @Test
+    @SneakyThrows
+    void testGetMediaByRatingId() {
+        Mockito.when(ratingService.getMediaByRatingId(anyLong())).thenReturn(rating);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/rating/media/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(ratingService, times(1)).getMediaByRatingId(anyLong());
+    }
 }
