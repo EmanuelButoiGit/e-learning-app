@@ -115,8 +115,8 @@ public class RatingService {
         if(!Objects.equals(rating.getMediaId(), updatedRating.getMediaId())) {
             checkIfRatingHasAlreadyBeenAddedByTheUser(updatedRating, allRatings);
         }
-        updatedRating.setTitle(sanitizationService.sanitizeString(rating.getTitle()));
-        updatedRating.setDescription(sanitizationService.sanitizeString(rating.getDescription()));
+        rating.setTitle(sanitizationService.sanitizeString(updatedRating.getTitle()));
+        rating.setDescription(sanitizationService.sanitizeString(updatedRating.getDescription()));
         rating.setId(updatedRating.getId());
         rating.setMediaId(updatedRating.getMediaId());
         rating.setTitle(updatedRating.getTitle());
