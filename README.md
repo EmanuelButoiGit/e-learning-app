@@ -2,6 +2,14 @@
 
 ![GitHub](https://img.shields.io/github/license/yourusername/e-learning-api)
 ![Microservices](https://img.shields.io/badge/Microservices-architecture-blue)
+![Quality Gate Status](https://img.shields.io/badge/Quality%20Gate-Passed-green)
+![Bugs](https://img.shields.io/badge/Bugs-0-green)
+![Security Hotspots](https://img.shields.io/badge/Security%20Hotspots-0-green)
+![Code Smells](https://img.shields.io/badge/Code%20Smells-0-green)
+![Duplicated Lines (%)](https://img.shields.io/badge/Duplicated%20Lines-2%25-yellow)
+![Coverage](https://img.shields.io/badge/Coverage-60%25-yellow)
+![Coverage - Class Level](https://img.shields.io/badge/Coverage%20(Class%20Level)-100%25-green)
+![Coverage - Method Level](https://img.shields.io/badge/Coverage%20(Method%20Level)-74%25-green)
 
 This project is an E-Learning API built as a microservices architecture. The project considers aspects like maintainability, evolvability, and scalability, providing a blueprint to a real-world application. 
 
