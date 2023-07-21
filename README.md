@@ -13,7 +13,7 @@
 
 This project is an E-Learning API built as a microservices architecture. The project considers aspects like maintainability, evolvability, and scalability, providing a blueprint to a real-world application. 
 
-The API allows users to interact with various media types and receive recommendations based on a scoring system. All the operations related to media, ratings, and recommendations are handled by individual microservices. Detailed research underpinning this project can be found at this link [reserchgate/emanuel](https://www.researchgate.net/publication/xxxxxxx).
+The API allows users to interact with various media types and receive recommendations based on a scoring system. All the operations related to media, ratings, and recommendations are handled by individual microservices. Detailed research underpinning this project can be found at this link [research paper](https://www.researchgate.net/publication/372504935_From_Strategy_to_Practice_A_Blueprint_for_Designing_a_Scalable_and_Robust_System).
 
 ## 📘 Contents
 
@@ -43,7 +43,7 @@ Several strategies were implemented in this project, each with a specific purpos
 7. **Evolvability:** Easy to modify or add new features without affecting other parts of the system.
 8. **Resilience & Mitigation:** Circuit Breaker, Retry, Rate Limiter, and Time Limiter are used for resilience. Shifting load, caching, and scheduling are used for mitigation.
 
-More details on each strategy can be found in the [research paper](https://www.researchgate.net/publication/xxxxxxx).
+More details on each strategy can be found in the [research paper](https://www.researchgate.net/publication/372504935_From_Strategy_to_Practice_A_Blueprint_for_Designing_a_Scalable_and_Robust_System).
 
 ## 🏛️ Architecture
 
