@@ -1,6 +1,6 @@
 # 🎓 E-Learning API - From Strategy to Practice: A Blueprint for Designing a Scalable and Robust System
 
-![GitHub](https://img.shields.io/github/license/yourusername/e-learning-api)
+![GitHub](https://img.shields.io/github/license/EmanuelButoiGit/e-learning-app)
 ![Microservices](https://img.shields.io/badge/Microservices-architecture-blue)
 ![Quality Gate Status](https://img.shields.io/badge/Quality%20Gate-Passed-green)
 ![Bugs](https://img.shields.io/badge/Bugs-0-green)
